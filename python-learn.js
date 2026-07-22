@@ -1781,8 +1781,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    let activeSyntaxMarkers = [];
-    let activeSyntaxLineClasses = [];
+    // --- Smart Levenshtein Distance Helper for Typo Suggestions ---
+    function levenshteinDistance(a, b) {
+        if (a.length === 0) return b.length;
+        if (b.length === 0) return a.length;
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+        for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                    matrix[i][j] = matrix[i - 1][j - 1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j - 1] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1
+                    );
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+
+    const VALID_PYTHON_TOKENS = new Set([
+        "print", "input", "int", "str", "float", "len", "type", "abs", "sum", "min", "max",
+        "round", "range", "list", "dict", "tuple", "set", "append", "pop", "remove", "insert",
+        "split", "join", "strip", "lower", "upper", "replace", "count", "items", "keys", "values",
+        "if", "else", "elif", "for", "while", "def", "return", "import", "from", "as", "pass",
+        "break", "continue", "in", "is", "and", "or", "not", "True", "False", "None", "try", "except"
+    ]);
 
     function runRealtimeSyntaxChecker(cm) {
         // Clear previous markers & line classes
@@ -1794,6 +1822,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const code = cm.getValue();
         const lines = code.split("\n");
         let firstError = null;
+
+        // Collect all user-defined variables & functions in the document
+        const declaredUserVars = new Set();
+        for (const m of code.matchAll(/\b([a-zA-Z_]\w*)\s*=/g)) declaredUserVars.add(m[1]);
+        for (const m of code.matchAll(/def\s+([a-zA-Z_]\w*)/g)) declaredUserVars.add(m[1]);
+        for (const m of code.matchAll(/for\s+([a-zA-Z_]\w*)\s+in/g)) declaredUserVars.add(m[1]);
 
         lines.forEach((lineText, lineIdx) => {
             const trimmed = lineText.trim();
@@ -1822,7 +1856,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 3. Check missing colon on statement heads
+            // 3. Check missing colon on statement heads (if, elif, else, for, while, def)
             if (/^(if|elif|else|for|while|def)\b/.test(trimmed) && !trimmed.endsWith(":")) {
                 if (!firstError) {
                     firstError = { line: lineIdx, msg: `ขาดเครื่องหมายโคลอน (:) ต่อท้ายบรรทัดที่ ${lineIdx + 1}` };
@@ -1831,9 +1865,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 4. Check common keyword spelling typos
-            const typos = {
-                "prinnt": "print", "prnt": "print", "pirnt": "print", "prnit": "print",
+            // 4. Check assignment operator '=' inside if/while condition
+            if (/^(if|elif|while)\b.*[^=]=[^=]/.test(trimmed)) {
+                if (!firstError) {
+                    firstError = { line: lineIdx, msg: `ต้องใช้ == สำหรับเปรียบเทียบเงื่อนไข (ไม่ใช้ =) ในบรรทัดที่ ${lineIdx + 1}` };
+                }
+                const eqIdx = lineText.indexOf('=');
+                markSyntaxError(cm, lineIdx, eqIdx, eqIdx + 1);
+                return;
+            }
+
+            // 5. Check function call typos (e.g. prin("..."), inpug("..."), whil(...))
+            const callMatches = lineText.matchAll(/\b([a-zA-Z_]\w*)\s*\(/g);
+            for (const match of callMatches) {
+                const fnName = match[1];
+                if (!VALID_PYTHON_TOKENS.has(fnName) && !declaredUserVars.has(fnName)) {
+                    // Find closest valid Python builtin/keyword suggestion
+                    let bestMatch = "print";
+                    let minDist = 99;
+                    VALID_PYTHON_TOKENS.forEach(k => {
+                        const dist = levenshteinDistance(fnName.toLowerCase(), k.toLowerCase());
+                        if (dist < minDist) {
+                            minDist = dist;
+                            bestMatch = k;
+                        }
+                    });
+
+                    if (!firstError) {
+                        firstError = {
+                            line: lineIdx,
+                            msg: `สะกดคำสั่งผิด '${fnName}' (คำที่ถูกต้องคือ '${bestMatch}') ในบรรทัดที่ ${lineIdx + 1}`
+                        };
+                    }
+                    const wStart = lineText.indexOf(fnName);
+                    markSyntaxError(cm, lineIdx, wStart, wStart + fnName.length);
+                }
+            }
+
+            // 6. Check common keyword spelling typos on non-function statements
+            const staticTypos = {
+                "prinnt": "print", "prnt": "print", "pirnt": "print", "prnit": "print", "prin": "print",
                 "inpug": "input", "inpt": "input", "imput": "input",
                 "whiile": "while", "whil": "while",
                 "iif": "if", "eliff": "elif", "els": "else",
@@ -1842,9 +1913,9 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             const words = lineText.match(/\b[a-zA-Z_]\w*\b/g) || [];
             words.forEach(w => {
-                if (typos[w]) {
+                if (staticTypos[w]) {
                     if (!firstError) {
-                        firstError = { line: lineIdx, msg: `สะกดคำสั่งผิด '${w}' (คำที่ถูกต้องคือ '${typos[w]}') ในบรรทัดที่ ${lineIdx + 1}` };
+                        firstError = { line: lineIdx, msg: `สะกดคำสั่งผิด '${w}' (คำที่ถูกต้องคือ '${staticTypos[w]}') ในบรรทัดที่ ${lineIdx + 1}` };
                     }
                     const wStart = lineText.indexOf(w);
                     markSyntaxError(cm, lineIdx, wStart, wStart + w.length);
