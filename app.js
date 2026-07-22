@@ -1414,6 +1414,254 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnStartPreQuiz = document.getElementById('btn-start-pre-quiz');
     const btnStartPostQuiz = document.getElementById('btn-start-post-quiz');
+     const RUBRIC_QUESTIONS = {
+        sequencing: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: เรียงลำดับคำสั่งรับค่าชื่อและการทักทายให้ถูกต้อง (ปัจจุบันโค้ดทักทายก่อนรับค่าชื่อ)",
+                buggyCode: `print("สวัสดีคุณ " + name)\nname = input("กรุณากรอกชื่อ: ")`,
+                hint: "💡 คำแนะนำ: ต้องรับค่าด้วย input(...) ในบรรทัดแรกก่อน แล้วค่อย print(...) ในบรรทัดที่สอง",
+                check: function(code) {
+                    const clean = code.replace(/\s+/g, ' ');
+                    const inputIdx = clean.indexOf('input');
+                    const printIdx = clean.indexOf('print');
+                    return inputIdx !== -1 && printIdx !== -1 && inputIdx < printIdx;
+                }
+            }
+        ],
+        loops: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขขอบเขตช่วงการวนลูปให้พิมพ์ตัวเลข 1 ถึง 5 (ปัจจุบันลูปทำงานแค่ 1 ถึง 4)",
+                buggyCode: `for i in range(1, 5):\n    print(i)`,
+                hint: "💡 คำแนะนำ: range(1, 5) จะหยุดก่อนเลข 5 (ทำงานแค่ 1-4) ต้องเปลี่ยนตัวเลขหยุดเป็น 6 (range(1, 6))",
+                check: function(code) {
+                    return /range\(\s*1\s*,\s*6\s*\)/.test(code);
+                }
+            }
+        ],
+        coordinates: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขโค้ดย้ายตำแหน่งตัวละครไปทางขวา 50 หน่วย (ปัจจุบันโค้ดไปเพิ่มแกน y ผิดแกน)",
+                buggyCode: `x = 100\ny = 100\ny = y + 50`,
+                hint: "💡 คำแนะนำ: การย้ายไปทางขวา ต้องเพิ่มค่าแกน x แทนแกน y (x = x + 50)",
+                check: function(code) {
+                    return /\bx\s*=\s*x\s*\+\s*50\b|\bx\s*\+=\s*50\b/.test(code);
+                }
+            }
+        ],
+        events: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: แปลงค่าอายุที่รับจาก input() เป็น int() เพื่อให้นำไปคำนวณปีหน้าได้โดยไม่ผิดพลาด",
+                buggyCode: `age = input("กรุณากรอกอายุ: ")\nnext_age = age + 1\nprint(next_age)`,
+                hint: "💡 คำแนะนำ: ต้องใช้ int(input(...)) หรือ int(age) เพื่อแปลงข้อความเป็นตัวเลขก่อนบวก 1",
+                check: function(code) {
+                    return /int\s*\(\s*(input|age)/.test(code);
+                }
+            }
+        ],
+        conditions: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขเงื่อนไขผ่านเกณฑ์ (คะแนนตั้งแต่ 50 ขึ้นไปถือว่าผ่าน) ปัจจุบันคนได้ 50 คะแนนสอบตก",
+                buggyCode: `score = 50\nif score > 50:\n    print("ผ่าน")\nelse:\n    print("ตก")`,
+                hint: "💡 คำแนะนำ: คะแนนตั้งแต่ 50 ขึ้นไป ต้องใช้เครื่องหมายเปรียบเทียบ >= 50",
+                check: function(code) {
+                    return /score\s*>=\s*50/.test(code);
+                }
+            }
+        ],
+        operators: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขตัวดำเนินการเพื่อเช็คเลขคู่ (หาร 2 เหลือเศษ 0) ปัจจุบันใช้ / หารธรรมดา",
+                buggyCode: `num = 8\nif num / 2 == 0:\n    print("เลขคู่")`,
+                hint: "💡 คำแนะนำ: การหาเศษเหลือจากการหาร ต้องใช้ตัวดำเนินการมอดุโล % 2 == 0",
+                check: function(code) {
+                    return /num\s*%\s*2\s*==\s*0/.test(code);
+                }
+            }
+        ],
+        variables: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขการสะกดชื่อตัวแปรสะสมคะแนนให้ถูกต้อง (ปัจจุบันสะกดเป็น socre)",
+                buggyCode: `score = 10\nsocre = score + 5\nprint(score)`,
+                hint: "💡 คำแนะนำ: ตัวแปรสะสมคะแนนต้องสะกดให้ตรงกันคือ score = score + 5",
+                check: function(code) {
+                    return (/\bscore\s*=\s*score\s*\+\s*5\b/.test(code) || /\bscore\s*\+=\s*5\b/.test(code)) && !/socre/.test(code);
+                }
+            }
+        ],
+        functions: [
+            {
+                q: "🐞 ภารกิจปฏิบัติการดีบัค: เติมคำสั่ง return ส่งคืนค่าผลลัพธ์ภาษีในฟังก์ชัน calc_tax",
+                buggyCode: `def calc_tax(price):\n    tax = price * 0.07\n\ntotal = calc_tax(100)\nprint(total)`,
+                hint: "💡 คำแนะนำ: ท้ายฟังก์ชันต้องมีคำสั่ง return tax เพื่อส่งคืนค่าผลลัพธ์การคำนวณ",
+                check: function(code) {
+                    return /return\s+tax/.test(code) || /return\s+price\s*\*\s*0\.07/.test(code);
+                }
+            }
+        ]
+    };
+
+    // ── Rubric Modal HTML (injected once) ─────────────────────────────────────
+    const rubricModal = document.createElement('div');
+    rubricModal.id = 'rubric-quiz-modal';
+    rubricModal.style.cssText = `
+        display:none; position:fixed; inset:0; z-index:9999;
+        background:rgba(0,0,0,0.82); backdrop-filter:blur(6px);
+        align-items:center; justify-content:center; padding:16px;
+    `;
+    document.body.appendChild(rubricModal);
+
+    function resetRubricModalHTML() {
+        rubricModal.innerHTML = `
+            <div style="background:linear-gradient(145deg,#0f172a,#1e293b); border:1px solid rgba(255,255,255,0.1);
+                        border-radius:20px; padding:28px; max-width:620px; width:100%; position:relative;
+                        box-shadow:0 25px 60px rgba(0,0,0,0.6); font-family:var(--font-headers);">
+                <button id="rubric-modal-close" style="position:absolute;top:14px;right:16px;background:none;border:none;
+                    color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">✕</button>
+                <div style="margin-bottom:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <div id="rq-topic-badge" style="display:inline-block;padding:4px 12px;border-radius:20px;
+                            font-size:11px;font-weight:700;font-family:var(--font-headers);"></div>
+                        <span style="font-size:12px; color:#fb923c; font-weight:600;"><i class="fa-solid fa-bug"></i> โหมดประเมินการปฏิบัติและดีบัคโค้ด</span>
+                    </div>
+                    <h3 id="rq-question" style="font-size:14px;color:white;line-height:1.5;margin:0 0 14px 0; background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border-left:4px solid #fb923c;"></h3>
+                    
+                    <!-- Interactive Code Editor Box -->
+                    <div style="margin-bottom:12px;">
+                        <div style="font-size:11px; color:var(--text-muted); margin-bottom:4px; display:flex; justify-content:space-between;">
+                            <span><i class="fa-solid fa-code"></i> แก้ไขโค้ดที่ถูกต้องตรงนี้:</span>
+                            <span id="rq-hint-toggle" style="color:#60a5fa; cursor:pointer;"><i class="fa-solid fa-lightbulb"></i> ดูคำใบ้</span>
+                        </div>
+                        <div id="rq-hint-box" style="display:none; font-size:12px; color:#93c5fd; background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.3); padding:8px 12px; border-radius:8px; margin-bottom:8px;"></div>
+                        <textarea id="rq-code-editor" style="width:100%; height:130px; background:#05070a; color:#f8fafc; font-family:'Fira Code', monospace; font-size:13px; padding:12px; border:1px solid rgba(255,255,255,0.15); border-radius:10px; box-sizing:border-box; outline:none; resize:none;"></textarea>
+                    </div>
+                </div>
+                <div id="rq-feedback" style="display:none;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px;"></div>
+                <div style="display:flex;justify-content:space-between; align-items:center;">
+                    <button id="rq-check-btn" style="background:#3b82f6;color:white;border:none;padding:10px 20px;
+                        border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+                        🧪 ทดสอบดีบัคโค้ด
+                    </button>
+                    <button id="rq-next-btn" disabled style="background:#34d399;color:#1a1a1a;border:none;padding:10px 24px;
+                        border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;opacity:0.5;transition:opacity .2s;">
+                        ผ่านภารกิจปฏิบัติ 🏆
+                    </button>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('rq-hint-toggle').addEventListener('click', () => {
+            const hBox = document.getElementById('rq-hint-box');
+            if (hBox) hBox.style.display = hBox.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('rq-check-btn').addEventListener('click', () => {
+            checkRubricDebugTask();
+        });
+
+        document.getElementById('rq-next-btn').addEventListener('click', () => {
+            finishRubricQuiz();
+        });
+
+        document.getElementById('rubric-modal-close').addEventListener('click', () => {
+            rubricModal.style.display = 'none';
+        });
+    }
+
+    // Initialize modal structure
+    resetRubricModalHTML();
+
+    // ── Rubric Quiz State ─────────────────────────────────────────────────────
+    let rqTopicKey = '';
+    let rqQuestions = [];
+    let rqIndex = 0;
+    let rqCorrect = 0;
+
+    window.openRubricQuiz = function(topicKey) {
+        resetRubricModalHTML();
+        rqTopicKey = topicKey;
+        rqQuestions = RUBRIC_QUESTIONS[topicKey] || [];
+        rqIndex = 0;
+        rqCorrect = 0;
+        rubricModal.style.display = 'flex';
+        renderRubricQuestion();
+    };
+
+    function renderRubricQuestion() {
+        const skill = RUBRIC_SKILLS.find(s => s.key === rqTopicKey);
+        const qData = rqQuestions[0]; // 1 practical debugging task per skill
+
+        if (!qData) return;
+
+        // Badge
+        const badge = document.getElementById('rq-topic-badge');
+        badge.textContent = skill ? skill.label : rqTopicKey;
+        badge.style.background = skill ? skill.color + '22' : '#fb923c22';
+        badge.style.color = skill ? skill.color : '#fb923c';
+        badge.style.border = `1px solid ${skill ? skill.color + '55' : '#fb923c55'}`;
+
+        document.getElementById('rq-question').textContent = qData.q;
+        document.getElementById('rq-hint-box').textContent = qData.hint;
+        document.getElementById('rq-code-editor').value = qData.buggyCode;
+        document.getElementById('rq-feedback').style.display = 'none';
+
+        const nextBtn = document.getElementById('rq-next-btn');
+        nextBtn.disabled = true;
+        nextBtn.style.opacity = '0.5';
+    }
+
+    function checkRubricDebugTask() {
+        const qData = rqQuestions[0];
+        const code = document.getElementById('rq-code-editor').value;
+        const fb = document.getElementById('rq-feedback');
+        const nextBtn = document.getElementById('rq-next-btn');
+
+        fb.style.display = 'block';
+        if (qData && typeof qData.check === 'function' && qData.check(code)) {
+            rqCorrect = 1;
+            if (window.playCodeSound) window.playCodeSound('success');
+            fb.style.background = 'rgba(52,211,153,0.15)';
+            fb.style.border = '1px solid #34d399';
+            fb.style.color = '#34d399';
+            fb.innerHTML = '<i class="fa-solid fa-circle-check"></i> 🎉 แก้ไขบัคสำเร็จถูกต้อง 100%! คุณผ่านการประเมินทักษะการปฏิบัตินี้แล้ว';
+
+            nextBtn.disabled = false;
+            nextBtn.style.opacity = '1';
+        } else {
+            if (window.playCodeSound) window.playCodeSound('error');
+            fb.style.background = 'rgba(248,113,113,0.15)';
+            fb.style.border = '1px solid #f87171';
+            fb.style.color = '#f87171';
+            fb.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> ⚠️ โค้ดยังไม่ถูกต้อง กรุณาตรวจสอบหรือกดดูคำใบ้แล้วลองอีกครั้งครับ';
+        }
+    }
+
+    function finishRubricQuiz() {
+        const passed = rqCorrect > 0;
+        if (passed) {
+            localStorage.setItem('rubric_quiz_completed_' + rqTopicKey, 'true');
+        }
+        const skill = RUBRIC_SKILLS.find(s => s.key === rqTopicKey);
+        const color = skill ? skill.color : '#fb923c';
+
+        document.querySelector('#rubric-quiz-modal > div').innerHTML = `
+            <div style="text-align:center;padding:20px 0;">
+                <div style="font-size:52px;margin-bottom:16px;">${passed ? '🏆' : '📚'}</div>
+                <h2 style="color:${color};font-size:20px;margin-bottom:8px;">
+                    ${passed ? 'ผ่านการประเมินการปฏิบัติ!' : 'ยังไม่ผ่าน'}
+                </h2>
+                ${passed ? `<p style="font-size:13px;color:#34d399;margin-bottom:24px;">⭐⭐⭐ ยอดเยี่ยม! ดาวทักษะการปฏิบัติ <strong>${skill ? skill.label : ''}</strong> ของคุณได้รับการอัปเกรดเรียบร้อยแล้ว!</p>` 
+                         : `<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">ลองทบทวนภารกิจและแก้ไขบัคใหม่อีกครั้ง</p>`}
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                    <button onclick="document.getElementById('rubric-quiz-modal').style.display='none'; renderMyRubricProfile();"
+                        style="background:${color};color:#1a1a1a;border:none;padding:10px 24px;border-radius:8px;
+                        font-size:13px;font-weight:700;cursor:pointer;">
+                        ตกลง <i class="fa-solid fa-check"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     const preTestScoreVal = document.getElementById('pre-test-score-val');
     const postTestScoreVal = document.getElementById('post-test-score-val');
 
@@ -1879,236 +2127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { key: 'functions',   label: 'ฟังก์ชันและโมดูล',   color: '#f472b6', icon: 'fa-cubes' }
     ];
 
-    const RUBRIC_QUESTIONS = {
-        sequencing: [
-            { q: 'ข้อใดคือความหมายของ "ลำดับการทำงาน" ในการเขียนโปรแกรม?', opts: ['โปรแกรมทำงานจากบนลงล่างทีละบรรทัด', 'โปรแกรมทำงานพร้อมกันทุกคำสั่ง', 'โปรแกรมข้ามบรรทัดได้ตามใจ', 'โปรแกรมเริ่มจากบรรทัดสุดท้าย'], ans: 0 },
-            { q: 'ในผังงาน (Flowchart) รูปสี่เหลี่ยมผืนผ้าหมายถึงอะไร?', opts: ['การตัดสินใจ (Decision)', 'การประมวลผล (Process)', 'จุดเริ่มต้น/สิ้นสุด', 'การรับ/แสดงผลข้อมูล'], ans: 1 },
-            { q: 'หากต้องการให้ Sprite เดินไปข้างหน้า 10 ก้าว แล้วหมุน 90 องศา ต้องเรียงลำดับอย่างไร?', opts: ['หมุนก่อน แล้วค่อยเดิน', 'เดินก่อน แล้วค่อยหมุน', 'ทำพร้อมกัน', 'ไม่สำคัญว่าจะเรียงอย่างไร'], ans: 1 }
-        ],
-        loops: [
-            { q: 'คำสั่ง "repeat 10" ใน Scratch หมายความว่าอย่างไร?', opts: ['ทำซ้ำ 10 ครั้งแล้วหยุด', 'ทำซ้ำตลอดไป 10 วินาที', 'ทำ 10 คำสั่งต่อไป', 'หยุดหลังจาก 10 วินาที'], ans: 0 },
-            { q: 'Loop แบบ "forever" เหมาะกับงานประเภทใด?', opts: ['งานที่ต้องการทำครั้งเดียว', 'งานที่ต้องตรวจสอบเหตุการณ์ตลอดเวลา เช่น การกดปุ่ม', 'งานคำนวณตัวเลขเพียงครั้งเดียว', 'งานที่มีเงื่อนไขชัดเจน'], ans: 1 },
-            { q: 'ใน Python คำสั่ง for i in range(5): จะทำงานกี่ครั้ง?', opts: ['4 ครั้ง', '5 ครั้ง', '6 ครั้ง', '1 ครั้ง'], ans: 1 }
-        ],
-        coordinates: [
-            { q: 'ใน Scratch พิกัด (0, 0) อยู่ที่ใดบนเวที?', opts: ['มุมซ้ายบน', 'มุมขวาล่าง', 'กลางเวที', 'มุมซ้ายล่าง'], ans: 2 },
-            { q: 'หากต้องการย้าย Sprite ไปทางขวา ต้องเพิ่มหรือลดค่าแกน X?', opts: ['เพิ่มค่า X', 'ลดค่า X', 'เพิ่มค่า Y', 'ลดค่า Y'], ans: 0 },
-            { q: 'ค่าพิกัด Y เป็นบวกแสดงว่า Sprite อยู่ที่ใด?', opts: ['ด้านล่างของเวที', 'ด้านบนของเวที', 'ด้านซ้ายของเวที', 'ด้านขวาของเวที'], ans: 1 }
-        ],
-        events: [
-            { q: '"When Green Flag clicked" ใน Scratch คือเหตุการณ์ประเภทใด?', opts: ['เหตุการณ์จากการรับสัญญาณ Broadcast', 'เหตุการณ์จากผู้ใช้กดปุ่มเริ่มโปรแกรม', 'เหตุการณ์จากการชนกัน', 'เหตุการณ์จากตัวจับเวลา'], ans: 1 },
-            { q: 'คำสั่ง "broadcast" ใช้ทำอะไร?', opts: ['ส่งสัญญาณให้ Sprite อื่นรับและทำงาน', 'หยุดโปรแกรมทั้งหมด', 'ลบ Sprite ออกจากเวที', 'เปลี่ยนฉากหลัง'], ans: 0 },
-            { q: 'ใน Python ฟังก์ชัน input() ใช้ทำอะไร?', opts: ['แสดงผลออกหน้าจอ', 'รับข้อมูลจากผู้ใช้ผ่านคีย์บอร์ด', 'บันทึกไฟล์', 'สุ่มตัวเลข'], ans: 1 }
-        ],
-        conditions: [
-            { q: 'คำสั่ง if-else ใช้ทำอะไรในการเขียนโปรแกรม?', opts: ['วนซ้ำการทำงาน', 'ตัดสินใจเลือกทำงานตามเงื่อนไข', 'สร้างตัวแปรใหม่', 'แสดงผลลัพธ์'], ans: 1 },
-            { q: 'ใน Scratch บล็อก "if <> then" จะทำงานเมื่อใด?', opts: ['ทำงานตลอดเวลา', 'ทำงานเมื่อเงื่อนไขเป็นจริง (True)', 'ทำงานเมื่อเงื่อนไขเป็นเท็จ', 'ไม่ทำงานเลย'], ans: 1 },
-            { q: 'ผลลัพธ์ของ 5 > 3 ใน Python คือ?', opts: ['5', '3', 'True', 'False'], ans: 2 }
-        ],
-        operators: [
-            { q: 'ใน Scratch บล็อก "() + ()" ใช้ทำอะไร?', opts: ['เปรียบเทียบสองค่า', 'บวกตัวเลขสองตัวเข้าด้วยกัน', 'รวมข้อความ', 'คูณตัวเลข'], ans: 1 },
-            { q: 'ผลลัพธ์ของ 10 mod 3 (10 หาร 3 เอาเศษ) คือ?', opts: ['3', '1', '2', '0'], ans: 1 },
-            { q: 'ใน Python ผลของ 2 ** 3 คือ?', opts: ['6', '8', '5', '9'], ans: 1 }
-        ],
-        variables: [
-            { q: '"ตัวแปร" ในการเขียนโปรแกรมคืออะไร?', opts: ['คำสั่งที่รันทันที', 'ที่เก็บข้อมูลชั่วคราวที่มีชื่อเรียก', 'ส่วนของโค้ดที่ทำซ้ำ', 'ฟังก์ชันพิเศษ'], ans: 1 },
-            { q: 'ใน Scratch การ "set [คะแนน] to 0" ทำอะไร?', opts: ['ลบตัวแปร', 'กำหนดค่าเริ่มต้นตัวแปรคะแนนเป็น 0', 'เพิ่มคะแนน 1 แต้ม', 'แสดงค่าตัวแปร'], ans: 1 },
-            { q: 'ใน Python score = score + 1 เทียบเท่ากับ?', opts: ['score == 1', 'score += 1', 'score - 1', 'score = 1'], ans: 1 }
-        ],
-        functions: [
-            { q: 'ประโยชน์หลักของการสร้าง "ฟังก์ชัน" ในโปรแกรมคืออะไร?', opts: ['ทำให้โปรแกรมทำงานช้าลง', 'ลดการเขียนโค้ดซ้ำและจัดระเบียบงาน', 'เพิ่มขนาดไฟล์', 'บังคับให้ใช้ตัวแปรมากขึ้น'], ans: 1 },
-            { q: 'ใน Scratch "My Block" คือการสร้างอะไร?', opts: ['ตัวแปรชนิดใหม่', 'ฟังก์ชัน/โพรซีเดอร์ที่กำหนดเอง', 'เหตุการณ์ใหม่', 'Loop พิเศษ'], ans: 1 },
-            { q: 'ใน Python def greet(name): print("Hello", name) เรียกใช้ด้วยคำสั่งใด?', opts: ['call greet("ไทย")', 'run greet("ไทย")', 'greet("ไทย")', 'execute greet("ไทย")'], ans: 2 }
-        ]
-    };
 
-    // ── Rubric Modal HTML (injected once) ─────────────────────────────────────
-    const rubricModal = document.createElement('div');
-    rubricModal.id = 'rubric-quiz-modal';
-    rubricModal.style.cssText = `
-        display:none; position:fixed; inset:0; z-index:9999;
-        background:rgba(0,0,0,0.82); backdrop-filter:blur(6px);
-        align-items:center; justify-content:center; padding:16px;
-    `;
-    document.body.appendChild(rubricModal);
-
-    function resetRubricModalHTML() {
-        rubricModal.innerHTML = `
-            <div style="background:linear-gradient(145deg,#0f172a,#1e293b); border:1px solid rgba(255,255,255,0.1);
-                        border-radius:20px; padding:32px; max-width:560px; width:100%; position:relative;
-                        box-shadow:0 25px 60px rgba(0,0,0,0.6);">
-                <button id="rubric-modal-close" style="position:absolute;top:14px;right:16px;background:none;border:none;
-                    color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">✕</button>
-                <div style="margin-bottom:20px;">
-                    <div id="rq-topic-badge" style="display:inline-block;padding:4px 12px;border-radius:20px;
-                        font-size:11px;font-weight:700;font-family:var(--font-headers);margin-bottom:12px;"></div>
-                    <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">
-                        คำถามข้อที่ <strong id="rq-num">1</strong> จาก 3
-                    </div>
-                    <div style="height:4px;background:rgba(255,255,255,0.07);border-radius:4px;margin-bottom:20px;">
-                        <div id="rq-progress" style="height:4px;border-radius:4px;background:#fb923c;width:33%;transition:width .3s;"></div>
-                    </div>
-                    <h3 id="rq-question" style="font-size:15px;color:white;line-height:1.6;margin:0 0 20px 0;"></h3>
-                    <div id="rq-options" style="display:flex;flex-direction:column;gap:10px;"></div>
-                </div>
-                <div id="rq-feedback" style="display:none;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;"></div>
-                <div style="display:flex;justify-content:flex-end;">
-                    <button id="rq-next-btn" disabled style="background:#fb923c;color:#1a1a1a;border:none;padding:10px 24px;
-                        border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;opacity:0.5;transition:opacity .2s;">
-                        ข้อถัดไป <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-
-        document.getElementById('rq-next-btn').addEventListener('click', () => {
-            rqIndex++;
-            if (rqIndex < rqQuestions.length) {
-                renderRubricQuestion();
-            } else {
-                finishRubricQuiz();
-            }
-        });
-
-        document.getElementById('rubric-modal-close').addEventListener('click', () => {
-            rubricModal.style.display = 'none';
-        });
-    }
-
-    // Initialize modal structure
-    resetRubricModalHTML();
-
-    // ── Rubric Quiz State ─────────────────────────────────────────────────────
-    let rqTopicKey = '';
-    let rqQuestions = [];
-    let rqIndex = 0;
-    let rqCorrect = 0;
-    let rqAnswered = false;
-
-    window.openRubricQuiz = function(topicKey) {
-        resetRubricModalHTML();
-        rqTopicKey = topicKey;
-        rqQuestions = RUBRIC_QUESTIONS[topicKey] || [];
-        rqIndex = 0;
-        rqCorrect = 0;
-        rqAnswered = false;
-        rubricModal.style.display = 'flex';
-        renderRubricQuestion();
-    };
-
-    function renderRubricQuestion() {
-        const skill = RUBRIC_SKILLS.find(s => s.key === rqTopicKey);
-        const qData = rqQuestions[rqIndex];
-
-        // Badge
-        const badge = document.getElementById('rq-topic-badge');
-        badge.textContent = skill ? skill.label : rqTopicKey;
-        badge.style.background = skill ? skill.color + '22' : '#fb923c22';
-        badge.style.color = skill ? skill.color : '#fb923c';
-        badge.style.border = `1px solid ${skill ? skill.color + '55' : '#fb923c55'}`;
-
-        document.getElementById('rq-num').textContent = rqIndex + 1;
-        document.getElementById('rq-progress').style.width = `${((rqIndex + 1) / 3) * 100}%`;
-        document.getElementById('rq-question').textContent = qData.q;
-        document.getElementById('rq-feedback').style.display = 'none';
-
-        const optBox = document.getElementById('rq-options');
-        optBox.innerHTML = '';
-        qData.opts.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.textContent = opt;
-            btn.style.cssText = `
-                background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
-                color:white; padding:11px 16px; border-radius:10px; text-align:left;
-                font-size:13px; cursor:pointer; transition:all .2s; width:100%;
-            `;
-            btn.addEventListener('mouseenter', () => { if (!rqAnswered) btn.style.background = 'rgba(251,146,60,0.12)'; });
-            btn.addEventListener('mouseleave', () => { if (!rqAnswered) btn.style.background = 'rgba(255,255,255,0.04)'; });
-            btn.addEventListener('click', () => handleRubricAnswer(i, qData.ans));
-            optBox.appendChild(btn);
-        });
-
-        rqAnswered = false;
-        const nextBtn = document.getElementById('rq-next-btn');
-        nextBtn.disabled = true;
-        nextBtn.style.opacity = '0.5';
-        nextBtn.textContent = rqIndex < 2 ? 'ข้อถัดไป →' : 'ดูผลลัพธ์ 🏆';
-    }
-
-    function handleRubricAnswer(selected, correct) {
-        if (rqAnswered) return;
-        rqAnswered = true;
-        if (selected === correct) rqCorrect++;
-
-        const opts = document.querySelectorAll('#rq-options button');
-        opts.forEach((btn, i) => {
-            btn.disabled = true;
-            if (i === correct) {
-                btn.style.background = 'rgba(52,211,153,0.18)';
-                btn.style.border = '1px solid #34d399';
-            } else if (i === selected && selected !== correct) {
-                btn.style.background = 'rgba(248,113,113,0.18)';
-                btn.style.border = '1px solid #f87171';
-            }
-        });
-
-        const fb = document.getElementById('rq-feedback');
-        fb.style.display = 'block';
-        if (selected === correct) {
-            fb.style.background = 'rgba(52,211,153,0.1)';
-            fb.style.border = '1px solid rgba(52,211,153,0.3)';
-            fb.style.color = '#34d399';
-            fb.innerHTML = '<i class="fa-solid fa-circle-check"></i> ถูกต้อง! เยี่ยมมาก 🎉';
-        } else {
-            fb.style.background = 'rgba(248,113,113,0.1)';
-            fb.style.border = '1px solid rgba(248,113,113,0.3)';
-            fb.style.color = '#f87171';
-            fb.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> คำตอบที่ถูกคือ: <strong>${rqQuestions[rqIndex].opts[correct]}</strong>`;
-        }
-
-        const nextBtn = document.getElementById('rq-next-btn');
-        nextBtn.disabled = false;
-        nextBtn.style.opacity = '1';
-    }
-
-    function finishRubricQuiz() {
-        const passed = rqCorrect >= 2; // ผ่านถ้าตอบถูก 2/3 ข้อ
-        if (passed) {
-            localStorage.setItem('rubric_quiz_completed_' + rqTopicKey, 'true');
-        }
-        const skill = RUBRIC_SKILLS.find(s => s.key === rqTopicKey);
-        const color = skill ? skill.color : '#fb923c';
-
-        document.querySelector('#rubric-quiz-modal > div').innerHTML = `
-            <div style="text-align:center;padding:20px 0;">
-                <div style="font-size:52px;margin-bottom:16px;">${passed ? '🏆' : '📚'}</div>
-                <h2 style="color:${color};font-size:20px;margin-bottom:8px;">
-                    ${passed ? 'ผ่านการทดสอบ!' : 'ยังไม่ผ่าน'}
-                </h2>
-                <p style="color:rgba(255,255,255,0.6);font-size:14px;margin-bottom:8px;">
-                    คุณตอบถูก <strong style="color:white;font-size:18px;">${rqCorrect}/3</strong> ข้อ
-                </p>
-                ${passed ? `<p style="font-size:12px;color:#34d399;margin-bottom:24px;">⭐⭐⭐ ดาวทักษะ <strong>${skill ? skill.label : ''}</strong> ของคุณถูกอัปเกรดเป็นระดับสูงสุดแล้ว!</p>` 
-                         : `<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">ลองทำอีกครั้ง — ต้องตอบถูกอย่างน้อย 2 ข้อเพื่ออัปเกรดดาว</p>`}
-                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-                    <button onclick="document.getElementById('rubric-quiz-modal').style.display='none'; renderMyRubricProfile();"
-                        style="background:${color};color:#1a1a1a;border:none;padding:10px 24px;border-radius:8px;
-                        font-size:13px;font-weight:700;cursor:pointer;">
-                        ดูโปรไฟล์ของฉัน <i class="fa-solid fa-chart-bar"></i>
-                    </button>
-                    <button onclick="openRubricQuiz('${rqTopicKey}')"
-                        style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
-                        color:white;padding:10px 24px;border-radius:8px;font-size:13px;cursor:pointer;">
-                        ลองใหม่อีกครั้ง
-                    </button>
-                </div>
-            </div>
-        `;
-        // Re-render the rubric skill grid
-        setTimeout(renderMyRubricProfile, 300);
-        // Sync to Firebase if function is available
-        if (window.syncProgressToCloud) window.syncProgressToCloud();
-    }
 
     // ── Render My Rubric Skill Grid ───────────────────────────────────────────
     window.renderMyRubricProfile = function() {
