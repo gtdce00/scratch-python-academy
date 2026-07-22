@@ -195,6 +195,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (aboutMenu) aboutMenu.click();
     });
 
+    // Automatic Hash Navigation Handler (e.g. index.html#quiz, index.html#flowchart)
+    function handleInitialHash() {
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            const targetMenu = document.querySelector(`[data-tab="${hash}"]`);
+            if (targetMenu) {
+                setTimeout(() => targetMenu.click(), 100);
+            }
+        }
+    }
+    handleInitialHash();
+    window.addEventListener('hashchange', handleInitialHash);
+
     // Initial progress update
     updateProgress();
 
