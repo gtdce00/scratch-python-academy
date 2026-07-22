@@ -108,8 +108,8 @@
                 baseStars = 1;
             }
 
-            // Quiz acts as a reinforcement booster ONLY if student has done at least 1 practical coding task
-            if (quizPassed && done > 0 && baseStars < 3) {
+            // Debugging task / quiz acts as a reinforcement booster to award +1 star
+            if (quizPassed && baseStars < 3) {
                 baseStars += 1;
             }
 

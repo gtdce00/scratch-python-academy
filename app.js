@@ -2158,9 +2158,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
             const quizPassed = localStorage.getItem('rubric_quiz_completed_' + skill.key) === 'true';
 
-            // Calculate Authentic Stars: Base on practical tasks + bonus if quiz passed with >0 tasks done
+            // Calculate Authentic Stars: Base on practical tasks + bonus +1 star when debugging task is completed!
             let stars = pct >= 67 ? 3 : pct >= 34 ? 2 : 1;
-            if (quizPassed && done > 0 && stars < 3) {
+            if (quizPassed && stars < 3) {
                 stars += 1;
             }
             
