@@ -2160,8 +2160,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Calculate Authentic Stars: Base on practical tasks + bonus +1 star when debugging task is completed!
             let stars = pct >= 67 ? 3 : pct >= 34 ? 2 : 1;
-            if (quizPassed && stars < 3) {
-                stars += 1;
+            if (quizPassed) {
+                stars = Math.max(stars, 2);
+                if (pct >= 34) stars = 3;
             }
             
             // Build Stars with FontAwesome

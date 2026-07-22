@@ -108,9 +108,10 @@
                 baseStars = 1;
             }
 
-            // Debugging task / quiz acts as a reinforcement booster to award +1 star
-            if (quizPassed && baseStars < 3) {
-                baseStars += 1;
+            // Debugging task / quiz acts as a reinforcement booster to award +1 star (minimum 2 stars)
+            if (quizPassed) {
+                baseStars = Math.max(baseStars, 2);
+                if (pct >= 0.34) baseStars = 3;
             }
 
             scores[key] = baseStars;
