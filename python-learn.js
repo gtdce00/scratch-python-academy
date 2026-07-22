@@ -1751,6 +1751,131 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Custom Python Autocomplete Hint Dictionary & Syntax Checker ---
+    const PYTHON_KEYWORDS = [
+        "print", "input", "int", "str", "float", "len", "append",
+        "def", "return", "if", "else", "elif", "for", "while", "range",
+        "in", "and", "or", "not", "True", "False", "None",
+        "continue", "break", "score", "age", "name", "colors", "fruits",
+        "student", "calc_discount", "count", "temp", "num", "price"
+    ];
+
+    if (window.CodeMirror) {
+        CodeMirror.registerHelper("hint", "python", function(cm) {
+            const cur = cm.getCursor();
+            const token = cm.getTokenAt(cur);
+            const start = token.start;
+            const end = token.end;
+            const word = token.string;
+
+            if (!word || word.trim() === '') return null;
+
+            const list = PYTHON_KEYWORDS.filter(k => k.toLowerCase().startsWith(word.toLowerCase()));
+            if (!list.length) return null;
+
+            return {
+                list: list,
+                from: CodeMirror.Pos(cur.line, start),
+                to: CodeMirror.Pos(cur.line, end)
+            };
+        });
+    }
+
+    let activeSyntaxMarkers = [];
+    let activeSyntaxLineClasses = [];
+
+    function runRealtimeSyntaxChecker(cm) {
+        // Clear previous markers & line classes
+        activeSyntaxMarkers.forEach(m => m.clear());
+        activeSyntaxMarkers = [];
+        activeSyntaxLineClasses.forEach(h => cm.removeLineClass(h, "background", "cm-syntax-error-line"));
+        activeSyntaxLineClasses = [];
+
+        const code = cm.getValue();
+        const lines = code.split("\n");
+        let firstError = null;
+
+        lines.forEach((lineText, lineIdx) => {
+            const trimmed = lineText.trim();
+            if (!trimmed || trimmed.startsWith("#")) return;
+
+            // 1. Check unclosed double or single quotes
+            const dQuotes = (lineText.match(/"/g) || []).length;
+            const sQuotes = (lineText.match(/'/g) || []).length;
+            if (dQuotes % 2 !== 0 || sQuotes % 2 !== 0) {
+                if (!firstError) {
+                    firstError = { line: lineIdx, msg: `เครื่องหมายคำพูด (" หรือ ') ปิดไม่ครบในบรรทัดที่ ${lineIdx + 1}` };
+                }
+                markSyntaxError(cm, lineIdx, 0, lineText.length);
+                return;
+            }
+
+            // 2. Check unclosed parentheses
+            const openP = (lineText.match(/\(/g) || []).length;
+            const closeP = (lineText.match(/\)/g) || []).length;
+            if (openP > closeP) {
+                if (!firstError) {
+                    firstError = { line: lineIdx, msg: `วงเล็บ () ปิดไม่ครบในบรรทัดที่ ${lineIdx + 1}` };
+                }
+                const pIdx = Math.max(0, lineText.indexOf('('));
+                markSyntaxError(cm, lineIdx, pIdx, lineText.length);
+                return;
+            }
+
+            // 3. Check missing colon on statement heads
+            if (/^(if|elif|else|for|while|def)\b/.test(trimmed) && !trimmed.endsWith(":")) {
+                if (!firstError) {
+                    firstError = { line: lineIdx, msg: `ขาดเครื่องหมายโคลอน (:) ต่อท้ายบรรทัดที่ ${lineIdx + 1}` };
+                }
+                markSyntaxError(cm, lineIdx, Math.max(0, lineText.length - 3), lineText.length);
+                return;
+            }
+
+            // 4. Check common keyword spelling typos
+            const typos = {
+                "prinnt": "print", "prnt": "print", "pirnt": "print", "prnit": "print",
+                "inpug": "input", "inpt": "input", "imput": "input",
+                "whiile": "while", "whil": "while",
+                "iif": "if", "eliff": "elif", "els": "else",
+                "rang": "range", "ranfe": "range",
+                "defa": "def", "functon": "def", "retun": "return"
+            };
+            const words = lineText.match(/\b[a-zA-Z_]\w*\b/g) || [];
+            words.forEach(w => {
+                if (typos[w]) {
+                    if (!firstError) {
+                        firstError = { line: lineIdx, msg: `สะกดคำสั่งผิด '${w}' (คำที่ถูกต้องคือ '${typos[w]}') ในบรรทัดที่ ${lineIdx + 1}` };
+                    }
+                    const wStart = lineText.indexOf(w);
+                    markSyntaxError(cm, lineIdx, wStart, wStart + w.length);
+                }
+            });
+        });
+
+        // Update status bar UI
+        const statusBar = document.getElementById('syntax-status-bar');
+        if (statusBar) {
+            if (firstError) {
+                statusBar.className = "syntax-status-bar invalid";
+                statusBar.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <strong>ไวยากรณ์มีข้อผิดพลาด:</strong> ${firstError.msg}`;
+            } else {
+                statusBar.className = "syntax-status-bar valid";
+                statusBar.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>ไวยากรณ์ถูกต้อง:</strong> พร้อมรันโค้ดประมวลผล`;
+            }
+        }
+    }
+
+    function markSyntaxError(cm, line, start, end) {
+        const lineHandle = cm.addLineClass(line, "background", "cm-syntax-error-line");
+        activeSyntaxLineClasses.push(lineHandle);
+        const marker = cm.markText(
+            { line: line, ch: start },
+            { line: line, ch: end },
+            { className: "cm-syntax-error-text" }
+        );
+        activeSyntaxMarkers.push(marker);
+    }
+
     // --- 5. Initial Bootstrapping ---
     if (editorTextArea) {
         editorInstance = CodeMirror.fromTextArea(editorTextArea, {
@@ -1764,11 +1889,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Auto-complete hint when typing "p" or "i"
+        // Trigger Auto-complete hint instantly when typing any letter
         editorInstance.on("inputRead", function(cm, change) {
-            if (change.text.length === 1 && (change.text[0] === 'p' || change.text[0] === 'i' || change.text[0] === 'r')) {
-                CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
+            if (change.text.length === 1 && /[a-zA-Z._]/.test(change.text[0])) {
+                CodeMirror.commands.autocomplete(cm, null, { completeSingle: false });
             }
+        });
+
+        // Real-time Syntax Checker on code change
+        let syntaxTimeout = null;
+        editorInstance.on("change", function(cm) {
+            clearTimeout(syntaxTimeout);
+            syntaxTimeout = setTimeout(() => runRealtimeSyntaxChecker(cm), 300);
         });
 
         // Prevent paste to encourage typing
@@ -1790,6 +1922,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 editorInstance.setValue(lessons[currentLessonId].defaultCode);
             }
             editorInstance.refresh();
+            runRealtimeSyntaxChecker(editorInstance);
         }, 150);
     }
 

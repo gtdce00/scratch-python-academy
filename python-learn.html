@@ -30,6 +30,56 @@
             font-family: 'Kanit', sans-serif !important;
             font-size: 13px !important;
             z-index: 9999 !important;
+            background: #1e293b !important;
+            border: 1px solid #3b82f6 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+            padding: 4px !important;
+        }
+        .CodeMirror-hint {
+            color: #e2e8f0 !important;
+            padding: 4px 8px !important;
+            border-radius: 4px !important;
+        }
+        li.CodeMirror-hint-active {
+            background: #3b82f6 !important;
+            color: #ffffff !important;
+        }
+        /* Red Wavy Underline for Syntax Errors */
+        .cm-syntax-error-text {
+            text-decoration: underline wavy #ef4444 !important;
+            background: rgba(239, 68, 68, 0.25) !important;
+            border-radius: 2px;
+        }
+        .cm-syntax-error-line {
+            background: rgba(239, 68, 68, 0.12) !important;
+            border-left: 3px solid #ef4444 !important;
+        }
+        .syntax-status-bar {
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-family: var(--font-headers);
+        }
+        .syntax-status-bar.valid {
+            background: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+        .syntax-status-bar.invalid {
+            background: rgba(248, 113, 113, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            animation: pulseError 2s infinite ease-in-out;
+        }
+        @keyframes pulseError {
+            0%, 100% { border-color: rgba(248, 113, 113, 0.3); }
+            50% { border-color: rgba(248, 113, 113, 0.7); }
         }
         .header-back-btn {
             background-color: rgba(255, 255, 255, 0.05);
@@ -731,6 +781,11 @@
                             <div class="ide-quick-templates" id="editor-templates-container">
                                 <!-- Populated dynamically by JS -->
                             </div>
+                        </div>
+
+                        <!-- Real-time Syntax Checker Status Bar -->
+                        <div class="syntax-status-bar valid" id="syntax-status-bar">
+                            <i class="fa-solid fa-circle-check"></i> <strong>ไวยากรณ์ถูกต้อง:</strong> พร้อมรันโค้ดประมวลผล
                         </div>
 
                         <!-- Run Row -->
