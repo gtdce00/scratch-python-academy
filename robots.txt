@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gtdce00.github.io/scratch-python-academy/sitemap.xml
