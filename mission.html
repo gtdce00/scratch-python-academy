@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมผ่านด่าน 20 ด่าน - Scratch Academy</title>
+    <!-- Google Fonts: Kanit & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=3">
+    <style>
+        /* Custom layout adjustments for mission.html */
+        .header-back-btn {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: var(--font-headers);
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .header-back-btn:hover {
+            background-color: var(--primary-orange);
+            border-color: var(--primary-orange);
+            transform: translateX(-4px);
+        }
+        
+        /* Mission grid structure */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        /* Sidebar custom scrollbar */
+        .sidebar-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+        .sidebar-menu::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Mission menu item specific styling */
+        .menu-item.mission-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .menu-item.mission-item .status-icon {
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+        .menu-item.mission-item.completed .status-icon {
+            color: var(--scratch-green);
+        }
+        .menu-item.mission-item {
+            transition: all 0.2s ease-in-out !important;
+        }
+        .menu-item.mission-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(153, 102, 255, 0.2);
+            background-color: rgba(153, 102, 255, 0.1) !important;
+        }
+        .menu-item.mission-item.active {
+            background-color: var(--scratch-purple);
+            box-shadow: 0 4px 12px rgba(153, 102, 255, 0.3);
+        }
+        .menu-item.mission-item.active:hover {
+            background-color: var(--scratch-purple) !important;
+            box-shadow: 0 4px 12px rgba(153, 102, 255, 0.4);
+        }
+
+        /* Stage Area Styles */
+        .stage-card {
+            background-color: #0c111d;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .stage-header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stage-title-text {
+            font-family: var(--font-headers);
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scratch-flag-stop-buttons {
+            display: flex;
+            background-color: #1e293b;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2px 8px;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .scratch-btn-control {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s;
+        }
+        .scratch-btn-control:active {
+            transform: scale(0.9);
+        }
+        .scratch-btn-control.green-flag {
+            color: #40BF50;
+        }
+        .scratch-btn-control.stop-sign {
+            color: #FF4D4D;
+        }
+
+        .stage-container {
+            background-color: #0c1524;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: center;
+            width: 100%;
+            height: 320px;
+            border-radius: 12px;
+            border: 4px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.4), 0 0 15px rgba(79, 184, 255, 0.1);
+        }
+
+        /* Variables Display on Stage */
+        .stage-variable-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(77, 151, 255, 0.15);
+            border: 1px solid var(--primary-blue);
+            color: #1e293b;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: flex;
+            gap: 6px;
+            z-index: 20;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stage-variable-value {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 0 4px;
+            border-radius: 2px;
+        }
+
+        /* Sprite styling inside stage */
+        .stage-sprite {
+            position: absolute;
+            font-size: 40px;
+            user-select: none;
+            z-index: 10;
+            transition: transform 0.1s linear, filter 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+        }
+
+        .stage-target {
+            position: absolute;
+            font-size: 32px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Scratch speech bubble inside stage */
+        .stage-speech-bubble {
+            position: absolute;
+            background-color: white;
+            border: 2px solid #ccc;
+            color: black;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-family: var(--font-headers);
+            max-width: 160px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            z-index: 15;
+            pointer-events: none;
+            display: none;
+        }
+        .stage-speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        /* Answering Form Box */
+        .stage-answer-box {
+            display: none;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--primary-blue);
+            border-radius: 8px;
+            padding: 8px 12px;
+            align-items: center;
+            gap: 8px;
+            z-index: 25;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .stage-answer-input {
+            flex-grow: 1;
+            border: 1px solid #cbd5e1;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: 13px;
+            color: black;
+            outline: none;
+        }
+        .stage-answer-input:focus {
+            border-color: var(--primary-blue);
+        }
+        .stage-answer-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-family: var(--font-headers);
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+        .stage-answer-btn:hover {
+            background-color: var(--primary-blue-hover);
+        }
+
+        /* Console log styles */
+        .console-container {
+            background-color: #05070a;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            height: 100px;
+            overflow-y: auto;
+        }
+        .console-line {
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .console-line.system {
+            color: var(--primary-orange);
+        }
+        .console-line.success {
+            color: var(--scratch-green);
+        }
+        .console-line.sprite {
+            color: var(--primary-blue);
+        }
+
+        /* Mission Details Panel Styles */
+        .details-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 480px;
+        }
+
+        .mission-status-badge {
+            align-self: flex-start;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: var(--font-headers);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mission-status-badge.pending {
+            background-color: rgba(255, 171, 25, 0.1);
+            color: var(--primary-orange);
+            border: 1px solid rgba(255, 171, 25, 0.2);
+        }
+        .mission-status-badge.completed {
+            background-color: rgba(64, 191, 80, 0.1);
+            color: var(--scratch-green);
+            border: 1px solid rgba(64, 191, 80, 0.2);
+        }
+
+        .mission-title-area h2 {
+            font-size: 20px;
+            color: var(--text-white);
+            margin-top: 4px;
+        }
+
+        .mission-info-box {
+            background-color: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+        }
+        .mission-info-box h4 {
+            color: var(--primary-orange);
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .mission-info-box p {
+            font-size: 12px !important;
+            color: var(--text-muted) !important;
+            margin: 0 !important;
+        }
+
+        .hints-box h4 {
+            font-size: 14px;
+            color: var(--text-white);
+            margin-bottom: 10px;
+        }
+
+        .hints-block-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .steps-box h4 {
+            font-size: 14px;
+            color: var(--text-white);
+            margin-bottom: 8px;
+        }
+        .steps-box ol {
+            padding-left: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .steps-box li {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Success Overlay */
+        .stage-success-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 30;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .success-icon-animated {
+            font-size: 50px;
+            color: var(--scratch-green);
+            margin-bottom: 12px;
+            animation: popIcon 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIcon {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        .stage-success-overlay h3 {
+            font-size: 20px;
+            color: white;
+            margin-bottom: 6px;
+        }
+        .stage-success-overlay p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            max-width: 250px;
+        }
+
+        /* Run/Stop Buttons Container */
+        .action-buttons-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .btn-action-run {
+            flex-grow: 1.5;
+            background-color: var(--scratch-green);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: var(--font-headers);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-action-run:hover {
+            background-color: #38a846;
+            box-shadow: 0 4px 10px rgba(64, 191, 80, 0.2);
+        }
+        .btn-action-stop {
+            flex-grow: 1;
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            padding: 10px;
+            border-radius: 8px;
+            font-family: var(--font-headers);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-action-stop:hover {
+            background-color: rgba(255, 77, 77, 0.15);
+            border-color: #FF4D4D;
+            color: #FF4D4D;
+        }
+
+        /* Top Navigation Bar Layout Overrides to bypass browser caching */
+        .app-container {
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+        }
+        .sidebar {
+            width: 100% !important;
+            background-color: #111827 !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-right: none !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            position: sticky !important;
+            top: 0 !important;
+            height: 70px !important;
+            left: 0 !important;
+            z-index: 100 !important;
+            padding: 0 24px !important;
+            box-sizing: border-box !important;
+        }
+        .sidebar-brand {
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            border-bottom: none !important;
+            flex-shrink: 0 !important;
+        }
+        .brand-text h2 {
+            font-size: 18px !important;
+        }
+        .brand-text span {
+            font-size: 12px !important;
+            letter-spacing: 0.5px !important;
+        }
+        .sidebar-menu {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            flex-grow: 1 !important;
+            padding: 0 !important;
+            margin-left: 24px !important;
+            overflow: visible !important;
+            gap: 8px !important;
+        }
+        .menu-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 8px 14px !important;
+            margin-bottom: 0 !important;
+            white-space: nowrap !important;
+            font-size: 13px !important;
+            flex-shrink: 0 !important;
+        }
+        .sidebar-footer {
+            display: none !important;
+        }
+        .sidebar-category-header {
+            display: none !important;
+        }
+        .main-content {
+            margin-left: 0 !important;
+            min-height: calc(100vh - 70px) !important;
+        }
+        @media (max-width: 1024px) {
+            .brand-text {
+                display: none !important;
+            }
+            .sidebar {
+                width: 100% !important;
+                height: 70px !important;
+                padding: 0 16px !important;
+                flex-direction: row !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .menu-item {
+                font-size: 13px !important;
+            }
+            .menu-item span {
+                display: inline !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation - 20 Missions list -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 100 100" width="50" height="50">
+                        <circle cx="50" cy="50" r="45" fill="#FFAB19" />
+                        <path d="M30 40 Q40 20 60 30 T80 50 T60 70 T30 50 Z" fill="#4D97FF" opacity="0.8"/>
+                        <path d="M40 45 Q50 35 60 45 T70 55" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="45" cy="48" r="4" fill="#FFFFFF" />
+                        <circle cx="65" cy="48" r="4" fill="#FFFFFF" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h2>Scratch</h2>
+                    <span>Academy</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu" id="mission-sidebar-menu">
+                <!-- Dropdown: Level 1 -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-seedling"></i> Level 1: ผู้เริ่มต้น <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#mission1" class="menu-item mission-item active" data-mission="1">
+                            <span>1. เหมียวส้มกินนมพลังงาน</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission2" class="menu-item mission-item" data-mission="2">
+                            <span>2. เต้นบีทบ็อกซ์จับจังหวะ</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission3" class="menu-item mission-item" data-mission="3">
+                            <span>3. หลบดาวระเบิดลบแต้ม</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission4" class="menu-item mission-item" data-mission="4">
+                            <span>4. เหมียวส้มเร่งความเร็ว</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission5" class="menu-item mission-item" data-mission="5">
+                            <span>5. ถอดรหัสบวกเลขวิเศษ</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission6" class="menu-item mission-item" data-mission="6">
+                            <span>6. เปลี่ยนสีเมื่อโดนคลิก</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission7" class="menu-item mission-item" data-mission="7">
+                            <span>7. สเกลตามระยะห่างเมาส์</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: Level 2 -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-gears"></i> Level 2: ตรรกะเงื่อนไข <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#mission8" class="menu-item mission-item" data-mission="8">
+                            <span>8. กระโดดข้ามรั้วหรรษา</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission9" class="menu-item mission-item" data-mission="9">
+                            <span>9. กวาดสายตาตรวจจับสี</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission10" class="menu-item mission-item" data-mission="10">
+                            <span>10. ลูปวิ่งรอบสนามฟุตบอล</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission11" class="menu-item mission-item" data-mission="11">
+                            <span>11. วาดรูปเรขาคณิตสามเหลี่ยม</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission12" class="menu-item mission-item" data-mission="12">
+                            <span>12. บังคับทิศทางด้วยคีย์บอร์ด</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission13" class="menu-item mission-item" data-mission="13">
+                            <span>13. ตัวละครลับทักทายสุ่มเวลา</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission14" class="menu-item mission-item" data-mission="14">
+                            <span>14. เลขคณิตหาเศษเหลือ</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: Level 3 -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-rocket"></i> Level 3: นักสร้างสรรค์ <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#mission15" class="menu-item mission-item" data-mission="15">
+                            <span>15. สวิตช์ปิดเปิดไฟเวที</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission16" class="menu-item mission-item" data-mission="16">
+                            <span>16. วิ่งแข่งเต่ากับหอยทาก</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission17" class="menu-item mission-item" data-mission="17">
+                            <span>17. ตรวจสอบตรรกะจริง/เท็จ</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission18" class="menu-item mission-item" data-mission="18">
+                            <span>18. เกมแมวจับหนูแสนซน</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission19" class="menu-item mission-item" data-mission="19">
+                            <span>19. หัวใจแอนิเมชันเต้นตึกตัก</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                        <a href="#mission20" class="menu-item mission-item" data-mission="20">
+                            <span>20. วงล้อสุ่มเลขนำโชค</span>
+                            <i class="fa-solid fa-circle-check status-icon"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: นำทางข้ามหน้า -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-bars"></i> เมนูนำทางข้ามหน้า <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="index.html" class="menu-item">
+                            <i class="fa-solid fa-house"></i> กลับสู่หน้าแรก
+                        </a>
+                        <a href="index.html#flowchart" class="menu-item">
+                            <i class="fa-solid fa-diagram-project"></i> เรียนรู้เรื่องผังงาน
+                        </a>
+                        <a href="index.html#variables" class="menu-item">
+                            <i class="fa-solid fa-box-archive"></i> ตัวแปร & ตัวดำเนินการ
+                        </a>
+                        <a href="index.html#activities" class="menu-item">
+                            <i class="fa-solid fa-gamepad"></i> กิจกรรมฝึกเขียนโค้ด
+                        </a>
+                        <a href="motion.html" class="menu-item">
+                            <i class="fa-solid fa-arrows-up-down-left-right"></i> คลังบล็อกคำสั่ง Scratch
+                        </a>
+                        <a href="python-learn.html" class="menu-item">
+                            <i class="fa-brands fa-python"></i> เรียนรู้ Python เบื้องต้น
+                        </a>
+                        <a href="index.html#quiz" class="menu-item">
+                            <i class="fa-solid fa-award"></i> ไปทำแบบทดสอบ Pre/Post
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="index.html" class="header-back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header" style="flex-wrap: wrap; gap: 12px; align-items: center;">
+                <div class="header-title">
+                    <h1 id="page-section-title">เกมผ่านด่าน 20 ด่าน (Scratch Coding Missions)</h1>
+                </div>
+                <div class="header-student-profile" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px;">
+                    <i class="fa-solid fa-user-graduate" style="color: var(--primary-orange); font-size: 13px;"></i>
+                    <input type="text" id="header-student-name" placeholder="ระบุชื่อผู้เรียน..." style="background: transparent; border: none; color: white; outline: none; font-size: 12px; width: 130px; font-family: var(--font-body);" title="กรอกชื่อตรงนี้เพื่อให้คุณครูตรวจความคืบหน้า">
+                </div>
+                <div class="header-progress">
+                    <span class="progress-text">ภารกิจสำเร็จ: <strong id="progress-percent">0 / 20 (0%)</strong></span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="learning-progress"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Screens -->
+            <div class="content-wrapper">
+                <div class="mission-grid">
+                    
+                    <!-- Left: Mission Details Panel -->
+                    <div class="details-card" id="mission-details-card">
+                        <div class="mission-status-badge pending" id="mission-status">
+                            <i class="fa-regular fa-clock"></i> กำลังรอทำภารกิจ
+                        </div>
+                        <div class="mission-title-area">
+                            <h2 id="mission-title">กำลังโหลด...</h2>
+                        </div>
+                        
+                        <!-- Objective Box -->
+                        <div class="mission-info-box">
+                            <h4>🎯 โจทย์และเป้าหมาย</h4>
+                            <p id="mission-objective">กำลังดึงข้อมูลเป้าหมาย...</p>
+                        </div>
+
+                        <!-- Coding Hint Blocks (Scratch visual style) -->
+                        <div class="hints-box">
+                            <h4>🧩 บล็อกคำใบ้ที่ต้องประยุกต์ใช้</h4>
+                            <div class="hints-block-list" id="mission-hints-list">
+                                <!-- Will be populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Step Guides -->
+                        <div class="steps-box">
+                            <h4>📖 ขั้นตอนการเขียนสคริปต์</h4>
+                            <ol id="mission-steps-list">
+                                <!-- Will be populated by JS -->
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Right: Interactive Stage & Run Area -->
+                    <div class="stage-card">
+                        <div class="stage-header-controls">
+                            <span class="stage-title-text"><i class="fa-solid fa-display"></i> เวทีจำลอง Scratch (Stage)</span>
+                            <div class="scratch-flag-stop-buttons">
+                                <button class="scratch-btn-control green-flag" id="btn-flag" title="เริ่มรันจำลอง">
+                                    <i class="fa-solid fa-flag"></i>
+                                </button>
+                                <button class="scratch-btn-control stop-sign" id="btn-stop" title="หยุดรันจำลอง">
+                                    <i class="fa-solid fa-octagon"></i>🛑
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Stage Box -->
+                        <div class="stage-container" id="stage-box" style="background-color: white;">
+                            <!-- Concept Check Overlay -->
+                            <div class="stage-success-overlay" id="concept-overlay" style="display: none; background: rgba(15, 23, 42, 0.96); flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box; z-index: 10;">
+                                <div style="color: #fb923c; font-size: 36px; margin-bottom: 12px;"><i class="fa-solid fa-lightbulb"></i></div>
+                                <h3 style="color: white; margin: 0 0 6px 0; font-size: 15px; font-family: var(--font-headers);">แบบทดสอบสั้นประจำบทเรียน 💡</h3>
+                                <p id="concept-question-text" style="color: var(--text-muted); font-size: 12.5px; margin: 0 0 14px 0; max-width: 90%;">คำถามวัดความรู้ความเข้าใจแนวคิด</p>
+                                <div id="concept-options" style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 300px; margin-bottom: 12px;">
+                                    <!-- Dynamic Options Buttons -->
+                                </div>
+                                <div id="concept-feedback" style="font-size: 11px; font-weight: bold; display: none;"></div>
+                            </div>
+
+                            <!-- Success Overlay -->
+                            <div class="stage-success-overlay" id="success-overlay">
+                                <div class="success-icon-animated">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </div>
+                                <h3>สุดยอดเลย! ภารกิจสำเร็จ 🎉</h3>
+                                <p id="success-text">น้องๆ ประยุกต์บล็อกคำสั่งได้ถูกต้องและผ่านด่านแล้ว</p>
+                                <button class="stage-answer-btn" id="btn-next-mission" style="padding: 10px 24px; font-size:14px;">
+                                    ลุยด่านถัดไป <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+
+                            <!-- Variables display on stage -->
+                            <div class="stage-variable-display" id="stage-var-display" style="display: none;">
+                                <span id="stage-var-name">คะแนน:</span>
+                                <span class="stage-variable-value" id="stage-var-val">0</span>
+                            </div>
+
+                            <!-- Sprites inside stage -->
+                            <div class="stage-sprite" id="sprite-cat" style="left: 60px; top: 156px; font-size:40px; transform: scale(1);">🐱</div>
+                            <div class="stage-target" id="sprite-target" style="left: 360px; top: 160px; display: none;">🍼</div>
+
+                            <!-- Extra character sprite for race or broadcast -->
+                            <div class="stage-sprite" id="sprite-extra" style="left: 60px; top: 220px; display: none;">😸</div>
+
+                            <!-- Speech Bubble for Sprite -->
+                            <div class="stage-speech-bubble" id="speech-bubble">สวัสดี!</div>
+
+                            <!-- Text Input Response Form (For math / coding questions) -->
+                            <div class="stage-answer-box" id="answer-box">
+                                <input type="text" class="stage-answer-input" id="answer-input" placeholder="พิมพ์คำตอบของคุณตรงนี้..." autocomplete="off">
+                                <button class="stage-answer-btn" id="btn-submit-answer">ตกลง</button>
+                            </div>
+                        </div>
+
+                        <!-- Drag & Drop Assembly Workspace -->
+                        <div class="workspace-card" style="margin-top: 16px; background-color: #0c111d; border-radius: 20px; border: 1px solid var(--border-color); padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+                            <span style="font-family: var(--font-headers); font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; user-select: none;">
+                                <i class="fa-solid fa-puzzle-piece" style="color: var(--scratch-purple);"></i> พื้นที่ประกอบบล็อก (Block Assembly Workspace)
+                            </span>
+                            <div id="block-drop-area" style="min-height: 100px; background-color: #080d16; border: 2px dashed rgba(153, 102, 255, 0.4); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; justify-content: center; align-items: center; overflow-y: auto; max-height: 180px; box-sizing: border-box;">
+                                <span id="drop-placeholder-text" style="font-size: 11px; color: var(--text-muted); text-align: center;">ลากบล็อกคำใบ้จากทางซ้ายมาวางต่อที่นี่ เพื่อประกอบโค้ดดิ้งก่อนรันสคริปต์!</span>
+                            </div>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                                <button class="btn-action-stop" id="btn-clear-workspace" style="font-size: 11px; padding: 6px 12px; background-color: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #f87171; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-trash-can"></i> เคลียร์บล็อก</button>
+                            </div>
+                        </div>
+
+                        <!-- Manual Run/Stop buttons & tips -->
+                        <div class="action-buttons-row">
+                            <button class="btn-action-run" id="btn-action-run">
+                                <i class="fa-solid fa-play"></i> เริ่มรันสคริปต์
+                            </button>
+                            <button class="btn-action-stop" id="btn-action-stop">
+                                <i class="fa-solid fa-stop"></i> รีเซ็ตด่าน
+                            </button>
+                        </div>
+
+                        <!-- Console logger feedback -->
+                        <div class="console-container" id="console-box">
+                            <div class="console-line system">[ระบบ]: ยินดีต้อนรับสู่โหมดภารกิจ Scratch! กรุณาเลือกด่านแล้วกดปุ่ม "เริ่มรันสคริปต์" เพื่อเริ่มทำงาน</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="audio-synth.js"></script>
+    <!-- Firebase SDK Compatibility Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="db-config.js?v=3"></script>
+    <script src="class-config.js?v=3"></script>
+    <script src="db-sync.js?v=3"></script>
+    <script src="mission.js?v=3"></script>
+</body>
+</html>

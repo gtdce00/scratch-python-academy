@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Blocks & Projects - Scratch Academy</title>
+    <!-- Google Fonts: Kanit & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=3">
+    <style>
+        /* Custom layout adjustments for motion.html */
+        .header-back-btn {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: var(--font-headers);
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .header-back-btn:hover {
+            background-color: var(--primary-orange);
+            border-color: var(--primary-orange);
+            transform: translateX(-4px);
+        }
+        .motion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .block-card-interactive {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .block-card-interactive:hover {
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(77, 151, 255, 0.1);
+        }
+        .block-preview {
+            width: 180px;
+            flex-shrink: 0;
+        }
+        .block-desc-text h4 {
+            color: var(--primary-blue);
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .block-desc-text p {
+            font-size: 12px !important;
+            margin: 0 !important;
+            color: var(--text-muted) !important;
+        }
+        .motion-block-svg {
+            background-color: var(--primary-blue);
+            color: white;
+            font-family: var(--font-headers);
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            display: inline-block;
+            width: 100%;
+        }
+        .project-viewer {
+            display: flex;
+            background-color: #0c111d;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-top: 30px;
+            min-height: 480px;
+        }
+        .project-menu {
+            width: 250px;
+            background-color: #111827;
+            border-right: 1px solid var(--border-color);
+            padding: 20px 12px;
+        }
+        .project-menu h4 {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 12px;
+            padding-left: 8px;
+        }
+        .project-btn {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-headers);
+            font-size: 13px;
+            padding: 12px 16px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .project-btn:hover {
+            background-color: rgba(255,255,255,0.02);
+            color: white;
+        }
+        .project-btn.active {
+            background-color: var(--primary-orange);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 171, 25, 0.3);
+        }
+        .project-content-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            padding: 24px;
+            gap: 24px;
+        }
+        .project-info-pane {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .project-info-pane h3 {
+            color: var(--primary-orange);
+            font-size: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .project-details-card {
+            background-color: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .project-details-card h5 {
+            color: var(--text-white);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        .project-details-card p, .project-details-card li {
+            font-size: 12px !important;
+            color: var(--text-muted) !important;
+            margin: 0 !important;
+        }
+        .project-details-card ul {
+            padding-left: 16px;
+        }
+        .blocks-needed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .project-stage-pane {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .stage-box {
+            background-color: white;
+            height: 260px;
+            border-radius: 12px;
+            border: 4px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .stage-sprite {
+            position: absolute;
+            font-size: 40px;
+            transition: all 0.1s linear;
+            z-index: 10;
+        }
+        .stage-ball {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--scratch-pink);
+            border-radius: 50%;
+            border: 2px solid white;
+            display: none;
+            z-index: 5;
+            transition: all 0.1s linear;
+        }
+        .stage-star {
+            position: absolute;
+            font-size: 24px;
+            color: #ffd700;
+            display: none;
+            z-index: 6;
+        }
+        .stage-bubble {
+            position: absolute;
+            background-color: white;
+            border: 2px solid #ccc;
+            color: black;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-family: var(--font-headers);
+            max-width: 130px;
+            display: none;
+            top: 40px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            z-index: 12;
+        }
+        .stage-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+        .project-run-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+        .project-console {
+            background-color: #05070a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            height: 80px;
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 8px 12px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        /* Top Navigation Bar Layout Overrides to bypass browser caching */
+        .app-container {
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+        }
+        .sidebar {
+            width: 100% !important;
+            background-color: #111827 !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-right: none !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            position: sticky !important;
+            top: 0 !important;
+            height: 70px !important;
+            left: 0 !important;
+            z-index: 100 !important;
+            padding: 0 24px !important;
+            box-sizing: border-box !important;
+        }
+        .sidebar-brand {
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            border-bottom: none !important;
+            flex-shrink: 0 !important;
+        }
+        .brand-text h2 {
+            font-size: 18px !important;
+        }
+        .brand-text span {
+            font-size: 12px !important;
+            letter-spacing: 0.5px !important;
+        }
+        .sidebar-menu {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            flex-grow: 1 !important;
+            padding: 0 !important;
+            margin-left: 24px !important;
+            overflow: visible !important;
+            gap: 8px !important;
+        }
+        .menu-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 8px 14px !important;
+            margin-bottom: 0 !important;
+            white-space: nowrap !important;
+            font-size: 13px !important;
+            flex-shrink: 0 !important;
+        }
+        .sidebar-footer {
+            display: none !important;
+        }
+        .sidebar-category-header {
+            display: none !important;
+        }
+        .main-content {
+            margin-left: 0 !important;
+            min-height: calc(100vh - 70px) !important;
+        }
+        @media (max-width: 1024px) {
+            .brand-text {
+                display: none !important;
+            }
+            .sidebar {
+                width: 100% !important;
+                height: 70px !important;
+                padding: 0 16px !important;
+                flex-direction: row !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .menu-item {
+                font-size: 13px !important;
+            }
+            .menu-item span {
+                display: inline !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation (Same theme, custom items) -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <svg viewBox="0 0 100 100" width="50" height="50">
+                        <circle cx="50" cy="50" r="45" fill="#FFAB19" />
+                        <path d="M30 40 Q40 20 60 30 T80 50 T60 70 T30 50 Z" fill="#4D97FF" opacity="0.8"/>
+                        <path d="M40 45 Q50 35 60 45 T70 55" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="45" cy="48" r="4" fill="#FFFFFF" />
+                        <circle cx="65" cy="48" r="4" fill="#FFFFFF" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h2>Scratch</h2>
+                    <span>Academy</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <!-- Dropdown: เลือกดูประเภทบล็อก (Scratch Blocks Selector) -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-shapes"></i> หมวดหมู่บล็อก Scratch <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#motion-blocks" class="menu-item active" data-sec="motion">
+                            <i class="fa-solid fa-arrows-up-down-left-right"></i> บล็อกเคลื่อนไหว
+                        </a>
+                        <a href="#looks-blocks" class="menu-item" data-sec="looks">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> บล็อกรูปลักษณ์
+                        </a>
+                        <a href="#sound-blocks" class="menu-item" data-sec="sound">
+                            <i class="fa-solid fa-volume-high"></i> บล็อกเสียง
+                        </a>
+                        <a href="#events-blocks" class="menu-item" data-sec="events">
+                            <i class="fa-solid fa-bolt"></i> บล็อกเหตุการณ์
+                        </a>
+                        <a href="#control-blocks" class="menu-item" data-sec="control">
+                            <i class="fa-solid fa-gears"></i> บล็อกควบคุม
+                        </a>
+                        <a href="#sensing-blocks" class="menu-item" data-sec="sensing">
+                            <i class="fa-solid fa-eye"></i> บล็อกตรวจจับ
+                        </a>
+                        <a href="#operators-blocks" class="menu-item" data-sec="operators">
+                            <i class="fa-solid fa-calculator"></i> บล็อกตัวดำเนินการ
+                        </a>
+                        <a href="#variables-blocks" class="menu-item" data-sec="variables">
+                            <i class="fa-solid fa-box-archive"></i> บล็อกตัวแปร
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: โครงงานตัวอย่าง -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-lightbulb"></i> โครงงานตัวอย่าง <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#projects" class="menu-item" data-sec="projects">
+                            <i class="fa-solid fa-diagram-project"></i> 5 โปรเจกต์ตัวอย่าง
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: เมนูนำทางข้ามหน้า -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-bars"></i> เมนูนำทางข้ามหน้า <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="index.html" class="menu-item">
+                            <i class="fa-solid fa-house"></i> กลับสู่หน้าแรก
+                        </a>
+                        <a href="index.html#flowchart" class="menu-item">
+                            <i class="fa-solid fa-diagram-project"></i> เรียนรู้เรื่องผังงาน
+                        </a>
+                        <a href="index.html#variables" class="menu-item">
+                            <i class="fa-solid fa-box-archive"></i> ตัวแปร & ตัวดำเนินการ
+                        </a>
+                        <a href="index.html#activities" class="menu-item">
+                            <i class="fa-solid fa-gamepad"></i> กิจกรรมฝึกเขียนโค้ด
+                        </a>
+                        <a href="mission.html" class="menu-item">
+                            <i class="fa-solid fa-trophy"></i> เกมผ่านด่าน 20 ด่าน (Lab)
+                        </a>
+                        <a href="python-learn.html" class="menu-item">
+                            <i class="fa-brands fa-python"></i> เรียนรู้ Python เบื้องต้น
+                        </a>
+                        <a href="index.html#quiz" class="menu-item">
+                            <i class="fa-solid fa-award"></i> ไปทำแบบทดสอบ Pre/Post
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="index.html" class="header-back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> กลับหน้าหลัก
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="content-header" style="flex-wrap: wrap; gap: 12px; align-items: center;">
+                <div class="header-title">
+                    <h1 id="page-section-title">เรียนรู้กลุ่มบล็อกคำสั่งเคลื่อนไหว (Motions)</h1>
+                </div>
+                <div class="header-student-profile" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px;">
+                    <i class="fa-solid fa-user-graduate" style="color: var(--primary-orange); font-size: 13px;"></i>
+                    <input type="text" id="header-student-name" placeholder="ระบุชื่อผู้เรียน..." style="background: transparent; border: none; color: white; outline: none; font-size: 12px; width: 130px; font-family: var(--font-body);" title="กรอกชื่อตรงนี้เพื่อให้คุณครูตรวจความคืบหน้า">
+                </div>
+            </header>
+
+            <!-- Content Screens -->
+            <div class="content-wrapper">
+                
+                <!-- Section 1: Motion Blocks Deep Dive -->
+                <section id="motion-sec" class="tab-panel active">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Motions (เคลื่อนไหว)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีน้ำเงินนี้ มีหน้าที่สำคัญในการควบคุมพิกัด ทิศทาง และความเร็วในการขยับตัวละคร (สไปรท์)</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อจำลองการป้อนข้อมูลและดูรายละเอียดว่าบล็อกนั้นควบคุมเวทีอย่างไรบ้าง!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="move">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-motion">เดินหน้า <span class="scratch-input-pill">10</span> ก้าว</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>move (เดินหน้า/ถอยหลัง)</h4>
+                                <p>สั่งตัวละครขยับไปทิศทางปัจจุบันที่หันอยู่ ป้อนเลขบวก=เดินหน้า ป้อนติดลบ=ถอยหลัง</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="turn-right">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-motion">หมุน ↷ <span class="scratch-input-pill">15</span> องศา</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>turn right (หมุนตามเข็ม)</h4>
+                                <p>สั่งตัวละครหันหน้าตามเข็มนาฬิกาตามจำนวนองศาที่ป้อน</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="turn-left">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-motion">หมุน ↶ <span class="scratch-input-pill">15</span> องศา</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>turn left (หมุนทวนเข็ม)</h4>
+                                <p>สั่งตัวละครหันหน้าทวนเข็มนาฬิกาตามจำนวนองศาที่ป้อน</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="goto-xy">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-motion">ไปที่ x: <span class="scratch-input-pill">0</span> y: <span class="scratch-input-pill">0</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>go to x y (วาร์ปไปพิกัด)</h4>
+                                <p>ย้ายตำแหน่งตัวละครไปที่พิกัด x และ y ทันที (วาร์ปโดยไม่เห็นเส้นทางเดิน)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="glide">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-motion">ร่อน <span class="scratch-input-pill">1</span> วิ ไปที่ x: <span class="scratch-input-pill">0</span> y: <span class="scratch-input-pill">0</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>glide (ร่อนสไลด์ตัว)</h4>
+                                <p>ร่อนตัวละครสไลด์ไปยังพิกัด x, y ช้าๆ ตามเวลาวินาทีที่กำหนด (ค่ายิ่งมากยิ่งร่อนช้า)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="bounce">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-motion">ถ้าชนขอบ, ให้สะท้อนกลับ</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>if on edge, bounce (ชนขอบให้เด้ง)</h4>
+                                <p>เช็คว่าตัวละครชนขอบเขตหน้าจอหรือยัง ถ้าชนแล้วจะทำการสะท้อนกลับอัตโนมัติ</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.1: Looks Blocks Deep Dive -->
+                <section id="looks-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Looks (รูปลักษณ์)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีม่วงนี้ มีหน้าที่ควบคุมสไตล์ของตัวละคร การพูด คิด การสลับชุดแต่งตัว และการแสดงผลบนเวที</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="say-for">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-looks">พูด <span class="scratch-input-pill" style="min-width: 50px;">สวัสดี!</span> <span class="scratch-input-pill">2</span> วินาที</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>say for seconds (พูดแบบกำหนดเวลา)</h4>
+                                <p>แสดงกล่องข้อความพูดของตัวละครบนเวทีค้างไว้ตามวินาทีที่กำหนดแล้วจึงหายไป</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="switch-costume">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-looks">เปลี่ยนคอสตูมเป็น <span class="scratch-input-dropdown">costume2</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>switch costume to (เปลี่ยนคอสตูมเป็น)</h4>
+                                <p>สั่งตัวละครสลับไปใช้ชุดแต่งกายที่เลือกโดยระบุชื่อชุดโดยตรง</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="next-costume">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-looks">ชุดถัดไป</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>next costume (ชุดถัดไป)</h4>
+                                <p>สลับชุดแต่งตัวถัดไปในลิสต์ตัวละครเพื่อทำภาพเคลื่อนไหว (เช่น ขยับขาแมวตอนเดิน)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="change-size">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-looks">เปลี่ยนขนาดทีละ <span class="scratch-input-pill">10</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>change size by (เปลี่ยนขนาดทีละ)</h4>
+                                <p>ขยายขนาดตัวละครเพิ่มขึ้น (ป้อนค่าบวก) หรือลดขนาดให้เล็กลง (ป้อนค่าลบ)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="change-effect">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-looks">เปลี่ยนเอฟเฟกต์ <span class="scratch-input-dropdown">สี</span> ทีละ <span class="scratch-input-pill">25</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>change effect by (เปลี่ยนเอฟเฟกต์ภาพ)</h4>
+                                <p>สั่งเปลี่ยนค่าเอฟเฟกต์พิเศษของภาพตัวละคร เช่น การเปลี่ยนเฉดสี หรือหมุนบิดภาพ</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="show-hide">
+                            <div class="block-preview" style="display: flex; gap: 4px;">
+                                <div class="scratch-block-visual stack scratch-looks" style="padding: 8px 10px;">แสดง</div>
+                                <div class="scratch-block-visual stack scratch-looks" style="padding: 8px 10px;">ซ่อน</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>show / hide (แสดงและซ่อน)</h4>
+                                <p>ใช้ควบคุมการมองเห็นตัวละคร สั่งให้ปรากฏตัวขึ้นมา (แสดง) หรือล่องหนหายไป (ซ่อน)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.2: Sound Blocks Deep Dive -->
+                <section id="sound-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Sound (เสียง)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีชมพูนี้ มีหน้าที่ควบคุมการเล่นไฟล์เสียงร้อง เสียงเอฟเฟกต์ ปรับแต่งเสียงทุ้ม/แหลม และความดัง</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="play-sound">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sound">เล่นเสียง <span class="scratch-input-dropdown">Meow</span> จนจบ</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>play sound until done (เล่นเสียงจนจบ)</h4>
+                                <p>สั่งให้เล่นเสียงที่เลือกจนร้องจบไฟล์เสียงก่อน จึงจะข้ามไปทำคำสั่งในบรรทัดถัดไป</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="start-sound">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sound">เริ่มเสียง <span class="scratch-input-dropdown">Meow</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>start sound (เริ่มเสียงทันที)</h4>
+                                <p>เริ่มส่งเสียงร้องของตัวละครออกมาทันที โดยไม่ต้องรอร้องจบ (รันคำสั่งถัดไปควบคู่ได้เลย)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="stop-sound">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sound">หยุดเสียงทั้งหมด</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>stop all sounds (หยุดเสียงทั้งหมด)</h4>
+                                <p>ปิดสัญญาณและสั่งให้หยุดเสียงร้องของทุกตัวละครที่กำลังเล่นอยู่ทันที</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="change-pitch">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sound">เปลี่ยนเอฟเฟกต์ <span class="scratch-input-dropdown">เสียงสูงต่ำ</span> ทีละ <span class="scratch-input-pill">10</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>change pitch effect by (เปลี่ยนระดับเสียงสูงต่ำ)</h4>
+                                <p>ปรับระดับเสียงเอฟเฟกต์ให้ร้องแหลมสูงขึ้น (ป้อนค่าบวก) หรือเสียงทุ้มต่ำลง (ป้อนค่าลบ)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="change-volume">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sound">เปลี่ยนระดับเสียงทีละ <span class="scratch-input-pill">-10</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>change volume by (เปลี่ยนระดับเสียง)</h4>
+                                <p>เพิ่มระดับความดัง (ป้อนค่าบวก) หรือหรี่เสียงของตัวละครให้เบาลง (ป้อนค่าลบ)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="set-volume">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sound">ตั้งระดับเสียงเป็น <span class="scratch-input-pill">100</span> %</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>set volume to (ตั้งระดับเสียงเป็นเปอร์เซ็นต์)</h4>
+                                <p>กำหนดความดังเสียงของตัวละครตามค่าเปอร์เซ็นต์ที่ระบุ (0% = ปิดเสียง, 100% = ดังปกติ)</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.3: Events Blocks Deep Dive -->
+                <section id="events-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Events (เหตุการณ์)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีเหลืองทองนี้ ทำหน้าที่ดักจับเหตุการณ์เพื่อเริ่มรันสคริปต์ และใช้เป็นเครื่องมือกระจายสัญญาณสั่งงาน</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="when-green-flag">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual hat scratch-events" style="margin-top:0;">เมื่อคลิก <span style="color: #40BF50; margin: 0 4px;"><i class="fa-solid fa-flag"></i></span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>when green flag clicked (เมื่อคลิกธงเขียว)</h4>
+                                <p>บล็อกตั้งต้นยอดนิยม ทำหน้าที่เริ่มสั่งการรันคำสั่งทั้งหมดที่ต่ออยู่ด้านล่างเมื่อกดปุ่มเริ่มธงเขียว</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="when-key-pressed">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual hat scratch-events" style="margin-top:0;">เมื่อกดปุ่ม <span class="scratch-input-dropdown" style="background: rgba(0,0,0,0.08); color: #1e293b;">สเปซบาร์</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>when key pressed (เมื่อกดปุ่มคีย์บอร์ด)</h4>
+                                <p>สคริปต์ด้านล่างจะเริ่มรันเมื่อผู้เรียนกดปุ่มบนคีย์บอร์ดตามปุ่มที่เลือก (เช่น กดสเปซบาร์หรือลูกศร)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="when-sprite-clicked">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual hat scratch-events" style="margin-top:0;">เมื่อตัวละครนี้ถูกคลิก</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>when this sprite clicked (เมื่อตัวละครถูกคลิก)</h4>
+                                <p>ทำงานเมื่อผู้ใช้กดคลิกเมาส์บนรูปร่างของตัวละครตัวนั้นโดยตรง</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="when-i-receive">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual hat scratch-events" style="margin-top:0;">เมื่อฉันได้รับ <span class="scratch-input-dropdown" style="background: rgba(0,0,0,0.08); color: #1e293b;">ข้อความ1</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>when I receive (เมื่อได้รับข้อความสัญญาณ)</h4>
+                                <p>ทำหน้าที่ดักรอรับสัญญาณข้อความวิทยุตามชื่อที่ตั้งไว้ เมื่อตรวจเจอสัญญาณสคริปต์จึงจะทำงาน</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="broadcast">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-events" style="color:#1e293b;">กระจาย <span class="scratch-input-dropdown" style="background: rgba(0,0,0,0.08); color: #1e293b;">ข้อความ1</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>broadcast (ส่งสัญญาณข้อความ)</h4>
+                                <p>ส่งรหัสสัญญาณคำสั่งแบบไร้สายกระจายไปให้ทุกสไปรท์ได้รับทราบและนำทางทำงานต่อไป</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="broadcast-and-wait">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-events" style="color:#1e293b;">กระจาย <span class="scratch-input-dropdown" style="background: rgba(0,0,0,0.08); color: #1e293b;">ข้อความ1</span> และรอ</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>broadcast and wait (กระจายและหยุดรอ)</h4>
+                                <p>ส่งสัญญาณข้อความออกไป จากนั้นหยุดรอให้สคริปต์ปลายทางทำงานเสร็จสิ้นก่อน จึงเริ่มทำงานบรรทัดถัดไป</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.4: Control Blocks Deep Dive -->
+                <section id="control-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Control (ควบคุม)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีส้มสว่างนี้ มีหน้าที่ควบคุมเงื่อนไข หน่วงเวลา วนลูป และระบบการทดสอบค่าตรรกะสำหรับการทำงานของโค้ด</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="wait">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-control">รอ <span class="scratch-input-pill">1</span> วินาที</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>wait (หน่วงเวลา)</h4>
+                                <p>สั่งหยุดชั่วคราวตามวินาทีที่พิมพ์ลงไปก่อนรันคำสั่งอื่นต่อ (ใช้หน่วงหรือลดความเร็วการเคลื่อนที่)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="forever">
+                            <div class="block-preview">
+                                <div class="scratch-c-wrapper">
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-top">วนซ้ำตลอด</div>
+                                    <div class="scratch-c-body"></div>
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-bottom"></div>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>forever (วนซ้ำตลอดไป)</h4>
+                                <p>สั่งรันคำสั่งที่ต่ออยู่ภายในบล็อกวนลูปช้อนนี้วนเวียนซ้ำอย่างไม่รู้จบ (เช่น เดินลาดตระเวน)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="repeat">
+                            <div class="block-preview">
+                                <div class="scratch-c-wrapper">
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-top">ทำซ้ำ <span class="scratch-input-pill">10</span></div>
+                                    <div class="scratch-c-body"></div>
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-bottom"></div>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>repeat (วนซ้ำระบุจำนวนรอบ)</h4>
+                                <p>สั่งทำซ้ำเฉพาะคำสั่งภายในลูปขอบเขตจำกัดตามจำนวนรอบที่พิมพ์ป้อน</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="if-then">
+                            <div class="block-preview">
+                                <div class="scratch-c-wrapper">
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-top">ถ้า <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">เงื่อนไข</span> แล้ว</div>
+                                    <div class="scratch-c-body"></div>
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-bottom"></div>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>if then (ถ้า...แล้ว)</h4>
+                                <p>บล็อกทางเลือกเดียว: ตรวจสอบเงื่อนไขหกเหลี่ยม หากคำนวณแล้ว 'เป็นจริง' จึงจะสั่งงานกล่องด้านใน</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="if-then-else">
+                            <div class="block-preview">
+                                <div class="scratch-c-wrapper">
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-top">ถ้า <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">เงื่อนไข</span> แล้ว</div>
+                                    <div class="scratch-c-body"></div>
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-bottom" style="border-radius:0;">มิฉะนั้น</div>
+                                    <div class="scratch-c-body"></div>
+                                    <div class="scratch-block-visual stack scratch-control scratch-c-bottom"></div>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>if then else (ถ้า...แล้ว...มิฉะนั้น)</h4>
+                                <p>บล็อกสองทางเลือก: ถ้าเช็คแล้วจริงจะทำงานส่วนแรก หากไม่จริง (เท็จ) จะย้ายไปทำส่วนมิฉะนั้น</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="stop">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual cap scratch-control">หยุด <span class="scratch-input-dropdown" style="background: rgba(0,0,0,0.08); color: white;">ทั้งหมด</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>stop (คำสั่งหยุดทำงาน)</h4>
+                                <p>เป็น Cap Block ทรงมนปิดขอบล่าง ทำหน้าที่หยุดคำสั่งทุกตัวละครหรือตัวที่ระบุทันที</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.5: Sensing Blocks Deep Dive -->
+                <section id="sensing-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Sensing (ตรวจจับ)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีฟ้าอ่อนนี้ ทำหน้าที่สัมผัสสัญญาณสิ่งแวดล้อม ตรวจสอบการสัมผัสปุ่มเมาส์ แป้นพิมพ์ หรือจับพิกัดจอภาพ</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="touching">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sensing" style="border-radius: 40px; padding: 6px 14px;">แตะ <span class="scratch-input-dropdown">ตัวชี้เมาส์</span> ?</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>touching ? (แตะสิ่งของ)</h4>
+                                <p>บล็อกเงื่อนไขหกเหลี่ยมรายงาน จริง หรือ เท็จ เมื่อตัวละครสัมผัสกับตัวชี้เมาส์ ขอบเวที หรือสไปรท์อื่น</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="distance">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sensing" style="border-radius: 40px;">ระยะห่างไปยัง <span class="scratch-input-dropdown">ตัวชี้เมาส์</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>distance to (รายงานระยะห่าง)</h4>
+                                <p>คำนวณและรายงานระยะห่างเป็นตัวเลขพิกเซลระหว่างตัวละครกับเมาส์หรือสไปรท์อื่น</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="ask">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sensing">ถาม <span class="scratch-input-pill" style="min-width: 60px; text-align: left;">คุณชื่ออะไร?</span> และรอ</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>ask and wait (เปิดกล่องรับคำถาม)</h4>
+                                <p>ถามข้อความออกทางหน้าจอพร้อมเปิดกล่องรับการพิมพ์ข้อความตอบจากผู้เรียนทางคีย์บอร์ด</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="answer">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sensing" style="border-radius: 40px; padding: 4px 14px;">คำตอบ</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>answer (คำตอบล่าสุด)</h4>
+                                <p>รายงานคำตอบล่าสุดในรูปตัวแปรเก็บข้อความที่พิมพ์ผ่านกล่องคำถามก่อนหน้า</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="key-pressed">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-sensing" style="border-radius: 40px; padding: 6px 14px;">ปุ่ม <span class="scratch-input-dropdown">สเปซบาร์</span> ถูกกด?</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>key pressed ? (ตรวจสอบแป้นพิมพ์)</h4>
+                                <p>รายงานค่า จริง หากปุ่มคีย์บอร์ดที่กำหนดในช่องดรอปดาวน์กำลังถูกกดปุ่มใช้งานอยู่</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="mouse-xy">
+                            <div class="block-preview" style="display: flex; gap: 4px;">
+                                <div class="scratch-block-visual stack scratch-sensing" style="border-radius: 40px; padding: 6px 10px; font-size:11px;">ตำแหน่ง x ของเมาส์</div>
+                                <div class="scratch-block-visual stack scratch-sensing" style="border-radius: 40px; padding: 6px 10px; font-size:11px;">ตำแหน่ง y ของเมาส์</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>mouse x / mouse y (รายงานตำแหน่งพิกัดเมาส์)</h4>
+                                <p>ส่งออกพิกัดเชิงตัวเลขแนวนอน X หรือแนวตั้ง Y ของตัวชี้เมาส์ในปัจจุบันแบบเรียลไทม์</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.6: Operators Blocks Deep Dive -->
+                <section id="operators-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Operators (ตัวดำเนินการ)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีเขียวนี้ ทำหน้าที่ประมวลผลคำนวณคณิตศาสตร์ สุ่มตัวเลข และตรวจสอบเชิงตรรกะ/เปรียบเทียบข้อความ</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="add">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-operators" style="border-radius: 40px; padding: 4px 12px;">
+                                    <span class="scratch-input-pill" style="border-radius: 40px; width: 24px; height:18px; min-width:unset;"></span> 
+                                    + 
+                                    <span class="scratch-input-pill" style="border-radius: 40px; width: 24px; height:18px; min-width:unset;"></span>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>+ - * / (ตัวดำเนินการคณิตศาสตร์)</h4>
+                                <p>บล็อกวงรีสำหรับบวก ลบ คูณ หรือหารคำนวณทางคณิตศาสตร์ นำไปวางในช่องป้อนค่าบล็อกสแต็คได้</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="random">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-operators" style="border-radius: 40px; font-size:11px;">เลือกสุ่มจาก <span class="scratch-input-pill">1</span> ถึง <span class="scratch-input-pill">10</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>pick random to (เลือกสุ่มตัวเลข)</h4>
+                                <p>บล็อกสุ่มตัวเลขแบบสุ่มค่าช่วงพิกัด เช่น ใช้สุ่มหาตำแหน่งปล่อยตัวดาวตกสุ่ม Y เสมือนจริง</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="greater-than">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-operators" style="border-radius: 40px; padding: 6px 14px;">
+                                    <span class="scratch-input-pill" style="border-radius: 40px; width: 20px; height:18px; min-width:unset;"></span> 
+                                    &gt; 
+                                    <span class="scratch-input-pill">50</span>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>&gt; &lt; = (บล็อกการเปรียบเทียบ)</h4>
+                                <p>บล็อกหกเหลี่ยมประเมินเงื่อนไขว่า ค่าทางซ้ายมากกว่า น้อยกว่า หรือเท่ากับ ค่าขวาจริงหรือไม่</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="and">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-operators" style="border-radius: 40px; padding: 6px 10px; font-size:11px;">
+                                    <span class="scratch-input-hexagon" style="background:#3ba047; padding: 1px 6px;"></span> 
+                                    และ 
+                                    <span class="scratch-input-hexagon" style="background:#3ba047; padding: 1px 6px;"></span>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>and / or / not (ตัวดำเนินการตรรกศาสตร์)</h4>
+                                <p>ใช้เชื่อมเงื่อนไขเชิงตรรกะ (เช่น เงื่อนไข 'และ' จะส่งค่าเป็นจริง เมื่อเงื่อนไขทั้งสองฝั่งเป็นจริงพร้อมกัน)</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="join">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-operators" style="border-radius: 40px; font-size:11px;">ต่อ <span class="scratch-input-pill" style="border-radius: 40px; min-width: 35px; text-align: left; padding:1px 4px;">แอปเปิ้ล</span> <span class="scratch-input-pill" style="border-radius: 40px; min-width: 35px; text-align: left; padding:1px 4px;">กล้วย</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>join (การต่อคำ/เชื่อมข้อความ)</h4>
+                                <p>นำชุดข้อความตัวอักษร 2 ส่วน มารวมเชื่อมประกบกันให้เป็นผลลัพธ์สายอักขระประโยคเดียว</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="mod">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-operators" style="border-radius: 40px; padding: 4px 12px; font-size:11px;">
+                                    <span class="scratch-input-pill" style="border-radius: 40px; width: 20px; height:18px; min-width:unset;"></span> 
+                                    หารเอาเศษ 
+                                    <span class="scratch-input-pill" style="border-radius: 40px; width: 20px; height:18px; min-width:unset;"></span>
+                                </div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>mod (หารเอาเศษ)</h4>
+                                <p>ใช้หาเศษเหลือจากการคำนวณหารตัวเลข เช่น ตรวจจับเศษหารเพื่อเช็คการเป็นตัวเลขคู่อัตราแบ่ง</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 1.7: Variables Blocks Deep Dive -->
+                <section id="variables-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เจาะลึกกลุ่มบล็อกคำสั่ง Variables (ตัวแปร)</h2>
+                            <p class="lead-text">กลุ่มบล็อกสีส้มเข้มนี้ ทำหน้าที่สร้างและจัดการพื้นที่หน่วยความจำสำหรับเก็บค่าตัวเลข ข้อความ และปรับเปลี่ยนค่าตัวแปร</p>
+                            <p>น้องๆ สามารถคลิกที่การ์ดบล็อกด้านล่าง เพื่อนำมาศึกษารายละเอียดและผลการทำงานได้ครับ!</p>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap;">
+                        <button class="btn btn-light" style="background: rgba(255,255,255,0.05); color: #fff; cursor: default; font-weight: normal; font-size:13px; border:1px solid var(--border-color); padding: 6px 16px;">สร้างตัวแปร</button>
+                        <button class="btn btn-light" style="background: rgba(255,255,255,0.05); color: #fff; cursor: default; font-weight: normal; font-size:13px; border:1px solid var(--border-color); padding: 6px 16px;">สร้างรายการ</button>
+                        <button class="btn btn-light" style="background: rgba(255,255,255,0.05); color: #fff; cursor: default; font-weight: normal; font-size:13px; border:1px solid var(--border-color); padding: 6px 16px;">สร้างบล็อกใหม่ (My Blocks)</button>
+                    </div>
+
+                    <div class="motion-grid">
+                        <div class="block-card-interactive" data-block="reporter">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-variables" style="border-radius: 40px; padding: 4px 14px;">my variable</div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>my variable (บล็อกรายงานข้อมูล)</h4>
+                                <p>บล็อกวงรีรายงานค่า ใช้ดึงค่าที่ตัวแปรตัวนั้นๆ จดจำเก็บเอาไว้ในกล่องไปคำนวณส่งผลลัพธ์ต่อ</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="set-var">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-variables">ตั้งค่า <span class="scratch-input-dropdown">my variable</span> เป็น <span class="scratch-input-pill">0</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>set variable to (ตั้งค่าตัวแปร)</h4>
+                                <p>สั่งทับค่าเดิมในตัวแปรตัวนั้นให้เปลี่ยนไปเท่ากับค่าตัวเลขหรือข้อความตัวใหม่โดยตรง</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="change-var">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-variables">เปลี่ยน <span class="scratch-input-dropdown">my variable</span> ทีละ <span class="scratch-input-pill">1</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>change variable by (เปลี่ยนค่าสะสมตัวแปร)</h4>
+                                <p>สั่งเพิ่มค่าสะสมให้ตัวแปร (ป้อนค่าบวก) หรือลดค่าสะสมลง (ป้อนค่าลบ) เช่น การเพิ่มคะแนนสะสม</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="show-var">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-variables">แสดงตัวแปร <span class="scratch-input-dropdown">my variable</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>show variable (แสดงตัวแปรบนเวที)</h4>
+                                <p>สั่งให้เปิดการแสดงผลพาเนลบอกสถานะค่าตัวแปรตัวนั้นขึ้นมาบนหน้าต่างหน้าจอเวทีหลัก</p>
+                            </div>
+                        </div>
+
+                        <div class="block-card-interactive" data-block="hide-var">
+                            <div class="block-preview">
+                                <div class="scratch-block-visual stack scratch-variables">ซ่อนตัวแปร <span class="scratch-input-dropdown">my variable</span></div>
+                            </div>
+                            <div class="block-desc-text">
+                                <h4>hide variable (ซ่อนตัวแปรบนเวที)</h4>
+                                <p>สั่งปิดซ่อนพาเนลแสดงผลค่าตัวแปร ไม่ให้โชว์บดบังตัวละครบนพื้นที่ของเวที</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: 5 Projects Showcase -->
+                <section id="projects-sec" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>โปรเจกต์มินิต้นแบบ 5 สไตล์เขียนเล่นใน Scratch</h2>
+                            <p>น้องๆ สามารถเลือกโปรเจกต์ที่ต้องการศึกษาจากแถบเมนูด้านซ้าย เพื่อดูข้อมูลวัตถุประสงค์ ขั้นตอนความคิด (Flowchart) ชุดบล็อกที่ใช้ และยังกดรันโปรแกรมจำลองเพื่อดูการแสดงผลเสมือนของโปรเจกต์จริงบนเวทีได้เลยครับ!</p>
+                        </div>
+                    </div>
+
+                    <div class="project-viewer">
+                        <!-- Project Selector Sidebar -->
+                        <div class="project-menu">
+                            <h4>เลือกโปรเจกต์:</h4>
+                            <button class="project-btn active" data-proj="1">
+                                <span class="badge-num">ป.1</span> เจ้าเหมียวเดินขยับขา
+                            </button>
+                            <button class="project-btn" data-proj="2">
+                                <span class="badge-num">ป.2</span> ตัวละครเต้นรำหรรษา
+                            </button>
+                            <button class="project-btn" data-proj="3">
+                                <span class="badge-num">ป.3</span> วิ่งไล่จับพิกัดเมาส์
+                            </button>
+                            <button class="project-btn" data-proj="4">
+                                <span class="badge-num">ป.4</span> ทักทายเมื่อเมาส์แตะ
+                            </button>
+                            <button class="project-btn" data-proj="5">
+                                <span class="badge-num">ป.5</span> ดาวตกคณิตศาสตร์สุ่มค่า
+                            </button>
+                        </div>
+
+                        <!-- Content Grid -->
+                        <div class="project-content-grid">
+                            <!-- Left col: Project Info -->
+                            <div class="project-info-pane" id="project-details-box">
+                                <!-- Generated Dynamically -->
+                            </div>
+
+                            <!-- Right col: Simulated Stage -->
+                            <div class="project-stage-pane">
+                                <div class="stage-box" id="project-stage-screen">
+                                    <!-- Cat Sprite -->
+                                    <div class="stage-sprite" id="proj-cat-sprite">🐱</div>
+                                    <!-- Ball Sprite -->
+                                    <div class="stage-ball" id="proj-ball-sprite"></div>
+                                    <!-- Star Sprite -->
+                                    <div class="stage-star" id="proj-star-sprite">⭐</div>
+                                    <!-- Speech bubble -->
+                                    <div class="stage-bubble" id="proj-stage-bubble">สวัสดีครับ</div>
+                                </div>
+                                
+                                <div class="project-run-controls">
+                                    <button class="btn btn-green" id="btn-play-proj">
+                                        <i class="fa-solid fa-play"></i> รันโปรเจกต์
+                                    </button>
+                                    <button class="btn btn-red" id="btn-stop-proj" disabled>
+                                        <i class="fa-solid fa-stop"></i> หยุด
+                                    </button>
+                                </div>
+
+                                <div class="project-console" id="proj-console-text">
+                                    เลือกโปรเจกต์และกดเริ่มรันจำลอง...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="audio-synth.js"></script>
+    <!-- Firebase SDK Compatibility Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="db-config.js?v=3"></script>
+    <script src="class-config.js?v=3"></script>
+    <script src="db-sync.js?v=3"></script>
+    <script src="motion.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Rover: Mission Mars - 2D Logic Game</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles specific to game */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --grid-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation */
+        .game-header {
+            height: 60px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .game-title {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .level-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Game Layout */
+        .game-container {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+        }
+
+        /* Left Panel - Canvas */
+        .canvas-wrapper {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+            position: relative;
+        }
+
+        #gameCanvas {
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            background-color: #0b1120;
+        }
+
+        .level-overlay {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .level-overlay h2 {
+            font-family: 'Chakra Petch', sans-serif;
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: #38bdf8;
+        }
+        .level-overlay p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Right Panel - Coding Area */
+        .code-panel {
+            flex: 1;
+            background: var(--bg-panel);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Block Palette */
+        .palette {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .palette-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .block-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Draggable Blocks */
+        .cmd-block {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2), inset 0 2px 0 rgba(255,255,255,0.2);
+            transition: transform 0.1s;
+        }
+        .cmd-block:active {
+            cursor: grabbing;
+        }
+        .cmd-block.move { background: linear-gradient(180deg, #3b82f6, #2563eb); border: 1px solid #1d4ed8; }
+        .cmd-block.turn { background: linear-gradient(180deg, #8b5cf6, #7c3aed); border: 1px solid #6d28d9; }
+        .cmd-block.loop { background: linear-gradient(180deg, #f59e0b, #d97706); border: 1px solid #b45309; }
+
+        /* Workspace */
+        .workspace-wrapper {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        #workspace {
+            min-height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Execution Controls */
+        .controls {
+            padding: 16px 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+        .btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+        
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-clear:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Status & Feedback */
+        .efficiency-rating {
+            display: flex;
+            gap: 4px;
+            color: var(--text-muted);
+        }
+        .efficiency-rating .fa-star.active {
+            color: #fbbf24;
+            filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5));
+        }
+
+        /* Success Modal */
+        #modal-success {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            max-width: 400px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="game-header">
+        <div class="game-title">
+            <i class="fa-solid fa-space-awesome" style="color: #38bdf8;"></i> Code Rover
+        </div>
+        <div class="level-info">
+            <div class="efficiency-rating" id="ui-stars">
+                <!-- Stars will be injected here -->
+            </div>
+            <select id="level-select" style="background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px;">
+                <option value="1">Level 1: Ignition</option>
+                <option value="2">Level 2: Turn Around</option>
+                <option value="3">Level 3: The Maze</option>
+            </select>
+            <a href="index.html" class="btn-nav"><i class="fa-solid fa-house"></i> กลับหน้าหลัก</a>
+        </div>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="game-container">
+        
+        <!-- Canvas Viewer -->
+        <section class="canvas-wrapper">
+            <div class="level-overlay">
+                <h2 id="lvl-title">ด่านที่ 1: สตาร์ทเครื่อง</h2>
+                <p id="lvl-desc">เขียนโปรแกรมสั่งให้ Rover เดินทางไปเก็บกล่องพลังงาน</p>
+            </div>
+            <canvas id="gameCanvas" width="600" height="600"></canvas>
+        </section>
+
+        <!-- Code Workspace -->
+        <section class="code-panel">
+            
+            <div class="palette">
+                <div class="palette-title">ชุดคำสั่ง (Blocks)</div>
+                <div class="block-list">
+                    <div class="cmd-block move" draggable="true" data-cmd="forward">
+                        <i class="fa-solid fa-arrow-up"></i> เดินหน้า
+                    </div>
+                    <div class="cmd-block turn" draggable="true" data-cmd="turnLeft">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> หันซ้าย
+                    </div>
+                    <div class="cmd-block turn" draggable="true" data-cmd="turnRight">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> หันขวา
+                    </div>
+                </div>
+            </div>
+
+            <div class="workspace-wrapper">
+                <div class="palette-title">พื้นที่เขียนโปรแกรม (ลากคำสั่งมาวางที่นี่)</div>
+                <div id="workspace">
+                    <!-- Blocks go here -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn-clear" id="btn-clear"><i class="fa-solid fa-trash-can"></i> ล้างคำสั่ง</button>
+                <button class="btn-run" id="btn-run"><i class="fa-solid fa-play"></i> รันโปรแกรม</button>
+            </div>
+            
+        </section>
+
+    </main>
+
+    <!-- Modal Success -->
+    <div id="modal-success">
+        <div class="modal-content">
+            <i class="fa-solid fa-check-circle" style="font-size: 64px; color: #10b981; margin-bottom: 20px;"></i>
+            <h2 style="font-family: 'Chakra Petch', sans-serif; font-size: 28px; margin-bottom: 10px;">ภารกิจสำเร็จ!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">โค้ดของคุณทำงานได้อย่างสมบูรณ์</p>
+            <div id="modal-stars" style="font-size: 32px; margin-bottom: 30px; display: flex; justify-content: center; gap: 10px;">
+                <!-- Stars result -->
+            </div>
+            <button id="btn-next-level" class="btn-run" style="width: 100%; justify-content: center;">ด่านต่อไป <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Game Engine Scripts -->
+    <script src="game-2d.js"></script>
+</body>
+</html>

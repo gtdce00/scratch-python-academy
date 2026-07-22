@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch Academy - ก้าวแรกสู่โลกการเขียนโปรแกรม</title>
+    <!-- Google Fonts: Kanit & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css?v=3">
+    <style>
+        /* Top Navigation Bar Layout Overrides to bypass browser caching */
+        .app-container {
+            display: flex !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+        }
+        .sidebar {
+            width: 100% !important;
+            background-color: #111827 !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-right: none !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            position: sticky !important;
+            top: 0 !important;
+            height: 70px !important;
+            left: 0 !important;
+            z-index: 100 !important;
+            padding: 0 24px !important;
+            box-sizing: border-box !important;
+        }
+        .sidebar-brand {
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            border-bottom: none !important;
+            flex-shrink: 0 !important;
+        }
+        .brand-text h2 {
+            font-size: 18px !important;
+        }
+        .brand-text span {
+            font-size: 12px !important;
+            letter-spacing: 0.5px !important;
+        }
+        .sidebar-menu {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            flex-grow: 1 !important;
+            padding: 0 !important;
+            margin-left: 24px !important;
+            overflow: visible !important;
+            gap: 8px !important;
+        }
+        .menu-item {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 8px 14px !important;
+            margin-bottom: 0 !important;
+            white-space: nowrap !important;
+            font-size: 13px !important;
+            flex-shrink: 0 !important;
+        }
+        .sidebar-footer {
+            display: none !important;
+        }
+        .sidebar-category-header {
+            display: none !important;
+        }
+        .main-content {
+            margin-left: 0 !important;
+            min-height: calc(100vh - 70px) !important;
+        }
+        @media (max-width: 1024px) {
+            .brand-text {
+                display: none !important;
+            }
+            .sidebar {
+                width: 100% !important;
+                height: 70px !important;
+                padding: 0 16px !important;
+                flex-direction: row !important;
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+            .menu-item {
+                font-size: 13px !important;
+            }
+            .menu-item span {
+                display: inline !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <!-- Custom SVG Logo representing Scratch / Coding -->
+                    <svg viewBox="0 0 100 100" width="50" height="50">
+                        <circle cx="50" cy="50" r="45" fill="#FFAB19" />
+                        <path d="M30 40 Q40 20 60 30 T80 50 T60 70 T30 50 Z" fill="#4D97FF" opacity="0.8"/>
+                        <path d="M40 45 Q50 35 60 45 T70 55" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="45" cy="48" r="4" fill="#FFFFFF" />
+                        <circle cx="65" cy="48" r="4" fill="#FFFFFF" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h2>Scratch</h2>
+                    <span>Academy</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <!-- หน้าแรก -->
+                <a href="#home" class="menu-item active" data-tab="home">
+                    <i class="fa-solid fa-house"></i> หน้าแรก
+                </a>
+
+                <!-- Dropdown: แนะนำการใช้งาน -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-cat"></i> แนะนำการใช้งาน <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#about" class="menu-item" data-tab="about">
+                            <i class="fa-solid fa-circle-info"></i> โปรแกรม Scratch คืออะไร?
+                        </a>
+                        <a href="#install" class="menu-item" data-tab="install">
+                            <i class="fa-solid fa-download"></i> การติดตั้งโปรแกรม
+                        </a>
+                        <a href="#interface" class="menu-item" data-tab="interface">
+                            <i class="fa-solid fa-desktop"></i> ส่วนประกอบโปรแกรม
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: บทเรียน Scratch -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-puzzle-piece"></i> บทเรียน Scratch <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#flowchart" class="menu-item" data-tab="flowchart">
+                            <i class="fa-solid fa-diagram-project"></i> เรื่องผังงาน (Flowchart)
+                        </a>
+                        <a href="#variables" class="menu-item" data-tab="variables">
+                            <i class="fa-solid fa-box-archive"></i> ตัวแปร & ตัวดำเนินการ
+                        </a>
+                        <a href="#activities" class="menu-item" data-tab="activities">
+                            <i class="fa-solid fa-gamepad"></i> กิจกรรมฝึกเขียนโค้ด
+                        </a>
+                        <a href="motion.html" class="menu-item">
+                            <i class="fa-solid fa-arrows-up-down-left-right"></i> คลังบล็อกคำสั่ง Scratch
+                        </a>
+                        <a href="mission.html" class="menu-item">
+                            <i class="fa-solid fa-trophy"></i> เกมผ่านด่าน 20 ด่าน (Lab)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: บทเรียน Python -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-brands fa-python"></i> บทเรียน Python <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="python-learn.html" class="menu-item">
+                            <i class="fa-brands fa-python"></i> เรียนรู้ Python เบื้องต้น
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Dropdown: ประเมินผลรูบริก & สอบ -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-solid fa-square-poll-vertical"></i> การวัดผลสัมฤทธิ์ <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="#quiz" class="menu-item" data-tab="quiz">
+                            <i class="fa-solid fa-award"></i> แบบทดสอบ Pre/Post test
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="text-center" style="font-size: 11px; color: var(--text-muted); font-family: var(--font-headers);">
+                    Scratch Academy © 2026
+                </div>
+            </div>
+        </aside>
+
+        <!-- ════════════════════════════════════════════════════ -->
+        <!-- LOGIN MODAL (shown on first visit)                   -->
+        <!-- ════════════════════════════════════════════════════ -->
+        <div id="login-modal" style="display:none; position:fixed; inset:0; z-index:10000;
+            background:linear-gradient(135deg,#0a0f1a 0%,#111827 100%);
+            align-items:center; justify-content:center; flex-direction:column; padding:20px;">
+
+            <div style="max-width:440px; width:100%; background:rgba(255,255,255,0.03);
+                border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:40px 36px;
+                box-shadow:0 30px 80px rgba(0,0,0,0.5);">
+
+                <!-- Logo -->
+                <div style="text-align:center; margin-bottom:28px;">
+                    <div style="font-size:48px; margin-bottom:12px;">🐱</div>
+                    <h2 style="font-family:var(--font-headers); color:white; font-size:22px; margin:0 0 6px 0;">Scratch Academy</h2>
+                    <p style="color:rgba(255,255,255,0.4); font-size:13px; margin:0;">กรุณากรอกข้อมูลก่อนเข้าเรียน</p>
+                </div>
+
+                <!-- Error message -->
+                <div id="login-error" style="display:none; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3);
+                    color:#f87171; border-radius:10px; padding:10px 14px; font-size:12px; margin-bottom:16px; text-align:center;"></div>
+
+                <!-- Form -->
+                <div style="display:flex; gap:12px; margin-bottom:14px;">
+                    <div style="flex:1;">
+                        <label style="font-size:11px; color:rgba(255,255,255,0.4); display:block; margin-bottom:6px; font-family:var(--font-headers);">ชื่อจริง *</label>
+                        <input id="login-firstname" type="text" placeholder="เช่น สมชาย"
+                            style="width:100%; box-sizing:border-box; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+                            color:white; border-radius:10px; padding:10px 14px; font-size:13px; outline:none; font-family:var(--font-body);"
+                            autocomplete="given-name">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:11px; color:rgba(255,255,255,0.4); display:block; margin-bottom:6px; font-family:var(--font-headers);">นามสกุล *</label>
+                        <input id="login-lastname" type="text" placeholder="เช่น ใจดี"
+                            style="width:100%; box-sizing:border-box; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+                            color:white; border-radius:10px; padding:10px 14px; font-size:13px; outline:none; font-family:var(--font-body);"
+                            autocomplete="family-name">
+                    </div>
+                </div>
+
+                <div style="margin-bottom:22px;">
+                    <label style="font-size:11px; color:rgba(255,255,255,0.4); display:block; margin-bottom:6px; font-family:var(--font-headers);">รหัสห้องเรียน *</label>
+                    <input id="login-classcode" type="text" placeholder="เช่น M101 หรือ P601 (รับจากครู)"
+                        style="width:100%; box-sizing:border-box; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+                        color:white; border-radius:10px; padding:10px 14px; font-size:13px; outline:none; font-family:var(--font-body); text-transform:uppercase;"
+                        autocomplete="off" maxlength="10">
+                    <div style="font-size:10px; color:rgba(255,255,255,0.25); margin-top:6px; line-height:1.5;">
+                        รหัสห้อง: P101-P603 (ประถม), M101-M303 (มัธยม)
+                    </div>
+                </div>
+
+                <button id="btn-login-confirm"
+                    style="width:100%; background:linear-gradient(135deg,#fb923c,#f97316); border:none; color:#1a1a1a;
+                    font-size:15px; font-weight:800; padding:14px; border-radius:12px; cursor:pointer;
+                    font-family:var(--font-headers); transition:opacity .2s; letter-spacing:.3px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ
+                </button>
+
+                <p style="text-align:center; margin-top:16px; font-size:11px; color:rgba(255,255,255,0.25); line-height:1.6;">
+                    ข้อมูลของนักเรียนจะถูกบันทึกเพื่อติดตามพัฒนาการเท่านั้น<br>ไม่มีการเปิดเผยสู่ภายนอก
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header Status Bar -->
+            <header class="content-header" style="flex-wrap: wrap; gap: 12px; align-items: center;">
+                <div class="header-title">
+                    <h1 id="page-title">ยินดีต้อนรับสู่ Scratch Academy</h1>
+                </div>
+                <div class="header-student-profile" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; flex-wrap: wrap;">
+                    <i class="fa-solid fa-user-graduate" style="color: var(--primary-orange); font-size: 13px;"></i>
+                    <span id="header-student-display" style="color:white; font-size:12px; font-weight:600; max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">ผู้เรียนนิรนาม</span>
+                    <span id="header-class-badge" style="display:none; background:rgba(251,146,60,0.15); border:1px solid rgba(251,146,60,0.4); color:#fb923c; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px;"></span>
+                    <button id="btn-change-student" title="เปลี่ยนชื่อหรือห้องเรียน"
+                        style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.5); font-size:10px; padding:3px 8px; border-radius:8px; cursor:pointer;">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <input type="hidden" id="header-student-firstname">
+                    <input type="hidden" id="header-student-lastname">
+                    <input type="hidden" id="header-student-name">
+                </div>
+                <div class="header-progress">
+                    <span class="progress-text">ระดับการเรียนรู้: <strong id="progress-percent">0%</strong></span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="learning-progress"></div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Screens -->
+            <div class="content-wrapper">
+                
+                <!-- 1. Home Screen -->
+                <section id="home-tab" class="tab-panel active">
+                    <div class="hero-section">
+                        <div class="hero-content">
+                            <span class="hero-badge">หลักสูตรอบรมการเขียนโปรแกรมคอมพิวเตอร์เพื่อการศึกษา</span>
+                            <h1>การเขียนโปรแกรมคอมพิวเตอร์เบื้องต้น<br><span class="highlight-text">ด้วยโปรแกรม Scratch</span></h1>
+                            <p>ยินดีต้อนรับเด็กๆ และผู้ที่สนใจทุกคน! เว็บไซต์นี้จะพาเด็กๆ ไปทำความรู้จักกับพื้นฐานของการคิดอย่างเป็นระบบ การวางแผนงานด้วยผังงาน (Flowchart) และการเริ่มต้นสั่งการคอมพิวเตอร์ด้วยการต่อบล็อกคำสั่ง Scratch ซึ่งเป็นรากฐานที่สำคัญที่สุดก่อนจะก้าวเข้าสู่โลกของนักเขียนโปรแกรมตัวจริง!</p>
+                            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                <button class="btn btn-primary btn-large btn-start-learning">
+                                    <i class="fa-solid fa-play"></i> เริ่มการเรียนที่แสนสนุกกันเถอะ!
+                                </button>
+                                <a href="motion.html" class="btn btn-orange btn-large" style="text-decoration: none;">
+                                    <i class="fa-solid fa-arrows-up-down-left-right"></i> คลังบล็อกคำสั่ง
+                                </a>
+                                <a href="mission.html" class="btn btn-purple btn-large" style="text-decoration: none; background-color: var(--scratch-purple); border-color: var(--scratch-purple); color: white;">
+                                    <i class="fa-solid fa-trophy"></i> เกมผ่านด่าน 20 ด่าน
+                                </a>
+                                <a href="python-learn.html" class="btn btn-large" style="text-decoration: none; background-color: #306998; border-color: #306998; color: white;">
+                                    <i class="fa-brands fa-python"></i> เริ่มต้นเขียน Python <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                                <a href="game-2d.html" class="btn btn-large" style="text-decoration: none; background-color: #10b981; border-color: #059669; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
+                                    <i class="fa-solid fa-gamepad"></i> โซนเกม 2 มิติ (ใหม่!)
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hero-image">
+                            <!-- Animated SVG Boy Coding with Scratch Blocks -->
+                            <svg viewBox="0 0 400 400" width="100%" height="100%">
+                                <defs>
+                                    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#4D97FF" />
+                                        <stop offset="100%" stop-color="#005DFF" />
+                                    </linearGradient>
+                                    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#FFAB19" />
+                                        <stop offset="100%" stop-color="#FF8C00" />
+                                    </linearGradient>
+                                </defs>
+                                <circle cx="200" cy="200" r="180" fill="url(#blueGrad)" opacity="0.1" />
+                                <!-- Laptop screen representation -->
+                                <rect x="80" y="100" width="240" height="160" rx="10" fill="#1e293b" stroke="#4D97FF" stroke-width="4" />
+                                <rect x="95" y="115" width="210" height="130" rx="4" fill="#334155" />
+                                <!-- Laptop base -->
+                                <path d="M50 260 L350 260 L370 280 L30 280 Z" fill="#64748b" />
+                                <rect x="170" y="260" width="60" height="8" fill="#475569" />
+                                <!-- Code Block representing Scratch Orange -->
+                                <g transform="translate(110, 130) scale(0.8)">
+                                    <rect width="120" height="30" rx="8" fill="url(#orangeGrad)" />
+                                    <text x="10" y="20" fill="white" font-family="Kanit" font-size="12" font-weight="bold">when green flag clicked</text>
+                                </g>
+                                <g transform="translate(130, 160) scale(0.8)">
+                                    <rect width="100" height="30" rx="8" fill="#4D97FF" />
+                                    <text x="10" y="20" fill="white" font-family="Kanit" font-size="12">move 10 steps</text>
+                                </g>
+                                <g transform="translate(130, 190) scale(0.8)">
+                                    <rect width="100" height="30" rx="8" fill="#9966FF" />
+                                    <text x="10" y="20" fill="white" font-family="Kanit" font-size="12">say Hello!</text>
+                                </g>
+                                <!-- Mascot Scratch Cat Silhouette -->
+                                <g transform="translate(230, 150) scale(0.6)">
+                                    <circle cx="80" cy="80" r="40" fill="#FFAB19" />
+                                    <!-- Ears -->
+                                    <polygon points="50,50 40,20 70,45" fill="#FFAB19" />
+                                    <polygon points="110,50 120,20 90,45" fill="#FFAB19" />
+                                    <!-- Eyes -->
+                                    <circle cx="65" cy="75" r="10" fill="white" />
+                                    <circle cx="65" cy="75" r="4" fill="black" />
+                                    <circle cx="95" cy="75" r="10" fill="white" />
+                                    <circle cx="95" cy="75" r="4" fill="black" />
+                                    <!-- Snout -->
+                                    <polygon points="80,82 76,86 84,86" fill="#F87171" />
+                                    <!-- Smile -->
+                                    <path d="M72 90 Q80 100 88 90" fill="none" stroke="black" stroke-width="2" />
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon orange-bg"><i class="fa-solid fa-puzzle-piece"></i></div>
+                            <h3>เรียนรู้ด้วยบล็อกคำสั่ง</h3>
+                            <p>เข้าใจง่าย ไม่จำเป็นต้องพิมพ์คำสั่งยาวๆ ช่วยให้มองเห็นภาพการทำงานของคำสั่งได้ชัดเจนและไม่พิมพ์ผิดไวยากรณ์</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon blue-bg"><i class="fa-solid fa-diagram-project"></i></div>
+                            <h3>ออกแบบขั้นตอนผ่านผังงาน</h3>
+                            <p>ฝึกฝนการเขียนลำดับขั้นตอนความคิดผ่านผังงาน (Flowchart) ด้วยสัญลักษณ์ที่เป็นสากล ก่อนเริ่มต้นโค้ดจริง</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon purple-bg"><i class="fa-solid fa-code"></i></div>
+                            <h3>ตัวแปรและตัวดำเนินการ</h3>
+                            <p>ทำความเข้าใจเรื่อง 'กล่องวิเศษ' (ตัวแปร) ที่ใช้จองพื้นที่ในสมองคอมพิวเตอร์ และฝึกการคิดเลขด้วยตัวดำเนินการ</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. What is Scratch Tab -->
+                <section id="about-tab" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>โปรแกรม Scratch คืออะไร ?</h2>
+                            <p class="lead-text"><strong>Scratch</strong> เป็นโปรแกรมสร้างสื่อมัลติมีเดียที่ใช้งานได้ทั้งแบบ<strong>ออฟไลน์ (Offline)</strong> และ<strong>ออนไลน์ (Online)</strong></p>
+                            <p>เหมาะอย่างยิ่งสำหรับนักเรียน นักวิชาการ ครู และผู้ปกครองที่ต้องการสร้างชิ้นงานการศึกษา หรือเพื่อความบันเทิง เช่น:</p>
+                            <ul class="styled-list">
+                                <li><i class="fa-solid fa-circle-check"></i> โครงงานคณิตศาสตร์และวิทยาศาสตร์</li>
+                                <li><i class="fa-solid fa-circle-check"></i> แบบจำลองและสถานการณ์จำลองเพื่อการเรียนรู้</li>
+                                <li><i class="fa-solid fa-circle-check"></i> งานนำเสนอ สื่อเคลื่อนไหว เล่าเรื่องราว (Animation)</li>
+                                <li><i class="fa-solid fa-circle-check"></i> งานด้านศิลปะ ดนตรีแบบมีปฏิสัมพันธ์ และเกมส์ง่ายๆ</li>
+                            </ul>
+                        </div>
+                        <div class="visual-side">
+                            <div class="cat-card">
+                                <div class="mascot-cat-svg-inline">
+                                    <svg viewBox="0 0 100 100" width="120" height="120">
+                                        <!-- stylized flat scratch cat SVG -->
+                                        <ellipse cx="50" cy="55" rx="35" ry="30" fill="#FFAB19" />
+                                        <!-- Ears -->
+                                        <polygon points="25,35 15,10 38,28" fill="#FFAB19" />
+                                        <polygon points="75,35 85,10 62,28" fill="#FFAB19" />
+                                        <polygon points="27,33 20,15 35,27" fill="#F87171" opacity="0.6"/>
+                                        <polygon points="73,33 80,15 65,27" fill="#F87171" opacity="0.6"/>
+                                        <!-- Cheeks -->
+                                        <ellipse cx="25" cy="58" rx="8" ry="5" fill="#F87171" opacity="0.3" />
+                                        <ellipse cx="75" cy="58" rx="8" ry="5" fill="#F87171" opacity="0.3" />
+                                        <!-- Eyes -->
+                                        <circle cx="38" cy="48" r="9" fill="white" />
+                                        <circle cx="38" cy="48" r="4" fill="#000" />
+                                        <circle cx="62" cy="48" r="9" fill="white" />
+                                        <circle cx="62" cy="48" r="4" fill="#000" />
+                                        <!-- Nose -->
+                                        <polygon points="50,56 46,60 54,60" fill="#F87171" />
+                                        <!-- Mouth / Smile -->
+                                        <path d="M44 64 Q50 72 56 64" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                                        <!-- Whiskers -->
+                                        <line x1="15" y1="52" x2="5" y2="52" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                                        <line x1="15" y1="58" x2="3" y2="60" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                                        <line x1="85" y1="52" x2="95" y2="52" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                                        <line x1="85" y1="58" x2="97" y2="60" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                                        <!-- Feet -->
+                                        <circle cx="35" cy="85" r="8" fill="#FFAB19" />
+                                        <circle cx="65" cy="85" r="8" fill="#FFAB19" />
+                                        <!-- Tail -->
+                                        <path d="M82 65 Q95 70 90 50" fill="none" stroke="#FFAB19" stroke-width="10" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                                <span class="mascot-speech">สวัสดีคร้าบ! ผมเหมียวส้ม ยินดีที่ได้รู้จักครับ!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-content-card reversed">
+                        <div class="text-content">
+                            <h2>โครงสร้างสองขุมพลังของ Scratch</h2>
+                            <p>โปรแกรม Scratch ประกอบไปด้วย 2 ส่วนสำคัญ ได้แก่:</p>
+                            <div class="two-columns">
+                                <div class="col-item text-center">
+                                    <div class="concept-icon"><i class="fa-solid fa-laptop-code"></i></div>
+                                    <h4>1. โปรแกรมคอมพิวเตอร์</h4>
+                                    <p>มีหน้าที่ในการสร้าง จัดการภาพ เสียง และสคริปต์ (Script) ในชิ้นงานของเรา</p>
+                                </div>
+                                <div class="col-item text-center">
+                                    <div class="concept-icon"><i class="fa-solid fa-comments"></i></div>
+                                    <h4>2. ภาษาคอมพิวเตอร์ (ภาษา Scratch)</h4>
+                                    <p>ทำหน้าที่ผสาน ภาพ เสียง สร้างกระบวนการ และการโต้ตอบกับผู้ใช้งาน</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>ทำไมต้องเป็น "การเขียนโปรแกรมแบบบล็อก" (Block Programming)?</h2>
+                            <p>การเขียนโปรแกรมใน Scratch มีความแตกต่างจากภาษาคอมพิวเตอร์ทั่วไป คือ <strong>"เราใช้วิธีลากบล็อกคำสั่งมาเชื่อมต่อกันแทนการพิมพ์โค้ด"</strong> ซึ่งมีข้อดีดังนี้:</p>
+                            <div class="blocks-benefits">
+                                <div class="benefit-box"><i class="fa-solid fa-eye"></i> มองเห็นขั้นตอนการทำงานเป็นภาพ เข้าใจง่ายทันที</div>
+                                <div class="benefit-box"><i class="fa-solid fa-shield-halved"></i> ลดความผิดพลาดจากการสะกดคำหรือพิมพ์ไวยากรณ์ผิด</div>
+                                <div class="benefit-box"><i class="fa-solid fa-circle-nodes"></i> บล็อกมีรูปร่างเฉพาะที่ถูกออกแบบให้ต่อเข้ากันได้เฉพาะคู่ที่ถูกต้องเท่านั้น ป้องกันการรันโปรแกรมผิดรูปแบบ</div>
+                            </div>
+                        </div>
+                        <!-- Mini drag-and-snap block simulation -->
+                        <div class="visual-side">
+                            <div class="block-snap-widget">
+                                <h3>ทดลองลากต่อบล็อกดูสิ!</h3>
+                                <p class="widget-subtitle">ลากบล็อกสีฟ้ามาวางต่อใต้บล็อกสีส้มให้ลงล็อกพอดี</p>
+                                <div class="snap-game-container">
+                                    <!-- Target area -->
+                                    <div class="block-orange-parent">
+                                        <div class="scratch-block-visual hat scratch-events" style="margin-top: 0;">
+                                            เมื่อคลิก <span class="green-flag-icon" style="color: #40BF50; margin: 0 4px;"><i class="fa-solid fa-flag"></i></span>
+                                        </div>
+                                        <div class="block-snap-zone" id="snap-target">
+                                            <span class="zone-label">วางบล็อกต่อตรงนี้</span>
+                                        </div>
+                                    </div>
+                                    <!-- Draggable source -->
+                                    <div class="block-source-area">
+                                        <div class="scratch-block-visual stack scratch-motion draggable" draggable="true" id="draggable-block-move" style="cursor: grab;">
+                                            เดินหน้า <span class="scratch-input-pill">10</span> ก้าว
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="snap-feedback" id="snap-game-feedback">
+                                    <i class="fa-regular fa-lightbulb"></i> พยายามลากบล็อก 'เดินหน้า 10 ก้าว' มาวางตรงช่องประสีส้มนะ!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Installation Tab -->
+                <section id="install-tab" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>เครื่องมือที่จำเป็นในการออกแบบและพัฒนา Scratch</h2>
+                            <p>ก่อนเริ่มต้นพัฒนาชิ้นงานจริง นักเขียนโปรแกรมจะใช้เครื่องมือต่างๆ ในการวางแผนและเตรียมงาน ดังนี้:</p>
+                            <div class="tools-grid">
+                                <div class="tool-desc-card">
+                                    <div class="tool-icon-circle word-icon"><i class="fa-solid fa-file-word"></i></div>
+                                    <h5>1. โปรแกรมเขียนผังงาน (Flowchart)</h5>
+                                    <p>เช่น Microsoft Visio หรือ Microsoft Word ใช้จัดเรียงลำดับความคิดอย่างเป็นขั้นเป็นตอน</p>
+                                </div>
+                                <div class="tool-desc-card">
+                                    <div class="tool-icon-circle ppt-icon"><i class="fa-solid fa-file-powerpoint"></i></div>
+                                    <h5>2. โปรแกรมออกแบบหน้าจอ</h5>
+                                    <p>เช่น Microsoft PowerPoint ใช้วางองค์ประกอบของหน้าจอ วาดภาพร่างตัวละครและฉากหลัง</p>
+                                </div>
+                                <div class="tool-desc-card">
+                                    <div class="tool-icon-circle scratch-icon"><i class="fa-solid fa-cubes"></i></div>
+                                    <h5>3. โปรแกรมพัฒนาระบบ</h5>
+                                    <p>โปรแกรม Scratch Version 3.0 สำหรับการเขียนโปรแกรมสั่งการ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Installer Simulation -->
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>วิธีการติดตั้งโปรแกรม Scratch Desktop (Version 3.0)</h2>
+                            <p>ทำความคุ้นเคยกับขั้นตอนการติดตั้งลงบนเครื่องคอมพิวเตอร์ของคุณ โดยการทดลองกดจำลองการติดตั้งผ่านหน้าต่างจำลองด้านขวานี้!</p>
+                            <ol class="step-list">
+                                <li class="step-list-item" data-step="1">เข้าสู่เว็บไซต์ <strong>scratch.mit.edu/download</strong> เพื่อดาวน์โหลดไฟล์</li>
+                                <li class="step-list-item" data-step="2">กดปุ่ม <strong>Direct Download</strong> เพื่อดาวน์โหลดตัวติดตั้ง</li>
+                                <li class="step-list-item" data-step="3">เปิดตัวติดตั้งและเลือกระหว่าง <strong>Anyone</strong> (ทุกคนในเครื่อง) หรือ <strong>Only for me</strong> (เฉพาะบัญชีเรา) แล้วกด <strong>Install</strong></li>
+                                <li class="step-list-item" data-step="4">เมื่อสิ้นสุดขั้นตอน กดปุ่ม <strong>Finish</strong> เพื่อเริ่มเปิดใช้งานโปรแกรมทันที!</li>
+                            </ol>
+                        </div>
+                        <div class="visual-side">
+                            <div class="virtual-installer-widget">
+                                <div class="installer-header">
+                                    <span class="dot red-dot"></span>
+                                    <span class="dot yellow-dot"></span>
+                                    <span class="dot green-dot"></span>
+                                    <span class="installer-title">ตัวจำลองการติดตั้ง Scratch Desktop Setup</span>
+                                </div>
+                                <div class="installer-body" id="installer-screen">
+                                    <!-- Step 1 View: Download -->
+                                    <div class="install-step" id="install-step-1">
+                                        <h4>ขั้นตอนที่ 1: ดาวน์โหลดตัวติดตั้ง</h4>
+                                        <p>จากหน้าเว็บไซต์ดาวน์โหลด Scratch Desktop</p>
+                                        <div class="fake-browser-page">
+                                            <div class="browser-address-bar">scratch.mit.edu/download</div>
+                                            <div class="fake-page-content text-center">
+                                                <div class="installer-logo-big"><i class="fa-solid fa-cubes" style="color: #FFAB19; font-size: 40px;"></i></div>
+                                                <p>เลือกรับโปรแกรมสำหรับ Windows หรือ macOS</p>
+                                                <button class="btn btn-fake-download" id="btn-fake-download">
+                                                    <i class="fa-solid fa-arrow-down-to-bracket"></i> Direct download
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- JavaScript will load other steps dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. Variables & Operators Tab -->
+                <section id="variables-tab" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>ตัวแปร (Variable) คืออะไร ?</h2>
+                            <p class="lead-text">ลองนึกภาพ <strong>"กล่องกระดาษใส่ของ"</strong> ที่เราติดป้ายชื่อเอาไว้ นั่นแหละคือตัวแปร!</p>
+                            <p><strong>ตัวแปร (Variable)</strong> ในคอมพิวเตอร์คือ การจองพื้นที่ในหน่วยความจำ เพื่อไว้เก็บข้อมูลที่จำเป็นสำหรับการทำงานของโปรแกรม โดยเราจะต้องตั้งชื่อเรียกข้อมูลช่องนั้น เพื่อความสะดวกในการเรียกใช้ เช่น หากจะใช้กล่องนั้นทำอะไร ก็สามารถอ้างผ่านป้ายชื่อตัวแปรที่เก็บค่าเอาไว้ได้เลย</p>
+                        </div>
+                        <div class="visual-side">
+                            <!-- Interactive Variable Box Widget -->
+                            <div class="variable-box-widget">
+                                <h3>ทดลองระบบ 'กล่องตัวแปรมหัศจรรย์'</h3>
+                                <p class="widget-subtitle">จำลองป้อนสมการ <strong>num = <span id="var-expr-left">5</span> + <span id="var-expr-right">1</span></strong></p>
+                                
+                                <div class="box-visual-container">
+                                    <!-- Math Flow visualization -->
+                                    <div class="math-flow">
+                                        <span class="math-term term-a">5</span>
+                                        <span class="math-op">+</span>
+                                        <span class="math-term term-b">1</span>
+                                    </div>
+                                    <!-- The Box -->
+                                    <div class="magic-box-card" id="variable-box-object">
+                                        <div class="box-lid"></div>
+                                        <div class="box-body-front">
+                                            <span class="box-label">num</span>
+                                        </div>
+                                        <div class="box-value-inside" id="box-stored-value">?</div>
+                                    </div>
+                                    <!-- User character visualization -->
+                                    <div class="child-mascot-hand">
+                                        <i class="fa-solid fa-child-reaching" style="font-size: 32px; color: #4D97FF;"></i>
+                                        <div class="result-bubble" id="result-bubble-val">ผลลัพธ์ = 6</div>
+                                    </div>
+                                </div>
+
+                                <div class="control-box-inputs">
+                                    <div class="input-group-inline">
+                                        <label>ลองเปลี่ยนตัวเลข:</label>
+                                        <input type="number" id="input-var-a" value="5" min="0" max="99">
+                                        <span>+</span>
+                                        <input type="number" id="input-var-b" value="1" min="0" max="99">
+                                    </div>
+                                    <button class="btn btn-orange" id="btn-run-box-sim">
+                                        <i class="fa-solid fa-play"></i> คำนวณใส่กล่องตัวแปร!
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operators Section -->
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>ตัวดำเนินการ (Operators)</h2>
+                            <p>ตัวดำเนินการจะถูกนำไปใช้งานร่วมกับตัวแปรและค่าคงที่ เพื่อกระทำสิ่งต่างๆ เช่น การคูณเลข การเปรียบเทียบค่า หรือตรวจสอบความถูกต้อง โดยแบ่งออกเป็น <strong>3 ประเภทหลัก</strong>:</p>
+                            
+                            <!-- Tabs inside tab for operators -->
+                            <div class="sub-tabs-container">
+                                <div class="sub-tabs-header">
+                                    <button class="sub-tab-btn active" data-subtab="op-arith">1. คณิตศาสตร์</button>
+                                    <button class="sub-tab-btn" data-subtab="op-rel">2. เปรียบเทียบ</button>
+                                    <button class="sub-tab-btn" data-subtab="op-logic">3. ตรรกศาสตร์</button>
+                                </div>
+                                <div class="sub-tab-content active" id="op-arith">
+                                    <h4>ตัวดำเนินการคณิตศาสตร์ (Arithmetic Operators)</h4>
+                                    <p>ใช้คำนวณตัวเลขระหว่างสองค่าเพื่อหาผลลัพธ์ทางคณิตศาสตร์</p>
+                                    <table class="operator-table">
+                                        <thead>
+                                            <tr>
+                                                <th>สัญลักษณ์</th>
+                                                <th>ชื่อตัวดำเนินการ</th>
+                                                <th>ตัวอย่าง</th>
+                                                <th>คำอธิบาย</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="badge badge-op">+</span></td>
+                                                <td>การบวก (Addition)</td>
+                                                <td><code>c = a + b</code></td>
+                                                <td>นำค่าของ a และ b มารวมกัน</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">-</span></td>
+                                                <td>การลบ (Subtraction)</td>
+                                                <td><code>c = a - b</code></td>
+                                                <td>หักออกด้วยค่าของ b จากค่า a</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">*</span></td>
+                                                <td>การคูณ (Multiplication)</td>
+                                                <td><code>c = a * b</code></td>
+                                                <td>คูณค่าของ a ด้วยค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">/</span></td>
+                                                <td>การหาร (Division)</td>
+                                                <td><code>c = a / b</code></td>
+                                                <td>หารค่าของ a ด้วยค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">%</span></td>
+                                                <td>การหารเอาเศษ (Modulo)</td>
+                                                <td><code>c = a % b</code></td>
+                                                <td>หารจำนวนเต็มแล้วเอาเศษที่เหลือจากการหาร (เช่น 5 % 2 ได้ 1)</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="sub-tab-content" id="op-rel">
+                                    <h4>ตัวดำเนินการเปรียบเทียบ (Relational & Comparison Operators)</h4>
+                                    <p>ใช้ประเมินค่าระหว่างสองค่าเพื่อหาผลลัพธ์ว่าเป็น <strong>จริง (True)</strong> หรือ <strong>เท็จ (False)</strong></p>
+                                    <table class="operator-table">
+                                        <thead>
+                                            <tr>
+                                                <th>สัญลักษณ์</th>
+                                                <th>ตัวอย่าง</th>
+                                                <th>ผลลัพธ์ที่จะเป็นจริง (True)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><span class="badge badge-op">==</span></td>
+                                                <td><code>a == b</code></td>
+                                                <td>เมื่อค่าของ a <strong>เท่ากับ</strong> ค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">!=</span></td>
+                                                <td><code>a != b</code></td>
+                                                <td>เมื่อค่าของ a <strong>ไม่เท่ากับ</strong> ค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">&lt;</span></td>
+                                                <td><code>a &lt; b</code></td>
+                                                <td>เมื่อค่าของ a <strong>น้อยกว่า</strong> ค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">&gt;</span></td>
+                                                <td><code>a &gt; b</code></td>
+                                                <td>เมื่อค่าของ a <strong>มากกว่า</strong> ค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">&lt;=</span></td>
+                                                <td><code>a &lt;= b</code></td>
+                                                <td>เมื่อค่าของ a <strong>น้อยกว่าหรือเท่ากับ</strong> ค่าของ b</td>
+                                            </tr>
+                                            <tr>
+                                                <td><span class="badge badge-op">&gt;=</span></td>
+                                                <td><code>a &gt;= b</code></td>
+                                                <td>เมื่อค่าของ a <strong>มากกว่าหรือเท่ากับ</strong> ค่าของ b</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="sub-tab-content" id="op-logic">
+                                    <h4>ตัวดำเนินการทางตรรกศาสตร์ (Logical Operators)</h4>
+                                    <p>ใช้ผสานหลายเงื่อนไขย่อยให้เหลือผลลัพธ์เดียว โดยปลายทางสุดท้ายจะเป็นจริงหรือเท็จ</p>
+                                    <table class="operator-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ชื่อตรรกะ</th>
+                                                <th>สัญลักษณ์</th>
+                                                <th>ตัวอย่าง</th>
+                                                <th>คำอธิบายแบบเข้าใจง่าย</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>not</strong> (ไม่)</td>
+                                                <td><span class="badge badge-op">!</span></td>
+                                                <td><code>!a</code></td>
+                                                <td>จะกลับผลลัพธ์เป็นตรงกันข้าม จากจริงเป็นเท็จ จากเท็จเป็นจริง</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>and</strong> (และ)</td>
+                                                <td><span class="badge badge-op">&amp;&amp;</span></td>
+                                                <td><code>a &amp;&amp; b</code></td>
+                                                <td>จะเป็นจริงได้เมื่อ <strong>ทั้งเงื่อนไข a และ b ต้องเป็นจริงพร้อมกัน</strong> เท่านั้น</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>or</strong> (หรือ)</td>
+                                                <td><span class="badge badge-op">||</span></td>
+                                                <td><code>a || b</code></td>
+                                                <td>จะเป็นจริงได้เพียงขอแค่ <strong>มีเงื่อนไขใดเงื่อนไขหนึ่งเป็นจริง</strong> ก็ผ่านฉลุย</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. Flowcharts Tab -->
+                <section id="flowchart-tab" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>ผังงาน (Flowchart) คืออะไร?</h2>
+                            <p class="lead-text">"ภาพหนึ่งภาพ แทนคำอธิบายได้เป็นล้านคำ" นั่นคือหัวใจของผังงาน!</p>
+                            <p><strong>ผังงาน (Flowchart)</strong> คือ แผนภาพแสดงการทำงานของโปรแกรม โดยใช้ <strong>สัญลักษณ์สากล</strong> เพื่ออธิบายขั้นตอนและลักษณะการทำงานในแต่ละจุด สัญลักษณ์เหล่านี้จะเชื่อมโยงกันด้วยลูกศร เพื่อบอกทิศทางการเคลื่อนที่ของโปรแกรม ช่วยให้เรา:</p>
+                            <div class="two-columns">
+                                <div class="col-item card-bg-subtle">
+                                    <h4><i class="fa-solid fa-list-check"></i> ประโยชน์ของการเขียนผังงาน</h4>
+                                    <ul class="clean-bullet-list">
+                                        <li>เรียนรู้และเข้าใจขั้นตอนได้รวดเร็ว (ไม่ต้องติดข้อจำกัดด้านภาษาโปรแกรมมิ่ง)</li>
+                                        <li>มองเห็นภาพลำดับการทำงานและทิศทางข้อมูลรวมของทั้งระบบชัดเจน</li>
+                                        <li>ค้นหาข้อผิดพลาด (บั๊ก) ได้เร็ว และซ่อมแซมแก้ไขโปรแกรมได้ง่าย</li>
+                                        <li>ช่วยให้เขียนโปรแกรมได้รวดเร็วและเป็นระบบมากขึ้นเมื่อทำตามผังงาน</li>
+                                    </ul>
+                                </div>
+                                <div class="col-item card-bg-subtle">
+                                    <h4><i class="fa-solid fa-object-group"></i> ประเภทของผังงานคอมพิวเตอร์</h4>
+                                    <ol class="clean-bullet-list">
+                                        <li><strong>ผังงานระบบ (System Flowchart)</strong>: แสดงภาพกว้างๆ ของระบบว่าส่วนสำคัญใดสัมพันธ์กันบ้าง</li>
+                                        <li><strong>ผังงานโปรแกรม (Program Flowchart)</strong>: แสดงรายละเอียดของขั้นตอนคำสั่งและการคำนวณอย่างเป็นลำดับเพื่อนำไปโค้ดดิ้ง</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flowchart Matching Game -->
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>มาฝึกจำสัญลักษณ์ผังงานกันเถอะ!</h2>
+                            <p>ก่อนจะไปเริ่มเขียนโปรแกรม มาเล่นเกมจับคู่รูปทรงสัญลักษณ์และคำอธิบายหน้าที่ของมันกันเถอะ วิธีการเล่นคือ <strong>คลิกเลือกรูปสัญลักษณ์ด้านซ้าย แล้วคลิกเลือกคำอธิบายขวาที่คู่กัน</strong> ให้ครบทุกข้อนะ!</p>
+                            
+                            <div class="matching-game-widget">
+                                <div class="matching-container">
+                                    <div class="shapes-list" id="game-shapes-col">
+                                        <!-- Will populate dynamically -->
+                                    </div>
+                                    <div class="meanings-list" id="game-meanings-col">
+                                        <!-- Will populate dynamically -->
+                                    </div>
+                                </div>
+                                <div class="game-controls">
+                                    <button class="btn btn-blue" id="btn-reset-match-game">เริ่มเล่นใหม่</button>
+                                    <span class="game-score-display" id="match-score">คะแนน: 0 / 5</span>
+                                </div>
+                                <div class="game-feedback" id="match-feedback">
+                                    เลือกสัญลักษณ์เพื่อเริ่มต้นจับคู่!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. Scratch Interface Tab -->
+                <section id="interface-tab" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>ส่วนประกอบของโปรแกรม Scratch 3.0</h2>
+                            <p>เมื่อเราเปิดโปรแกรม Scratch Desktop เราจะเห็นหน้าต่างแสดงผลเป็นหลัก ซึ่งแบ่งออกเป็น <strong>8 ส่วนสำคัญ</strong> ลองคลิกที่ปุ่มตัวเลขในภาพจำลองด้านล่าง เพื่อทำความรู้จักว่าแต่ละส่วนทำหน้าที่อะไรบ้าง!</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Scratch UI Tour -->
+                    <div class="scratch-tour-widget">
+                        <div class="tour-layout">
+                            <div class="fake-scratch-editor">
+                                <!-- Hotspot overlay controls overlayed on a styled editor mockup -->
+                                <div class="hotspot" style="top: 3%; left: 25%;" data-section="1">1</div>
+                                <div class="hotspot" style="top: 8%; left: 35%;" data-section="2">2</div>
+                                <div class="hotspot" style="top: 40%; left: 8%;" data-section="3">3</div>
+                                <div class="hotspot" style="top: 50%; left: 25%;" data-section="4">4</div>
+                                <div class="hotspot" style="top: 50%; left: 55%;" data-section="5">5</div>
+                                <div class="hotspot" style="top: 8%; left: 75%;" data-section="6">6</div>
+                                <div class="hotspot" style="top: 35%; left: 75%;" data-section="7">7</div>
+                                <div class="hotspot" style="top: 75%; left: 75%;" data-section="8">8</div>
+                                
+                                <!-- Stylized representation of Scratch Editor Layout -->
+                                <div class="editor-row-top">
+                                    <div class="editor-fake-bar">Scratch | ไฟล์ | แก้ไข | บทเรียน</div>
+                                </div>
+                                <div class="editor-row-body">
+                                    <div class="editor-col-palette">
+                                        <div class="circles-pal">
+                                            <span class="c-pal" style="background:#4D97FF;"></span>
+                                            <span class="c-pal" style="background:#9966FF;"></span>
+                                            <span class="c-pal" style="background:#FF66B2;"></span>
+                                            <span class="c-pal" style="background:#FFD01A;"></span>
+                                        </div>
+                                        <div class="blocks-mock">
+                                            <div class="b-mock" style="background:#4D97FF; width: 80%;">เดิน 10 ก้าว</div>
+                                            <div class="b-mock" style="background:#4D97FF; width: 60%;">หมุน 15 องศา</div>
+                                        </div>
+                                    </div>
+                                    <div class="editor-col-workspace">
+                                        <div class="workspace-area-mock">
+                                            <!-- script -->
+                                            <div class="block-group-mock" style="margin-left: 20px; margin-top: 30px;">
+                                                <div class="b-mock-w" style="background:#FFD01A;">เมื่อคลิกธงเขียว</div>
+                                                <div class="b-mock-w" style="background:#4D97FF;">เดิน 10 ก้าว</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="editor-col-stage">
+                                        <div class="stage-controls-mock">
+                                            <span class="green-flag-circle"><i class="fa-solid fa-flag"></i></span>
+                                            <span class="stop-circle"><i class="fa-solid fa-circle"></i></span>
+                                        </div>
+                                        <div class="stage-screen-mock">
+                                            <div class="cat-sprite-mock">🐱</div>
+                                        </div>
+                                        <div class="sprite-list-mock">
+                                            <div class="sprite-item-mock active">เหมียวส้ม</div>
+                                            <div class="sprite-item-mock">ฉากหลัง</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Panel showing details of clicked hotspot -->
+                            <div class="tour-details-panel" id="tour-info-panel">
+                                <div class="panel-placeholder">
+                                    <i class="fa-regular fa-hand-pointer animate-bounce"></i>
+                                    <h4>สำรวจส่วนประกอบห้องควบคุม</h4>
+                                    <p>กรุณากดคลิกปุ่มตัวเลข 1 ถึง 8 ในหน้าจอโปรแกรมจำลองด้านข้าง เพื่อดูคำอธิบายของแถบเครื่องมือแต่ละส่วน</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Block Categories list (Section 3 details) -->
+                    <div class="info-content-card" style="margin-top: 30px;">
+                        <div class="text-content">
+                            <h2>ทำความรู้จัก 8 หมวดหมู่บล็อกคำสั่ง (Scripts Categories)</h2>
+                            <p>บล็อกคำสั่งของ Scratch ถูกจัดหมวดหมู่ตามสีต่างๆ เพื่อช่วยให้เราจำได้ง่ายและสลับเครื่องมือได้รวดเร็ว:</p>
+                            <div class="categories-hex-grid">
+                                <div class="category-pill" style="border-left: 10px solid #4D97FF;">
+                                    <strong>Motion (เคลื่อนไหว)</strong>
+                                    <span>ใช้สั่งเคลื่อนตัวละครเดินหน้า ถอยหลัง หมุน หมุนไปตำแหน่งต่างๆ</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #9966FF;">
+                                    <strong>Looks (รูปลักษณ์)</strong>
+                                    <span>สั่งพูด คิด เปลี่ยนชุดตัวละคร ปรับสี/ขนาด ซ่อนหรือแสดงตัวละคร</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #FF66B2;">
+                                    <strong>Sound (เสียง)</strong>
+                                    <span>เล่นเสียงเอฟเฟกต์ เพิ่มความดัง ปรับระดับเสียงคีย์เปียโนหรือดนตรี</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #FFD01A;">
+                                    <strong>Events (เหตุการณ์)</strong>
+                                    <span>กำหนดจุดเริ่มต้นการรันโปรแกรม เช่น เมื่อคลิกธงเขียว หรือกดคีย์บอร์ด</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #FFAB19;">
+                                    <strong>Control (ควบคุม)</strong>
+                                    <span>สั่งรันวนซ้ำตลอดไป วนตามจำนวนรอบ เช็คเงื่อนไข (If-Else) สั่งหยุด</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #4CBFE6;">
+                                    <strong>Sensing (ตรวจจับ)</strong>
+                                    <span>ตรวจจับการชนขอบเวที ตัวละครแตะสี วัดพิกัดเมาส์ จับเวลาการรอคอย</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #40BF50;">
+                                    <strong>Operators (ดำเนินการ)</strong>
+                                    <span>บล็อกสีเขียวคำนวณ บวก ลบ คูณ หาร สุ่มเลข เปรียบเทียบค่าความจริง</span>
+                                </div>
+                                <div class="category-pill" style="border-left: 10px solid #FF8C1A;">
+                                    <strong>Variables (ตัวแปร)</strong>
+                                    <span>สร้างกล่องเก็บข้อมูล กำหนดค่าเริ่ม (Set) และการบวกเพิ่มลดค่า (Change)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. Coding Activities Tab (Simulator) -->
+                <section id="activities-tab" class="tab-panel">
+                    <div class="info-content-card">
+                        <div class="text-content">
+                            <h2>ทดลองรันโค้ดและผังงานคอมพิวเตอร์!</h2>
+                            <p>นี่คือไฮไลท์ของบทเรียน! น้องๆ สามารถศึกษาวิธีการทำงานของ <strong>โครงสร้างเขียนโปรแกรม 3 แบบ</strong> ได้แก่ <strong>แบบลำดับ (Sequential), แบบทางเลือก (Selection) และแบบวนซ้ำ (Repetition)</strong> โดยเลือกชื่อกิจกรรมด้านซ้าย และกดปุ่ม <strong>"เริ่มรันโปรแกรม"</strong> เพื่อดูการเคลื่อนไหวของผังงาน บล็อกโค้ด และผลลัพธ์จากเจ้าแมว Scratch ไปพร้อมกันแบบทีละขั้น!</p>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Execution Simulator Widget -->
+                    <div class="simulator-main-widget">
+                        <!-- Left pane: Activity selection -->
+                        <div class="sim-sidebar">
+                            <h4>เลือกโครงสร้างเรียนรู้:</h4>
+                            
+                            <div class="sim-section-header">1. โครงสร้างแบบลำดับ</div>
+                            <button class="sim-act-btn active" data-activity="1">
+                                <span class="badge-num">ก.1</span> บวกเลขพื้นฐาน (ลำดับ)
+                            </button>
+                            
+                            <div class="sim-section-header">2. โครงสร้างแบบทางเลือก</div>
+                            <button class="sim-act-btn" data-activity="2">
+                                <span class="badge-num">ก.2</span> เช็คคะแนนมากกว่า 5 (ทางเลือกเดียว)
+                            </button>
+                            <button class="sim-act-btn" data-activity="3">
+                                <span class="badge-num">ก.3</span> บวกเลขเช็คเกิน 100 (สองทางเลือก)
+                            </button>
+                            <button class="sim-act-btn" data-activity="4">
+                                <span class="badge-num">ก.4</span> คิดเกรดคะแนน 3 ช่วง (หลายทางเลือก)
+                            </button>
+                            
+                            <div class="sim-section-header">3. โครงสร้างแบบวนซ้ำ</div>
+                            <button class="sim-act-btn" data-activity="5">
+                                <span class="badge-num">ก.5</span> วนซ้ำนับเลข 0-9 (วนซ้ำแบบระบุรอบ)
+                            </button>
+                            <button class="sim-act-btn" data-activity="6">
+                                <span class="badge-num">ก.6</span> วนจนกว่า i เกิน 9 (วนซ้ำแบบเช็คเงื่อนไข)
+                            </button>
+                        </div>
+
+                        <!-- Mid pane: Interactive execution visualization -->
+                        <div class="sim-viewer-grid">
+                            <!-- Column A: Flowchart visualization -->
+                            <div class="sim-panel flowchart-panel">
+                                <div class="panel-header-tab">ผังงาน (Flowchart)</div>
+                                <div class="flowchart-render-area" id="flowchart-steps-container">
+                                    <!-- Flowchart items generated dynamically based on selected activity -->
+                                </div>
+                            </div>
+                            
+                            <!-- Column B: Scratch Blocks visualization -->
+                            <div class="sim-panel blocks-panel">
+                                <div class="panel-header-tab">บล็อกโค้ด Scratch</div>
+                                <div class="blocks-render-area" id="scratch-blocks-container">
+                                    <!-- Blocks generated dynamically -->
+                                </div>
+                            </div>
+                            
+                            <!-- Column C: Simulated Stage (Cat & Output) -->
+                            <div class="sim-panel stage-panel">
+                                <div class="panel-header-tab">เวทีประมวลผล (Stage)</div>
+                                <div class="stage-screen-area">
+                                    <!-- The Cute Cat mascot -->
+                                    <div class="sim-stage-cat" id="sim-cat-sprite">🐱</div>
+                                    <!-- Speech bubble -->
+                                    <div class="sim-cat-speech-bubble" id="sim-cat-bubble">สวัสดีจ้า! พร้อมลองรันโปรแกรมหรือยัง?</div>
+                                </div>
+                                <div class="stage-footer-controls">
+                                    <!-- Control Buttons -->
+                                    <button class="btn btn-green" id="btn-play-sim">
+                                        <i class="fa-solid fa-play"></i> เริ่มรันโปรแกรม
+                                    </button>
+                                    <button class="btn btn-red" id="btn-stop-sim" disabled>
+                                        <i class="fa-solid fa-stop"></i> หยุด
+                                    </button>
+                                </div>
+                                <div class="sim-console-output" id="sim-console-text">
+                                    คลิกเริ่มรันโปรแกรมเพื่อดูการประมวลผล...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- 8. Quiz Tab -->
+                <section id="quiz-tab" class="tab-panel">
+                    <div class="quiz-welcome-card" id="quiz-start-screen" style="max-width: 600px; margin: 0 auto;">
+                        <div class="welcome-badge"><i class="fa-solid fa-trophy"></i></div>
+                        <h2>แบบทดสอบวัดความรู้ (20 ข้อ)</h2>
+                        <p style="margin-bottom: 20px; color: var(--text-muted);">วัดระดับพื้นฐานโค้ดดิ้งและประเมินผลความก้าวหน้าทางการเรียนรู้</p>
+                        
+                        <!-- Pre/Post Score Board -->
+                        <div style="display: flex; gap: 16px; width: 100%; max-width: 480px; margin: 0 auto 24px auto;">
+                            <div style="flex: 1; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; text-align: center;">
+                                <h4 style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-family: var(--font-headers);">ก่อนเรียน (Pre-test)</h4>
+                                <strong id="pre-test-score-val" style="font-size: 18px; color: #38bdf8;">ยังไม่ได้ทำ</strong>
+                            </div>
+                            <div style="flex: 1; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; text-align: center;">
+                                <h4 style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px; font-family: var(--font-headers);">หลังเรียน (Post-test)</h4>
+                                <strong id="post-test-score-val" style="font-size: 18px; color: #34d399;">ยังไม่ได้ทำ</strong>
+                            </div>
+                        </div>
+
+                        <!-- Learning Gain Display -->
+                        <div id="analytics-gain-box" style="display: none; margin: -12px auto 20px auto; padding: 10px; background: rgba(52, 211, 153, 0.05); border: 1px dashed rgba(52, 211, 153, 0.3); border-radius: 12px; width: 100%; max-width: 480px; text-align: center; box-sizing: border-box;">
+                            <span style="font-size: 12px; color: var(--text-muted);">พัฒนาการเรียนรู้สัมพัทธ์ (Relative Learning Gain):</span>
+                            <strong id="learning-gain-percent" style="color: #34d399; font-size: 14px; margin-left: 4px; font-family: monospace;">+0.0%</strong>
+                        </div>
+
+                        <div style="display: flex; gap: 14px; justify-content: center; width: 100%; max-width: 480px; margin: 0 auto;">
+                            <button class="btn btn-blue" id="btn-start-pre-quiz" style="flex: 1; padding: 12px;">
+                                <i class="fa-solid fa-circle-question"></i> แบบทดสอบก่อนเรียน
+                            </button>
+                            <button class="btn btn-green" id="btn-start-post-quiz" style="flex: 1; padding: 12px; background-color: #34d399; color: #061f14;">
+                                <i class="fa-solid fa-trophy"></i> แบบทดสอบหลังเรียน
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question Screen -->
+                    <div class="quiz-question-card" id="quiz-play-screen" style="display: none;">
+                        <div class="quiz-header-bar">
+                            <span class="quiz-step-indicator">คำถามข้อที่ <strong id="current-q-num">1</strong> จาก 20</span>
+                            <div class="quiz-timer"><i class="fa-regular fa-clock"></i> ข้อละ 30 วินาที</div>
+                        </div>
+                        <div class="quiz-progress-bar-bg">
+                            <div class="quiz-progress-bar-fill" id="quiz-progress-fill" style="width: 5%;"></div>
+                        </div>
+                        
+                        <div class="question-body">
+                            <h3 id="question-text">ข้อความคำถาม</h3>
+                            <!-- Options -->
+                            <div class="options-container" id="options-box">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+                        
+                        <div class="quiz-footer-buttons">
+                            <button class="btn btn-light" id="btn-prev-q" style="display: none;">ข้อก่อนหน้า</button>
+                            <button class="btn btn-orange" id="btn-next-q" disabled>ข้อถัดไป <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Score Screen -->
+                    <div class="quiz-score-card" id="quiz-score-screen" style="display: none;">
+                        <div class="score-radial">
+                            <svg viewBox="0 0 36 36" class="circular-chart orange">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" id="score-circle-stroke" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage" id="score-percent-val">0/20</text>
+                            </svg>
+                        </div>
+                        
+                        <h2 id="score-title">ผลการทดสอบของคุณ</h2>
+                        <p id="score-subtitle">คุณทำคะแนนได้ 8 คะแนน ผ่านเกณฑ์ประเมินความรู้เรียบร้อยแล้ว!</p>
+                        
+                        <div class="score-buttons">
+                            <button class="btn btn-blue" id="btn-retry-quiz"><i class="fa-solid fa-rotate-left"></i> ทำแบบทดสอบอีกครั้ง</button>
+                            <button class="btn btn-orange" id="btn-go-back-home"><i class="fa-solid fa-house"></i> กลับสู่หน้าแรก</button>
+                        </div>
+
+                        <!-- Certificate Unlocked Box -->
+                        <div id="cert-unlock-box" style="display: none; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                            <h3 style="color: #facc15; font-size: 16px; margin-bottom: 8px;"><i class="fa-solid fa-certificate"></i> ปลดล็อกเกียรติบัตรสำเร็จ! 🎓</h3>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">กรุณากรอกชื่อของคุณเพื่อออกเกียรติบัตรการเรียน</p>
+                            <div style="display: flex; gap: 8px; justify-content: center; max-width: 400px; margin: 0 auto;">
+                                <input type="text" id="cert-student-name" placeholder="ชื่อ-นามสกุล ของคุณ" style="flex-grow: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: white; outline: none; font-size: 13px;">
+                                <button class="btn btn-green" id="btn-generate-cert" style="padding: 10px 16px; background-color: #34d399; color: #061f14;"><i class="fa-solid fa-file-pdf"></i> ออกเกียรติบัตร</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Rubric Dashboard (Visible on start and score screens) -->
+                    <div id="quiz-rubric-dashboard" style="margin-top: 32px; border-top: 2px solid var(--border-color); padding-top: 32px;">
+
+                        <!-- Badge Section -->
+                        <div style="background:rgba(15,23,42,0.4); border:1px solid var(--border-color); border-radius:16px; padding:24px; margin-bottom:32px; box-shadow:0 8px 30px rgba(0,0,0,0.3);">
+                            <h3 style="color:var(--text-white); margin-top:0; margin-bottom:8px; font-size:15px; font-family:var(--font-headers); display:flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-trophy" style="color:#facc15;"></i>
+                                Badges &amp; Achievements — รางวัลสะสม
+                            </h3>
+                            <p style="font-size:12px; color:var(--text-muted); margin-bottom:20px; margin-top:0;">รางวัลจะถูกมอบอัตโนมัติเมื่อผ่านเงื่อนไข</p>
+                            <div id="badge-display-grid" style="display:flex; flex-wrap:wrap; gap:12px;">
+                                <!-- Generated by badges.js -->
+                            </div>
+                        </div>
+
+                        <!-- Section 1: Your Individual Rubric Skill Profile -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin-bottom: 32px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                            <h3 style="color: var(--text-white); margin-top: 0; margin-bottom: 8px; font-size: 15px; font-family: var(--font-headers); display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-circle-user" style="color: #38bdf8;"></i>
+                                ระดับพลังประเมินผลสัมฤทธิ์รายบุคคลของคุณ (Your Rubric Profile)
+                            </h3>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px; margin-top: 0;">ระดับคะแนนทักษะ 8 มิติ วิเคราะห์จากความก้าวหน้าและการทำแบบทดสอบย่อย</p>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;" id="rubric-skills-grid">
+                                <!-- Generated by JS: 8 skill progress bars -->
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Rubric Topic Quizzes (Upgraders) -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin-bottom: 32px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                            <h3 style="color: var(--text-white); margin-top: 0; margin-bottom: 8px; font-size: 15px; font-family: var(--font-headers); display: flex; align-items: center; gap: 8px;">
+                                <i class="fa-solid fa-clipboard-question" style="color: #fb923c;"></i>
+                                แบบทดสอบย่อยรายหัวข้อรูบริก (Rubric Topic Quizzes)
+                            </h3>
+                            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px; margin-top: 0;">เลือกทำแบบทดสอบเฉพาะด้าน (หัวข้อละ 3 ข้อ) เพื่อประเมินตนเองและยกระดับดาวทักษะสะสม</p>
+                            
+                            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+                                <select id="rubric-quiz-select" style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); color: white; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-family: var(--font-headers); outline: none; min-width: 250px; cursor: pointer;">
+                                    <option value="sequencing">1. การจัดลำดับตรรกะคำสั่ง (Sequencing)</option>
+                                    <option value="loops">2. การควบคุมลูปวนซ้ำ (Loops & Iteration)</option>
+                                    <option value="coordinates">3. การจัดการพิกัดแกนและทิศทาง (Coordinates)</option>
+                                    <option value="events">4. การตรวจจับเหตุการณ์และรับอินพุต (Event & Input)</option>
+                                    <option value="conditions">5. การตั้งเงื่อนไขและการเปรียบเทียบ (Conditions)</option>
+                                    <option value="operators">6. การดำเนินการทางคณิตศาสตร์ (Operators)</option>
+                                    <option value="variables">7. การจัดการตัวแปรและข้อมูลสะสม (Variables)</option>
+                                    <option value="functions">8. การออกแบบฟังก์ชันเพื่อความกระชับ (Functions)</option>
+                                </select>
+                                <button class="btn btn-orange" id="btn-start-rubric-quiz" style="padding: 10px 20px; font-size: 12px;"><i class="fa-solid fa-play"></i> เริ่มทำแบบทดสอบย่อย</button>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Classroom Stats & Rubric Grid Table -->
+                        <!-- Classroom Stats Grid (Averages) -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                            <div style="background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                                <div style="font-size: 11px; color: #38bdf8; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-headers);"><i class="fa-solid fa-graduation-cap"></i> คะแนนเฉลี่ยก่อนเรียนห้อง</div>
+                                <div style="font-size: 20px; font-weight: bold; color: white;" id="class-avg-pre">- / 20</div>
+                            </div>
+                            <div style="background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.2); border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                                <div style="font-size: 11px; color: #34d399; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-headers);"><i class="fa-solid fa-circle-check"></i> คะแนนเฉลี่ยหลังเรียนห้อง</div>
+                                <div style="font-size: 20px; font-weight: bold; color: white;" id="class-avg-post">- / 20</div>
+                            </div>
+                            <div style="background: rgba(250, 205, 21, 0.08); border: 1px solid rgba(250, 205, 21, 0.2); border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                                <div style="font-size: 11px; color: #facc15; font-weight: bold; text-transform: uppercase; margin-bottom: 6px; font-family: var(--font-headers);"><i class="fa-solid fa-chart-line"></i> พัฒนาการเฉลี่ยรวมห้อง</div>
+                                <div style="font-size: 20px; font-weight: bold; color: #facc15;" id="class-avg-gain">- %</div>
+                            </div>
+                        </div>
+
+                        <!-- Classroom Leaderboard Scoreboard with 8 Rubrics -->
+                        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                                <h3 style="color: var(--text-white); margin: 0; font-size: 15px; font-family: var(--font-headers); display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-ranking-star" style="color: #facc15;"></i>
+                                    รายงานระดับพัฒนาการและตารางคะแนนเกณฑ์รูบริกของห้องเรียน (Class Rubric Matrix)
+                                </h3>
+                                <button id="btn-export-csv" class="btn btn-green" style="padding: 8px 16px; font-size: 12px; background-color: #34d399; color: #061f14;">
+                                    <i class="fa-solid fa-file-csv"></i> ดาวน์โหลดข้อมูล (CSV)
+                                </button>
+                            </div>
+                            <div style="overflow-x: auto; padding: 4px;">
+                                <table style="width: 100%; border-collapse: collapse; font-size: 11px; min-width: 1100px;">
+                                    <thead>
+                                        <tr style="text-align: left; color: var(--text-muted); border-bottom: 2px solid var(--border-color); font-family: var(--font-headers); font-size: 10.5px;">
+                                            <th style="padding: 10px 8px; width: 40px;">อันดับ</th>
+                                            <th style="padding: 10px 8px; width: 140px;">ชื่อผู้เรียน</th>
+                                            <th style="padding: 10px 4px; text-align: center; width: 60px;">ก่อนเรียน</th>
+                                            <th style="padding: 10px 4px; text-align: center; width: 60px;">หลังเรียน</th>
+                                            <th style="padding: 10px 4px; text-align: center; width: 75px;">พัฒนาการ</th>
+                                            <!-- 8 Rubrics -->
+                                            <th style="padding: 10px 4px; text-align: center; color: #f87171; width: 75px;">ตรรกะลำดับ</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #fb923c; width: 75px;">วนซ้ำ Loop</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #facc15; width: 75px;">พิกัดทิศทาง</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #4ade80; width: 75px;">เหตุการณ์</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #2dd4bf; width: 75px;">เงื่อนไข If</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #60a5fa; width: 75px;">ตัวคำนวณ</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #c084fc; width: 75px;">ตัวแปร Var</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #f472b6; width: 75px;">ฟังก์ชัน Func</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #e2e8f0; width: 75px;">รวม (24)</th>
+                                            <th style="padding: 10px 4px; text-align: center; color: #34d399; width: 75px;">ร้อยละ (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="leaderboard-body">
+                                        <tr>
+                                            <td colspan="15" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                                                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 6px;"></i> กำลังโหลดคะแนนวิเคราะห์รูบริกห้องเรียน...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Certificate Modal -->
+    <div id="cert-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 999; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: #0f172a; border: 2px solid #334155; border-radius: 20px; max-width: 700px; width: 100%; padding: 24px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box;">
+            <button id="btn-close-cert-modal" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            
+            <!-- Printable Area -->
+            <div id="printable-cert-area" style="background: white; border: 15px double #c5a880; border-radius: 4px; padding: 40px; text-align: center; color: #1e293b; font-family: 'Sarabun', sans-serif; position: relative; box-sizing: border-box; aspect-ratio: 1.414 / 1; width: 100%;">
+                <div style="border: 2px solid #e2e8f0; height: 100%; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; min-height: 380px;">
+                    <div>
+                        <div style="color: #d97706; font-size: 40px; margin-bottom: 8px;"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <h2 style="font-family: 'Kanit', sans-serif; font-size: 26px; color: #1e3a8a; margin: 0; letter-spacing: 1px;">เกียรติบัตรแสดงความสำเร็จ</h2>
+                        <p style="font-size: 13px; color: #475569; margin: 5px 0 0 0;">มอบให้เพื่อแสดงว่า</p>
+                    </div>
+                    
+                    <div>
+                        <h1 id="cert-display-name" style="font-family: 'Kanit', sans-serif; font-size: 32px; color: #b45309; margin: 15px 0; border-bottom: 2px solid #cbd5e1; display: inline-block; padding: 0 30px; font-weight: bold;">สมชาย ใจดี</h1>
+                        <p style="font-size: 13px; line-height: 1.6; color: #334155; margin: 0; max-width: 500px; margin: 0 auto;">ได้สำเร็จหลักสูตรปูพื้นฐานการเขียนโปรแกรมด้วยสื่อ Scratch & Python<br>และผ่านการทดสอบวัดความรู้สัมฤทธิ์ผล (หลังเรียน) ด้วยคะแนนดีเยี่ยม</p>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px; padding: 0 40px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 12px; color: #64748b; border-top: 1px solid #cbd5e1; padding-top: 5px; width: 120px;" id="cert-display-date">20 กรกฎาคม 2026</div>
+                            <div style="font-size: 9px; color: #94a3b8; margin-top: 2px;">วันที่ออกเอกสาร</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-family: monospace; font-size: 14px; color: #1e3a8a; font-weight: bold; border-top: 1px solid #cbd5e1; padding-top: 5px; width: 120px;" id="cert-display-score">18 / 20</div>
+                            <div style="font-size: 9px; color: #94a3b8; margin-top: 2px;">คะแนนที่ได้</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px;">
+                <button id="btn-print-cert" class="btn btn-green" style="padding: 10px 20px; background-color: #34d399; color: #061f14;"><i class="fa-solid fa-print"></i> พิมพ์เกียรติบัตร / บันทึก PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="audio-synth.js"></script>
+    <!-- Firebase SDK Compatibility Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="db-config.js?v=4"></script>
+    <script src="class-config.js?v=4"></script>
+    <script src="db-sync.js?v=4"></script>
+    <script src="badges.js?v=4"></script>
+    <script src="app.js?v=4"></script>
+</body>
+</html>

@@ -1,0 +1,722 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap');
+
+:root {
+    /* Default Dark Mode */
+    --bg-main: radial-gradient(circle at center, #1a1b26, #16161e);
+    --bg-panel: rgba(26, 27, 38, 0.7);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #a9b1d6;
+    --text-secondary: #7aa2f7;
+    --accent-color: #7dcfff;
+    --success-color: #9ece6a;
+    --warning-color: #e0af68;
+    --danger-color: #f7768e;
+    --panel-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    
+    /* Code Editor Specific */
+    --editor-bg: #1f2335;
+    --console-bg: #15161e;
+}
+
+body.light-mode {
+    --bg-main: radial-gradient(circle at center, #f1f1f1, #e2e2e2);
+    --bg-panel: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(0, 0, 0, 0.1);
+    --text-primary: #333333;
+    --text-secondary: #555555;
+    --accent-color: #3b82f6;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --panel-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    
+    --editor-bg: #f8fafc;
+    --console-bg: #1e293b;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+body {
+    font-family: 'Kanit', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+code, pre, .CodeMirror {
+    font-family: 'Fira Code', monospace;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* Glassmorphism */
+.glass-panel {
+    background: var(--bg-panel);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--panel-shadow);
+    border-radius: 12px;
+}
+
+/* Navbar */
+.navbar {
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-radius: 0 0 12px 12px;
+    margin-bottom: 15px;
+    z-index: 10;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-shadow: 0 0 10px rgba(125, 207, 255, 0.3);
+}
+
+.nav-stats {
+    display: flex;
+    gap: 15px;
+}
+
+.stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-color);
+}
+
+.stat-badge i {
+    color: var(--warning-color);
+}
+
+.nav-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* Buttons */
+button {
+    font-family: 'Kanit', sans-serif;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.btn-primary { background: var(--accent-color); color: #fff; border: none; }
+.btn-primary:hover { background: #5bbdf0; }
+
+.btn-success { background: var(--success-color); color: #fff; border: none; }
+.btn-success:hover { background: #8abd59; }
+
+.btn-run { background: var(--success-color); color: #fff; }
+.btn-clear { background: #565f89; color: #fff; }
+.btn-hint { background: var(--warning-color); color: #fff; }
+.btn-show-answer { background: #bb9af7; color: #fff; }
+
+/* Main Layout */
+.main-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 0 20px 20px 20px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.left-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.right-panel {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+}
+
+/* Map Area */
+.map-container,
+.rpg-container {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0d1b2a;
+    overflow: hidden;
+}
+
+canvas#rpg-canvas, canvas#gameCanvas {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.interaction-prompt {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 30px;
+    border: 2px solid var(--warning-color);
+    font-weight: 600;
+    animation: bounce 2s infinite;
+    z-index: 5;
+    pointer-events: none;
+    display: none;
+}
+
+.interaction-prompt.active {
+    display: block;
+}
+
+/* Mission Area */
+.mission-box {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.mission-box h2 {
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.example-code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 15px;
+    border-left: 4px solid var(--warning-color);
+    border-radius: 4px;
+    margin: 10px 0;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+    color: #e0af68;
+    white-space: pre-wrap;
+}
+
+/* Editor Area */
+.editor-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--editor-bg);
+}
+
+.editor-header {
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Mission Panel */
+.mission-panel {
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.mission-header h2 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.mission-badge {
+    background: rgba(125, 207, 255, 0.15);
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--accent-color);
+}
+
+.mission-content p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.code-example {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    border-left: 3px solid var(--warning-color);
+    color: #c0caf5;
+    white-space: pre-wrap;
+}
+
+/* Editor Panel */
+.editor-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--editor-bg);
+}
+
+.editor-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.editor-toolbar .filename {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-family: 'Fira Code', monospace;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.btn {
+    font-family: 'Kanit', sans-serif;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-small { font-size: 0.85rem; padding: 5px 10px; }
+.btn-large { font-size: 1.1rem; padding: 12px 30px; }
+.btn-primary { background: var(--accent-color); color: #1a1b26; }
+.btn-primary:hover { filter: brightness(1.2); }
+.btn-success { background: var(--success-color); color: #1a1b26; }
+.btn-success:hover { filter: brightness(1.2); }
+.btn-secondary { background: rgba(255,255,255,0.1); color: var(--text-primary); }
+.btn-secondary:hover { background: rgba(255,255,255,0.2); }
+.btn-danger { background: var(--danger-color); color: white; }
+.btn-danger:hover { filter: brightness(1.2); }
+
+.editor-controls {
+    display: flex;
+    gap: 10px;
+}
+
+#editor-wrapper {
+    flex: 1;
+    position: relative;
+    min-height: 200px;
+}
+
+/* Terminal Panel */
+.terminal-panel {
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border-color);
+}
+
+.terminal-header {
+    padding: 5px 12px;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-title {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.pyodide-loading {
+    font-size: 0.8rem;
+    color: var(--warning-color);
+}
+
+.terminal-output-area {
+    flex: 1;
+    padding: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: #c0caf5;
+    overflow-y: auto;
+    background: var(--console-bg);
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.sys-msg { color: #565f89; font-style: italic; }
+.err-msg { color: var(--danger-color); }
+.success-msg { color: var(--success-color); }
+
+/* CodeMirror Overrides */
+.CodeMirror {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100% !important;
+    font-family: 'Fira Code', monospace !important;
+    font-size: 15px;
+    background: transparent !important;
+}
+
+.light-mode .CodeMirror {
+    background: var(--editor-bg) !important;
+    color: #333;
+}
+
+/* Console Area */
+.console-container {
+    height: 180px;
+    background: var(--console-bg);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+}
+
+.console-header {
+    padding: 8px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.console-output {
+    flex: 1;
+    padding: 10px 15px;
+    overflow-y: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.sys-msg { color: var(--text-secondary); }
+.err-msg { color: var(--danger-color); }
+.success-msg { color: var(--success-color); }
+
+/* Modals */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--panel-shadow);
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+.btn-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    padding: 0;
+}
+.btn-close:hover { color: var(--danger-color); background: transparent; transform: none; }
+
+/* Dialog Box */
+.dialog-box {
+    text-align: center;
+}
+
+.dialog-text {
+    font-size: 1.2rem;
+    margin: 20px 0;
+    line-height: 1.5;
+}
+
+.dialog-character {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #333;
+    margin: 0 auto 15px;
+    border: 3px solid var(--accent-color);
+    overflow: hidden;
+}
+
+.dialog-character img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Success Box */
+.success-box {
+    text-align: center;
+}
+
+.success-box h2 {
+    color: var(--success-color);
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.stars-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.star {
+    font-size: 3rem;
+    color: #444;
+    transition: all 0.3s ease;
+}
+
+.star.star-lit {
+    color: var(--warning-color);
+    text-shadow: 0 0 20px rgba(224, 175, 104, 0.8);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.rewards-display {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.reward-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.reward-item i {
+    color: var(--warning-color);
+    font-size: 1.5rem;
+}
+
+/* Dashboard Box */
+.dashboard-box {
+    max-width: 800px;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.dashboard-table th, .dashboard-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-table th {
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.dashboard-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Achievements Modal */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.achievement-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    opacity: 0.5;
+    filter: grayscale(1);
+    transition: all 0.3s ease;
+}
+
+.achievement-card.unlocked {
+    opacity: 1;
+    filter: grayscale(0);
+    border-color: var(--warning-color);
+    box-shadow: 0 0 15px rgba(224, 175, 104, 0.2);
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    color: var(--warning-color);
+    margin-bottom: 10px;
+}
+
+.achievement-card h4 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.achievement-card p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    80% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .main-container {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .left-panel, .right-panel {
+        flex: none;
+        height: 50vh;
+    }
+    .right-panel {
+        height: auto;
+        min-height: 60vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+    .nav-stats {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}

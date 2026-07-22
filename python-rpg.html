@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Academy Adventure</title>
+    
+    <!-- Google Fonts: Kanit and Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6.4.0 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CodeMirror 5.65.13 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="python-rpg.css">
+</head>
+<body class="dark-mode">
+
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="index.html" class="nav-back-link" title="กลับหน้าแรก">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <span class="logo-text">Python Academy Adventure</span>
+        </div>
+        
+        <div class="nav-status">
+            <div class="status-badge" title="ระดับของคุณ">
+                <i class="fas fa-star text-warning"></i>
+                <span class="status-label">Level <span id="ui-level">1</span></span>
+                <span class="status-value">(<span id="ui-exp">0</span> XP)</span>
+            </div>
+            
+            <div class="status-badge" title="เหรียญทอง">
+                <i class="fas fa-coins text-gold"></i>
+                <span id="ui-coins">0</span>
+            </div>
+            
+            <div class="status-badge" title="เรียนต่อเนื่อง">
+                <i class="fas fa-fire text-danger"></i>
+                <span id="ui-streak">0</span> วัน
+            </div>
+        </div>
+        
+        <div class="nav-controls">
+            <button id="btn-achievements" class="btn-icon" title="ความสำเร็จ (Achievements)"><i class="fas fa-trophy"></i></button>
+            <button id="btn-dashboard" class="btn-icon" title="แผงควบคุม (Dashboard)"><i class="fas fa-chart-pie"></i></button>
+            <button id="btn-theme-toggle" class="btn-icon" title="สลับโหมดมืด/สว่าง"><i class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <!-- Main Game Container -->
+    <main class="main-container">
+        
+        <!-- Left Column: 2D RPG Map -->
+        <section class="left-panel">
+            <div class="rpg-container">
+                <canvas id="rpg-canvas"></canvas>
+                <div id="interaction-overlay" class="interaction-prompt hidden">
+                    <span>กด <strong>Spacebar</strong> เพื่อคุย</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Mission and Editor -->
+        <section class="right-panel">
+            
+            <!-- Mission Area -->
+            <div class="mission-panel">
+                <div class="mission-header">
+                    <h2><i class="fas fa-scroll"></i> ภารกิจปัจจุบัน</h2>
+                    <span id="mission-subtitle" class="mission-badge">ยังไม่มีภารกิจ</span>
+                </div>
+                <div class="mission-content">
+                    <p id="mission-instruction">เดินสำรวจในแผนที่และพูดคุยกับตัวละครต่างๆ เพื่อเริ่มเรียนรู้ Python!</p>
+                    <div id="mission-example" class="code-example hidden"></div>
+                </div>
+            </div>
+
+            <!-- Code Editor Area -->
+            <div class="editor-panel">
+                <div class="editor-toolbar">
+                    <span class="filename"><i class="fab fa-python"></i> main.py</span>
+                    <div class="editor-actions">
+                        <button id="btn-hint" class="btn btn-small btn-secondary" title="ขอคำใบ้"><i class="fas fa-lightbulb"></i> คำใบ้</button>
+                        <button id="btn-show-answer" class="btn btn-small btn-secondary" title="ดูเฉลย"><i class="fas fa-eye"></i> เฉลย</button>
+                        <button id="btn-clear" class="btn btn-small btn-danger" title="ล้างโค้ด"><i class="fas fa-eraser"></i> ล้าง</button>
+                        <button id="btn-run" class="btn btn-small btn-success" title="รันโปรแกรม"><i class="fas fa-play"></i> รันโค้ด</button>
+                    </div>
+                </div>
+                <div id="editor-wrapper">
+                    <textarea id="python-editor"></textarea>
+                </div>
+            </div>
+
+            <!-- Terminal Area -->
+            <div class="terminal-panel">
+                <div class="terminal-header">
+                    <span class="terminal-title"><i class="fas fa-terminal"></i> Terminal</span>
+                    <span id="pyodide-status" class="pyodide-loading"><i class="fas fa-spinner fa-spin"></i> กำลังโหลด Pyodide...</span>
+                </div>
+                <pre id="terminal-output" class="terminal-output-area"></pre>
+            </div>
+            
+        </section>
+    </main>
+
+    <!-- UI Modals -->
+
+    <!-- NPC Dialog Modal -->
+    <div id="dialog-modal" class="modal-overlay">
+        <div class="modal-box dialog-box">
+            <div class="dialog-header">
+                <h3 id="npc-name">NPC Name</h3>
+            </div>
+            <div class="dialog-body">
+                <p id="npc-text">NPC Dialog text goes here...</p>
+            </div>
+            <div class="dialog-footer">
+                <button id="btn-accept-mission" class="btn btn-primary">ตกลงรับภารกิจ</button>
+                <button id="btn-close-dialog" class="btn btn-secondary">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-box success-box text-center">
+            <h2 class="success-title">ภารกิจสำเร็จ! 🎉</h2>
+            <div id="success-stars" class="stars-display">
+                <!-- Stars added dynamically -->
+            </div>
+            <div class="rewards-display">
+                <div class="reward-pill exp">
+                    <i class="fas fa-star"></i> +<span id="reward-exp">0</span> XP
+                </div>
+                <div class="reward-pill coin">
+                    <i class="fas fa-coins"></i> +<span id="reward-coin">0</span> เหรียญ
+                </div>
+            </div>
+            <div class="dialog-footer centered">
+                <button id="btn-close-success" class="btn btn-success btn-large">ทำภารกิจต่อไป</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Modal -->
+    <div id="dashboard-modal" class="modal-overlay">
+        <div class="modal-box dashboard-box">
+            <div class="modal-header">
+                <h2><i class="fas fa-chart-line"></i> แผงควบคุม (Dashboard)</h2>
+                <button id="btn-close-dashboard" class="btn-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="dashboard-stats" class="stats-grid">
+                    <!-- Dashboard stats inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer space-between">
+                <button id="btn-reset-data" class="btn btn-danger"><i class="fas fa-trash-alt"></i> ล้างข้อมูลความคืบหน้า</button>
+                <button id="btn-export-csv" class="btn btn-primary"><i class="fas fa-download"></i> ส่งออกข้อมูลเป็น CSV</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Modal -->
+    <div id="achievement-modal" class="modal-overlay">
+        <div class="modal-box achievement-box">
+            <div class="modal-header">
+                <h2><i class="fas fa-trophy"></i> ความสำเร็จ (Achievements)</h2>
+                <button id="btn-close-achievements" class="btn-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="achievement-list" class="achievements-grid">
+                    <!-- Achievements inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External CDNs -->
+    <!-- CodeMirror 5.65.13 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
+    
+    <!-- Pyodide v0.25.0 -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+    <!-- Game Logic -->
+    <script src="python-rpg.js"></script>
+</body>
+</html>
