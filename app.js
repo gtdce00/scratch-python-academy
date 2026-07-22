@@ -2158,12 +2158,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
             const quizPassed = localStorage.getItem('rubric_quiz_completed_' + skill.key) === 'true';
 
-            // Calculate Authentic Stars: Base on practical tasks + bonus +1 star when debugging task is completed!
-            let stars = pct >= 67 ? 3 : pct >= 34 ? 2 : 1;
-            if (quizPassed) {
-                stars = Math.max(stars, 2);
-                if (pct >= 34) stars = 3;
-            }
+            // When practical debugging assessment is passed, grant 3 full stars (⭐⭐⭐)!
+            let stars = quizPassed ? 3 : (pct >= 67 ? 3 : pct >= 34 ? 2 : 1);
             
             // Build Stars with FontAwesome
             const starStr = Array(3).fill(0).map((_, i) => 

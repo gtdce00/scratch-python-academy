@@ -99,20 +99,8 @@
 
             // Calculate Base Star level from practical coding tasks
             const pct = total > 0 ? (done / total) : 0;
-            let baseStars = 1;
-            if (pct >= 0.67) {
-                baseStars = 3;
-            } else if (pct >= 0.34) {
-                baseStars = 2;
-            } else {
-                baseStars = 1;
-            }
-
-            // Debugging task / quiz acts as a reinforcement booster to award +1 star (minimum 2 stars)
-            if (quizPassed) {
-                baseStars = Math.max(baseStars, 2);
-                if (pct >= 0.34) baseStars = 3;
-            }
+            // When practical debugging assessment is passed, grant 3 full stars (⭐⭐⭐)!
+            let baseStars = quizPassed ? 3 : (pct >= 0.67 ? 3 : pct >= 0.34 ? 2 : 1);
 
             scores[key] = baseStars;
         });
