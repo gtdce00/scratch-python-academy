@@ -89,20 +89,8 @@
         };
         const scores = {};
         Object.keys(map).forEach(key => {
-            const rel = map[key];
-            const total = rel.m.length + rel.l.length;
-            let done = 0;
-            rel.m.forEach(id => { if (missions[id] === true) done++; });
-            rel.l.forEach(id => { if (lessons[id]  === true) done++; });
-            
-            const quizPassed = localStorage.getItem('rubric_quiz_completed_' + key) === 'true';
-
-            // Calculate Base Star level from practical coding tasks
-            const pct = total > 0 ? (done / total) : 0;
-            // When practical debugging assessment is passed, grant 3 full stars (⭐⭐⭐)!
-            let baseStars = quizPassed ? 3 : (pct >= 0.67 ? 3 : pct >= 0.34 ? 2 : 1);
-
-            scores[key] = baseStars;
+            const level = parseInt(localStorage.getItem('rubric_debug_level_' + key) || '0', 10);
+            scores[key] = Math.min(3, Math.max(0, level));
         });
         return scores;
     }
@@ -116,6 +104,7 @@
         localStorage.removeItem('scratch_badges');
         ['sequencing','loops','coordinates','events','conditions','operators','variables','functions'].forEach(k => {
             localStorage.removeItem('rubric_quiz_completed_' + k);
+            localStorage.removeItem('rubric_debug_level_' + k);
         });
     }
 
@@ -137,9 +126,11 @@
         if (d.preScore  !== null && d.preScore  !== undefined) localStorage.setItem('scratch_pre_test_score',  String(d.preScore));
         if (d.postScore !== null && d.postScore !== undefined) localStorage.setItem('scratch_post_test_score', String(d.postScore));
         if (d.badges)    localStorage.setItem('scratch_badges', JSON.stringify(d.badges));
-        if (d.rubricQuizPassed) {
-            Object.keys(d.rubricQuizPassed).forEach(k => {
-                if (d.rubricQuizPassed[k]) localStorage.setItem('rubric_quiz_completed_' + k, 'true');
+        if (d.rubricDebugLevels) {
+            Object.keys(d.rubricDebugLevels).forEach(k => {
+                const lvl = parseInt(d.rubricDebugLevels[k] || 0, 10);
+                localStorage.setItem('rubric_debug_level_' + k, String(lvl));
+                localStorage.setItem('rubric_quiz_completed_' + k, lvl >= 3 ? 'true' : 'false');
             });
         }
         showToast('✅ โหลดข้อมูลการเรียนของคุณจากคลาวด์เรียบร้อยแล้ว', '#34d399');
@@ -173,8 +164,11 @@
         const missionsCount = Object.values(missions).filter(Boolean).length;
         const lessonsCount  = Object.values(lessons).filter(Boolean).length;
         const rubricQuizPassed = {};
+        const rubricDebugLevels = {};
         ['sequencing','loops','coordinates','events','conditions','operators','variables','functions'].forEach(k => {
-            rubricQuizPassed[k] = localStorage.getItem('rubric_quiz_completed_' + k) === 'true';
+            const lvl = parseInt(localStorage.getItem('rubric_debug_level_' + k) || '0', 10);
+            rubricDebugLevels[k] = lvl;
+            rubricQuizPassed[k]  = lvl >= 3;
         });
         const data = {
             key: currentStudentKey, name, classCode: currentClassCode,
@@ -185,6 +179,7 @@
             completedMissions: missions,
             completedLessons:  lessons,
             rubrics: calculateRubricScores(missions, lessons),
+            rubricDebugLevels,
             rubricQuizPassed, badges,
             lastUpdated: new Date().toISOString()
         };

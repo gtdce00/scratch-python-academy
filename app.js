@@ -1414,10 +1414,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnStartPreQuiz = document.getElementById('btn-start-pre-quiz');
     const btnStartPostQuiz = document.getElementById('btn-start-post-quiz');
-     const RUBRIC_QUESTIONS = {
+    const RUBRIC_QUESTIONS = {
         sequencing: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: เรียงลำดับคำสั่งรับค่าชื่อและการทักทายให้ถูกต้อง (ปัจจุบันโค้ดทักทายก่อนรับค่าชื่อ)",
+                q: "🐞 ภารกิจดีบัค 1/3: เรียงลำดับคำสั่งรับค่าชื่อและการทักทายให้ถูกต้อง (ปัจจุบันโค้ดทักทายก่อนรับค่าชื่อ)",
                 buggyCode: `print("สวัสดีคุณ " + name)\nname = input("กรุณากรอกชื่อ: ")`,
                 hint: "💡 คำแนะนำ: ต้องรับค่าด้วย input(...) ในบรรทัดแรกก่อน แล้วค่อย print(...) ในบรรทัดที่สอง",
                 check: function(code) {
@@ -1426,75 +1426,212 @@ document.addEventListener('DOMContentLoaded', () => {
                     const printIdx = clean.indexOf('print');
                     return inputIdx !== -1 && printIdx !== -1 && inputIdx < printIdx;
                 }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: เรียงลำดับการกำหนดตัวแปรและการคำนวณผลรวมให้ถูกต้อง (ปัจจุบันพิมพ์ผลรวมก่อนกำหนดค่า)",
+                buggyCode: `print("ผลรวม:", total)\nx = 10\ny = 20\ntotal = x + y`,
+                hint: "💡 คำแนะนำ: ต้องกำหนด x และ y ก่อน จากนั้นคำนวณ total = x + y แล้วค่อย print ท้ายสุด",
+                check: function(code) {
+                    const clean = code.replace(/\s+/g, ' ');
+                    const defIdx = clean.indexOf('total =');
+                    const printIdx = clean.indexOf('print');
+                    return defIdx !== -1 && printIdx !== -1 && defIdx < printIdx;
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: เรียงลำดับการคำนวณพื้นที่สี่เหลี่ยมและการพิมพ์ผลลัพธ์ให้ถูกต้อง",
+                buggyCode: `print("พื้นที่:", area)\nwidth = 5\nheight = 10\narea = width * height`,
+                hint: "💡 คำแนะนำ: ต้องสร้างตัวแปร width, height และคำนวณ area ให้เสร็จก่อนแสดงผล print",
+                check: function(code) {
+                    const clean = code.replace(/\s+/g, ' ');
+                    const areaIdx = clean.indexOf('area =');
+                    const printIdx = clean.indexOf('print');
+                    return areaIdx !== -1 && printIdx !== -1 && areaIdx < printIdx;
+                }
             }
         ],
         loops: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขขอบเขตช่วงการวนลูปให้พิมพ์ตัวเลข 1 ถึง 5 (ปัจจุบันลูปทำงานแค่ 1 ถึง 4)",
+                q: "🐞 ภารกิจดีบัค 1/3: แก้ไขขอบเขตช่วงการวนลูปให้พิมพ์ตัวเลข 1 ถึง 5 (ปัจจุบันลูปทำงานแค่ 1 ถึง 4)",
                 buggyCode: `for i in range(1, 5):\n    print(i)`,
-                hint: "💡 คำแนะนำ: range(1, 5) จะหยุดก่อนเลข 5 (ทำงานแค่ 1-4) ต้องเปลี่ยนตัวเลขหยุดเป็น 6 (range(1, 6))",
+                hint: "💡 คำแนะนำ: range(1, 5) จะหยุดก่อนเลข 5 ต้องเปลี่ยนตัวเลขหยุดเป็น 6 (range(1, 6))",
                 check: function(code) {
                     return /range\(\s*1\s*,\s*6\s*\)/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: เพิ่มการบวกค่าตัวนับ count ใน while loop ป้องกันลูปไม่สิ้นสุด (Infinite Loop)",
+                buggyCode: `count = 1\nwhile count <= 3:\n    print("รอบที่", count)`,
+                hint: "💡 คำแนะนำ: ในลูปขณะที่ (while) ต้องเพิ่มค่า count = count + 1 หรือ count += 1 ท้ายลูปเสมอ",
+                check: function(code) {
+                    return /count\s*=\s*count\s*\+\s*1|count\s*\+=\s*1/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: แก้ไขการสะสมค่าผลรวมในลูป (ปัจจุบันสะสมผิดเป็นแทนที่ค่าเดิม total = i)",
+                buggyCode: `total = 0\nfor i in range(1, 6):\n    total = i\nprint(total)`,
+                hint: "💡 คำแนะนำ: การสะสมค่าต้องใช้ total = total + i หรือ total += i",
+                check: function(code) {
+                    return /total\s*=\s*total\s*\+\s*i|total\s*\+=\s*i/.test(code);
                 }
             }
         ],
         coordinates: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขโค้ดย้ายตำแหน่งตัวละครไปทางขวา 50 หน่วย (ปัจจุบันโค้ดไปเพิ่มแกน y ผิดแกน)",
+                q: "🐞 ภารกิจดีบัค 1/3: แก้ไขโค้ดย้ายตำแหน่งตัวละครไปทางขวา 50 หน่วย (ปัจจุบันโค้ดไปเพิ่มแกน y ผิดแกน)",
                 buggyCode: `x = 100\ny = 100\ny = y + 50`,
                 hint: "💡 คำแนะนำ: การย้ายไปทางขวา ต้องเพิ่มค่าแกน x แทนแกน y (x = x + 50)",
                 check: function(code) {
                     return /\bx\s*=\s*x\s*\+\s*50\b|\bx\s*\+=\s*50\b/.test(code);
                 }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: แก้ไขโค้ดย้ายตำแหน่งตัวละครขึ้นด้านบน 30 หน่วย (ปัจจุบันไปลบค่า y)",
+                buggyCode: `x = 0\ny = 100\ny = y - 30`,
+                hint: "💡 คำแนะนำ: การเคลื่อนที่ขึ้นด้านบน ต้องเพิ่มค่าแกน y (y = y + 30)",
+                check: function(code) {
+                    return /\by\s*=\s*y\s*\+\s*30\b|\by\s*\+=\s*30\b/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: แก้ไขการตั้งค่าพิกัดเริ่มต้นย้อนกลับมาที่จุดศูนย์กลาง (0, 0) บนเวที",
+                buggyCode: `x = 100\ny = -50`,
+                hint: "💡 คำแนะนำ: จุดศูนย์กลางของเวทีคือพิกัด x = 0 และ y = 0",
+                check: function(code) {
+                    return /x\s*=\s*0/.test(code) && /y\s*=\s*0/.test(code);
+                }
             }
         ],
         events: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: แปลงค่าอายุที่รับจาก input() เป็น int() เพื่อให้นำไปคำนวณปีหน้าได้โดยไม่ผิดพลาด",
+                q: "🐞 ภารกิจดีบัค 1/3: แปลงค่าอายุที่รับจาก input() เป็น int() เพื่อให้นำไปคำนวณปีหน้าได้",
                 buggyCode: `age = input("กรุณากรอกอายุ: ")\nnext_age = age + 1\nprint(next_age)`,
                 hint: "💡 คำแนะนำ: ต้องใช้ int(input(...)) หรือ int(age) เพื่อแปลงข้อความเป็นตัวเลขก่อนบวก 1",
                 check: function(code) {
                     return /int\s*\(\s*(input|age)/.test(code);
                 }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: แปลงค่าราคาสินค้าที่เป็นทศนิยมจาก input() ด้วย float() เพื่อนำไปคำนวณภาษี",
+                buggyCode: `price = input("ราคาสินค้า: ")\ntotal = price * 1.07\nprint(total)`,
+                hint: "💡 คำแนะนำ: ใช้ float(input(...)) หรือ float(price) สำหรับแปลงตัวเลขทศนิยม",
+                check: function(code) {
+                    return /float\s*\(\s*(input|price)/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: เติมข้อความระบุคำถามภายในฟังก์ชัน input() เพื่อแจ้งผู้ใช้",
+                buggyCode: `name = input()\nprint("สวัสดี", name)`,
+                hint: "💡 คำแนะนำ: เติมข้อความในวงเล็บ input เช่น input(\"กรุณากรอกชื่อ: \")",
+                check: function(code) {
+                    return /input\s*\(\s*["'].+?["']\s*\)/.test(code);
+                }
             }
         ],
         conditions: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขเงื่อนไขผ่านเกณฑ์ (คะแนนตั้งแต่ 50 ขึ้นไปถือว่าผ่าน) ปัจจุบันคนได้ 50 คะแนนสอบตก",
+                q: "🐞 ภารกิจดีบัค 1/3: แก้ไขเงื่อนไขผ่านเกณฑ์ (คะแนนตั้งแต่ 50 ขึ้นไปถือว่าผ่าน) ปัจจุบันคนได้ 50 คะแนนสอบตก",
                 buggyCode: `score = 50\nif score > 50:\n    print("ผ่าน")\nelse:\n    print("ตก")`,
                 hint: "💡 คำแนะนำ: คะแนนตั้งแต่ 50 ขึ้นไป ต้องใช้เครื่องหมายเปรียบเทียบ >= 50",
                 check: function(code) {
                     return /score\s*>=\s*50/.test(code);
                 }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: แก้ไขเครื่องหมายเปรียบเทียบความเท่ากันในเงื่อนไข if (ปัจจุบันใช้ = กำหนดค่าผิดไวยากรณ์)",
+                buggyCode: `status = "online"\nif status = "online":\n    print("เชื่อมต่อแล้ว")`,
+                hint: "💡 คำแนะนำ: การเปรียบเทียบเท่ากันใน Python ต้องใช้ == สองตัว (status == \"online\")",
+                check: function(code) {
+                    return /status\s*==\s*["']online["']/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: เรียงลำดับเงื่อนไขการตัดเกรด A (>= 80) และ B (>= 70) ให้ถูกต้อง",
+                buggyCode: `score = 85\nif score >= 70:\n    print("B")\nelif score >= 80:\n    print("A")`,
+                hint: "💡 คำแนะนำ: ต้องเช็คคะแนนสูง (>= 80) ก่อนคะแนนต่ำ (>= 70)",
+                check: function(code) {
+                    const clean = code.replace(/\s+/g, ' ');
+                    const idx80 = clean.indexOf('80');
+                    const idx70 = clean.indexOf('70');
+                    return idx80 !== -1 && idx70 !== -1 && idx80 < idx70;
+                }
             }
         ],
         operators: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขตัวดำเนินการเพื่อเช็คเลขคู่ (หาร 2 เหลือเศษ 0) ปัจจุบันใช้ / หารธรรมดา",
+                q: "🐞 ภารกิจดีบัค 1/3: แก้ไขตัวดำเนินการเพื่อเช็คเลขคู่ (หาร 2 เหลือเศษ 0) ปัจจุบันใช้ / หารธรรมดา",
                 buggyCode: `num = 8\nif num / 2 == 0:\n    print("เลขคู่")`,
                 hint: "💡 คำแนะนำ: การหาเศษเหลือจากการหาร ต้องใช้ตัวดำเนินการมอดุโล % 2 == 0",
                 check: function(code) {
                     return /num\s*%\s*2\s*==\s*0/.test(code);
                 }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: ใส่วงเล็บจัดลำดับการคำนวณให้บวกกันก่อนแล้วค่อยคูณ (ต้องการผลลัพธ์ (10 + 5) * 2 = 30)",
+                buggyCode: `ans = 10 + 5 * 2\nprint(ans)`,
+                hint: "💡 คำแนะนำ: ใส่ วงเล็บ (10 + 5) เพื่อให้บวกกันก่อนคูณ 2",
+                check: function(code) {
+                    return /\(\s*10\s*\+\s*5\s*\)\s*\*\s*2/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: แก้ไขเครื่องหมายคำนวณเลขยกกำลัง 2 ยกกำลัง 3 (ต้องการผลลัพธ์ 8)",
+                buggyCode: `ans = 2 ^ 3\nprint(ans)`,
+                hint: "💡 คำแนะนำ: เครื่องหมายยกกำลังใน Python คือ ** (2 ** 3)",
+                check: function(code) {
+                    return /2\s*\*\*\s*3/.test(code);
+                }
             }
         ],
         variables: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: แก้ไขการสะกดชื่อตัวแปรสะสมคะแนนให้ถูกต้อง (ปัจจุบันสะกดเป็น socre)",
+                q: "🐞 ภารกิจดีบัค 1/3: แก้ไขการสะกดชื่อตัวแปรสะสมคะแนนให้ถูกต้อง (ปัจจุบันสะกดเป็น socre)",
                 buggyCode: `score = 10\nsocre = score + 5\nprint(score)`,
                 hint: "💡 คำแนะนำ: ตัวแปรสะสมคะแนนต้องสะกดให้ตรงกันคือ score = score + 5",
                 check: function(code) {
                     return (/\bscore\s*=\s*score\s*\+\s*5\b/.test(code) || /\bscore\s*\+=\s*5\b/.test(code)) && !/socre/.test(code);
                 }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: เพิ่มข้อมูลใหม่เข้าลิสต์ด้วยคำสั่ง append() (ปัจจุบันไปเขียนทับลิสต์เดิม)",
+                buggyCode: `colors = ["red", "green"]\ncolors = "blue"\nprint(colors)`,
+                hint: "💡 คำแนะนำ: ใช้คำสั่ง colors.append(\"blue\") เพื่อเพิ่มสมาชิกใหม่เข้าลิสต์",
+                check: function(code) {
+                    return /colors\.append\(\s*["']blue["']\s*\)/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: แก้ไขดัชนีเข้าถึงสมาชิกตัวแรกในลิสต์ (ใน Python เริ่มต้นที่ดัชนี 0)",
+                buggyCode: `items = ["Apple", "Banana"]\nfirst = items[1]\nprint(first)`,
+                hint: "💡 คำแนะนำ: สมาชิกตัวแรกสุดของลิสต์อยู่ในตำแหน่งดัชนี 0 (items[0])",
+                check: function(code) {
+                    return /items\[\s*0\s*\]/.test(code);
+                }
             }
         ],
         functions: [
             {
-                q: "🐞 ภารกิจปฏิบัติการดีบัค: เติมคำสั่ง return ส่งคืนค่าผลลัพธ์ภาษีในฟังก์ชัน calc_tax",
+                q: "🐞 ภารกิจดีบัค 1/3: เติมคำสั่ง return ส่งคืนค่าผลลัพธ์ภาษีในฟังก์ชัน calc_tax",
                 buggyCode: `def calc_tax(price):\n    tax = price * 0.07\n\ntotal = calc_tax(100)\nprint(total)`,
                 hint: "💡 คำแนะนำ: ท้ายฟังก์ชันต้องมีคำสั่ง return tax เพื่อส่งคืนค่าผลลัพธ์การคำนวณ",
                 check: function(code) {
                     return /return\s+tax/.test(code) || /return\s+price\s*\*\s*0\.07/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 2/3: เติมพารามิเตอร์รับค่าชื่อในนิยามฟังก์ชัน def greet(name):",
+                buggyCode: `def greet():\n    print("สวัสดีคุณ " + name)\n\ngreet("สมชาย")`,
+                hint: "💡 คำแนะนำ: เพิ่มพารามิเตอร์ name ในวงเล็บหัวฟังก์ชัน def greet(name):",
+                check: function(code) {
+                    return /def\s+greet\(\s*name\s*\):/.test(code);
+                }
+            },
+            {
+                q: "🐞 ภารกิจดีบัค 3/3: เรียกใช้งานฟังก์ชันที่สร้างขึ้นให้ถูกไวยากรณ์ (ไม่ใช้คำสั่ง call หรือ run)",
+                buggyCode: `def add(a, b):\n    return a + b\n\nans = call add(3, 5)\nprint(ans)`,
+                hint: "💡 คำแนะนำ: ใน Python การเรียกใช้ฟังก์ชันทำได้เลยโดยเขียน add(3, 5) ไม่ต้องใส่ call",
+                check: function(code) {
+                    return /ans\s*=\s*add\(\s*3\s*,\s*5\s*\)/.test(code) && !/call/.test(code);
                 }
             }
         ]
@@ -1518,11 +1655,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button id="rubric-modal-close" style="position:absolute;top:14px;right:16px;background:none;border:none;
                     color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">✕</button>
                 <div style="margin-bottom:16px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                         <div id="rq-topic-badge" style="display:inline-block;padding:4px 12px;border-radius:20px;
                             font-size:11px;font-weight:700;font-family:var(--font-headers);"></div>
-                        <span style="font-size:12px; color:#fb923c; font-weight:600;"><i class="fa-solid fa-bug"></i> โหมดประเมินการปฏิบัติและดีบัคโค้ด</span>
+                        <span style="font-size:12px; color:#fb923c; font-weight:600;" id="rq-task-progress-label">
+                            <i class="fa-solid fa-bug"></i> ภารกิจดีบัคข้อที่ 1 จาก 3
+                        </span>
                     </div>
+
+                    <!-- Progress Bar for 3 Tasks -->
+                    <div style="height:6px; background:rgba(255,255,255,0.08); border-radius:4px; margin-bottom:14px; overflow:hidden;">
+                        <div id="rq-progress-bar" style="height:100%; width:33%; background:linear-gradient(90deg, #fb923c, #34d399); border-radius:4px; transition:width 0.3s;"></div>
+                    </div>
+
                     <h3 id="rq-question" style="font-size:14px;color:white;line-height:1.5;margin:0 0 14px 0; background:rgba(255,255,255,0.03); padding:12px 16px; border-radius:10px; border-left:4px solid #fb923c;"></h3>
                     
                     <!-- Interactive Code Editor Box -->
@@ -1543,7 +1688,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                     <button id="rq-next-btn" disabled style="background:#34d399;color:#1a1a1a;border:none;padding:10px 24px;
                         border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;opacity:0.5;transition:opacity .2s;">
-                        ผ่านภารกิจปฏิบัติ 🏆
+                        ภารกิจถัดไป ➔
                     </button>
                 </div>
             </div>
@@ -1559,7 +1704,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.getElementById('rq-next-btn').addEventListener('click', () => {
-            finishRubricQuiz();
+            advanceRubricDebugTask();
         });
 
         document.getElementById('rubric-modal-close').addEventListener('click', () => {
@@ -1574,21 +1719,19 @@ document.addEventListener('DOMContentLoaded', () => {
     let rqTopicKey = '';
     let rqQuestions = [];
     let rqIndex = 0;
-    let rqCorrect = 0;
 
     window.openRubricQuiz = function(topicKey) {
         resetRubricModalHTML();
         rqTopicKey = topicKey;
         rqQuestions = RUBRIC_QUESTIONS[topicKey] || [];
         rqIndex = 0;
-        rqCorrect = 0;
         rubricModal.style.display = 'flex';
         renderRubricQuestion();
     };
 
     function renderRubricQuestion() {
         const skill = RUBRIC_SKILLS.find(s => s.key === rqTopicKey);
-        const qData = rqQuestions[0]; // 1 practical debugging task per skill
+        const qData = rqQuestions[rqIndex];
 
         if (!qData) return;
 
@@ -1599,6 +1742,12 @@ document.addEventListener('DOMContentLoaded', () => {
         badge.style.color = skill ? skill.color : '#fb923c';
         badge.style.border = `1px solid ${skill ? skill.color + '55' : '#fb923c55'}`;
 
+        const taskLabel = document.getElementById('rq-task-progress-label');
+        if (taskLabel) taskLabel.innerHTML = `<i class="fa-solid fa-bug"></i> ภารกิจดีบัคข้อที่ ${rqIndex + 1} จาก 3`;
+
+        const progressBar = document.getElementById('rq-progress-bar');
+        if (progressBar) progressBar.style.width = `${((rqIndex + 1) / 3) * 100}%`;
+
         document.getElementById('rq-question').textContent = qData.q;
         document.getElementById('rq-hint-box').textContent = qData.hint;
         document.getElementById('rq-code-editor').value = qData.buggyCode;
@@ -1607,25 +1756,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const nextBtn = document.getElementById('rq-next-btn');
         nextBtn.disabled = true;
         nextBtn.style.opacity = '0.5';
+        nextBtn.textContent = rqIndex < 2 ? `ภารกิจถัดไป (ข้อ ${rqIndex + 2}/3) ➔` : 'เสร็จสิ้นการประเมิน 🏆';
     }
 
     function checkRubricDebugTask() {
-        const qData = rqQuestions[0];
+        const qData = rqQuestions[rqIndex];
         const code = document.getElementById('rq-code-editor').value;
         const fb = document.getElementById('rq-feedback');
         const nextBtn = document.getElementById('rq-next-btn');
 
         fb.style.display = 'block';
         if (qData && typeof qData.check === 'function' && qData.check(code)) {
-            rqCorrect = 1;
+            // Earn +1 star for passing this task level
+            const curLevel = parseInt(localStorage.getItem('rubric_debug_level_' + rqTopicKey) || '0', 10);
+            const newLevel = Math.max(curLevel, rqIndex + 1);
+            localStorage.setItem('rubric_debug_level_' + rqTopicKey, String(newLevel));
+            localStorage.setItem('rubric_quiz_completed_' + rqTopicKey, newLevel >= 3 ? 'true' : 'false');
+
             if (window.playCodeSound) window.playCodeSound('success');
             fb.style.background = 'rgba(52,211,153,0.15)';
             fb.style.border = '1px solid #34d399';
             fb.style.color = '#34d399';
-            fb.innerHTML = '<i class="fa-solid fa-circle-check"></i> 🎉 แก้ไขบัคสำเร็จถูกต้อง 100%! คุณผ่านการประเมินทักษะการปฏิบัตินี้แล้ว';
+            fb.innerHTML = `<i class="fa-solid fa-circle-check"></i> 🎉 แก้ไขบัคภารกิจนี้สำเร็จ! ได้รับดาวเพิ่มเป็น <strong>${newLevel}/3 ดาว ⭐</strong>`;
 
             nextBtn.disabled = false;
             nextBtn.style.opacity = '1';
+
+            // Sync to Cloud
+            if (typeof window.syncProgressToCloud === 'function') window.syncProgressToCloud();
         } else {
             if (window.playCodeSound) window.playCodeSound('error');
             fb.style.background = 'rgba(248,113,113,0.15)';
@@ -1635,22 +1793,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function finishRubricQuiz() {
-        const passed = rqCorrect > 0;
-        if (passed) {
-            localStorage.setItem('rubric_quiz_completed_' + rqTopicKey, 'true');
+    function advanceRubricDebugTask() {
+        rqIndex++;
+        if (rqIndex < 3) {
+            renderRubricQuestion();
+        } else {
+            finishRubricQuiz();
         }
+    }
+
+    function finishRubricQuiz() {
+        const finalStars = parseInt(localStorage.getItem('rubric_debug_level_' + rqTopicKey) || '0', 10);
         const skill = RUBRIC_SKILLS.find(s => s.key === rqTopicKey);
         const color = skill ? skill.color : '#fb923c';
 
         document.querySelector('#rubric-quiz-modal > div').innerHTML = `
             <div style="text-align:center;padding:20px 0;">
-                <div style="font-size:52px;margin-bottom:16px;">${passed ? '🏆' : '📚'}</div>
+                <div style="font-size:52px;margin-bottom:16px;">${finalStars > 0 ? '🏆' : '📚'}</div>
                 <h2 style="color:${color};font-size:20px;margin-bottom:8px;">
-                    ${passed ? 'ผ่านการประเมินการปฏิบัติ!' : 'ยังไม่ผ่าน'}
+                    ${finalStars === 3 ? 'ผ่านการประเมินระดับสูงสุด!' : 'สรุปผลการประเมินดีบัค'}
                 </h2>
-                ${passed ? `<p style="font-size:13px;color:#34d399;margin-bottom:24px;">⭐⭐⭐ ยอดเยี่ยม! ดาวทักษะการปฏิบัติ <strong>${skill ? skill.label : ''}</strong> ของคุณได้รับการอัปเกรดเรียบร้อยแล้ว!</p>` 
-                         : `<p style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;">ลองทบทวนภารกิจและแก้ไขบัคใหม่อีกครั้ง</p>`}
+                <p style="font-size:15px;color:white;margin-bottom:16px;">
+                    คุณได้รับดาวในทักษะ <strong>${skill ? skill.label : ''}</strong> จำนวน <strong style="color:#fbbf24; font-size:20px;">${finalStars}/3 ดาว ⭐</strong>
+                </p>
+                <p style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:24px;">
+                    ${finalStars === 3 ? '🎉 คุณสั่งสมดาวครบ 3 ดาวเต็มเรียบร้อยแล้ว ยอดเยี่ยมมาก!' : 'ลองทำภารกิจดีบัคอีกครั้งเพื่อสะสมดาวให้ครบ 3 ดาว'}
+                </p>
                 <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
                     <button onclick="document.getElementById('rubric-quiz-modal').style.display='none'; renderMyRubricProfile();"
                         style="background:${color};color:#1a1a1a;border:none;padding:10px 24px;border-radius:8px;
@@ -1660,6 +1828,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
         `;
+        if (typeof window.renderMyRubricProfile === 'function') window.renderMyRubricProfile();
     }
 
     const preTestScoreVal = document.getElementById('pre-test-score-val');
@@ -2156,19 +2325,18 @@ document.addEventListener('DOMContentLoaded', () => {
             rel.lessons.forEach(id  => { if (completedLessons[id])  done++; });
 
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-            const quizPassed = localStorage.getItem('rubric_quiz_completed_' + skill.key) === 'true';
+            // Star system: Start at 0 stars. Earn +1 star for each debug task passed (max 3 stars)!
+            const debugLevel = parseInt(localStorage.getItem('rubric_debug_level_' + skill.key) || '0', 10);
+            let stars = debugLevel;
 
-            // When practical debugging assessment is passed, grant 3 full stars (⭐⭐⭐)!
-            let stars = quizPassed ? 3 : (pct >= 67 ? 3 : pct >= 34 ? 2 : 1);
-            
-            // Build Stars with FontAwesome
+            // Build Stars with FontAwesome (Supports 0 to 3 stars)
             const starStr = Array(3).fill(0).map((_, i) => 
                 i < stars ? `<i class="fa-solid fa-star" style="color: #fbbf24; font-size: 10px; margin-right: 2px; filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4));"></i>` 
                           : `<i class="fa-regular fa-star" style="color: rgba(255,255,255,0.15); font-size: 10px; margin-right: 2px;"></i>`
             ).join('');
 
-            const levelLabel = stars === 3 ? 'ดีเยี่ยม (Proficient)' : stars === 2 ? 'กำลังพัฒนา (Developing)' : 'เริ่มต้น (Beginner)';
-            const levelColor = stars === 3 ? '#34d399' : stars === 2 ? '#fbbf24' : '#f87171';
+            const levelLabel = stars === 3 ? 'ดีเยี่ยม (3/3 ⭐)' : stars === 2 ? 'กำลังพัฒนา (2/3 ⭐)' : stars === 1 ? 'เริ่มต้น (1/3 ⭐)' : 'ยังไม่ประเมิน (0/3 ⭐)';
+            const levelColor = stars === 3 ? '#34d399' : stars === 2 ? '#fbbf24' : stars === 1 ? '#f87171' : 'rgba(255,255,255,0.4)';
 
             const card = document.createElement('div');
             card.style.cssText = `
