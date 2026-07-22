@@ -1129,7 +1129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!les) return;
 
         // Header info
-        pageSectionTitle.textContent = les.title;
+        if (pageSectionTitle) pageSectionTitle.textContent = les.title;
+        if (lessonTitle) lessonTitle.textContent = les.title;
         
         // Hide/Show Scratch side-by-side comparison in reference, projects or syllabus tab
         const compContainer = document.querySelector('.comparison-container');
