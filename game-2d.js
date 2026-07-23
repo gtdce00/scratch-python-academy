@@ -247,13 +247,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Animate move smoothly (simplified for now)
                 robot.x = nextX;
                 robot.y = nextY;
+                render();
             } else {
-                // Error shake
+                // Draw the scene first, then overlay the red "blocked" flash on top
+                // (previously render() ran afterwards and erased the flash instantly).
+                render();
                 ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
                 ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
             }
 
-            render();
             await sleep(400);
             blocks[i].style.transform = 'scale(1)';
         }

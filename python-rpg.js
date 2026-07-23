@@ -627,8 +627,8 @@ function startMission(levelId) {
     // Set editor code
     initEditor(level.defaultCode);
 
-    // Update mission display
-    document.getElementById("current-mission-display").innerText = `๐“ ${level.topic} - เธ เธฒเธฃเธเธดเธ ${levelId}/12`;
+    // Update mission display (element is optional; guard against null to avoid TypeError)
+    (document.getElementById("current-mission-display") || {}).innerText = `๐“ ${level.topic} - เธ เธฒเธฃเธเธดเธ ${levelId}/12`;
 }
 
 /** Update stats display in navbar */

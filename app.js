@@ -43,6 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ln) { loginError.textContent = '⚠️ กรุณากรอกนามสกุล';  loginError.style.display='block'; loginLastname.focus();  return; }
         if (!code) { loginError.textContent = '⚠️ กรุณากรอกรหัสห้องเรียน'; loginError.style.display='block'; loginClasscode.focus(); return; }
 
+        // Validate class code before saving/logging in
+        if (typeof isValidClassCode === 'function' && !isValidClassCode(code)) {
+            loginError.textContent = '❌ รหัสห้องเรียนไม่ถูกต้อง (กรุณาตรวจสอบรหัสจากครูผู้สอน)';
+            loginError.style.display = 'block';
+            loginClasscode.focus();
+            return;
+        }
+
         loginError.style.display = 'none';
         if (btnLogin) { btnLogin.disabled = true; btnLogin.textContent = 'กำลังเข้าสู่ระบบ...'; }
 
@@ -55,15 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('scratch_class_code', code.toUpperCase());
         localStorage.setItem('scratch_student_key', sKey);
 
-        const success = (typeof window.studentLogin === 'function')
-            ? window.studentLogin(fn, ln, code)
-            : true; // fallback if db-sync not yet loaded
-
-        if (success === false) {
-            if (btnLogin) { btnLogin.disabled = false; btnLogin.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> เข้าสู่ระบบ'; }
-            loginError.textContent = '❌ รหัสห้องเรียนไม่ถูกต้อง';
-            loginError.style.display = 'block';
-            return;
+        // db-sync's studentLogin is async; class-code validity was already checked above
+        if (typeof window.studentLogin === 'function') {
+            window.studentLogin(fn, ln, code);
         }
 
         updateHeaderDisplay(fn, ln, code);
@@ -1976,7 +1978,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const getTotalRubric = (student) => {
                 if (!student.rubrics) return 0;
                 let sum = 0;
-                Object.values(student.rubrics).forEach(val => sum += (val || 1));
+                Object.values(student.rubrics).forEach(val => sum += (val || 0));
                 return sum;
             };
 
@@ -2003,7 +2005,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Helper to render stars with number score
             const renderStars = (level) => {
-                const lvl = level || 1;
+                const lvl = level || 0;
+                if (lvl <= 0) return '<span style="color: #475569; font-size: 12px; font-weight: bold;">0</span>';
                 if (lvl === 1) return '<span style="color: #64748b; font-size: 12px; font-weight: bold;">1 <span style="font-size: 10px;">⭐</span></span>';
                 if (lvl === 2) return '<span style="color: #eab308; font-size: 12px; font-weight: bold;">2 <span style="font-size: 10px;">⭐⭐</span></span>';
                 return '<span style="color: #f97316; font-size: 12px; font-weight: bold;">3 <span style="font-size: 10px;">⭐⭐⭐</span></span>';
@@ -2058,6 +2061,8 @@ document.addEventListener('DOMContentLoaded', () => {
             leaderboardBody.innerHTML = '<tr><td colspan="13" style="text-align: center; color: #f87171; padding: 16px;"><i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถดึงข้อมูลได้ (การดึงข้อมูลจากระบบคลาวด์ขัดข้อง)</td></tr>';
         });
     }
+    // Expose so db-sync.js can refresh the leaderboard after cloud sync/restore
+    window.loadLeaderboard = loadLeaderboard;
 
     function calculateGain(pre, post) {
         if (pre === null || post === null) return 0;
@@ -2224,7 +2229,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnNextQ) {
         btnNextQ.addEventListener('click', () => {
-            if (currentQuestionIndex < quizQuestions.length - 1) {
+            if (currentQuestionIndex < currentQuizQuestions.length - 1) {
                 currentQuestionIndex++;
                 showQuestion(currentQuestionIndex);
             } else {
@@ -2328,6 +2333,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Star system: Start at 0 stars. Earn +1 star for each debug task passed (max 3 stars)!
             const debugLevel = parseInt(localStorage.getItem('rubric_debug_level_' + skill.key) || '0', 10);
             let stars = debugLevel;
+            const quizPassed = localStorage.getItem('rubric_quiz_completed_' + skill.key) === 'true';
 
             // Build Stars with FontAwesome (Supports 0 to 3 stars)
             const starStr = Array(3).fill(0).map((_, i) => 

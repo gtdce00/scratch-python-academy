@@ -1082,6 +1082,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 return { success: false, error: "กรุณาเขียน def calc_discount(price): return price * 0.9 และ print(calc_discount(100))" };
             }
         },
+        "ref": {
+            isReference: true,
+            badge: "คลังรวมคำสั่ง Python",
+            title: "คลังรวมคำสั่ง Python (Python Command Reference)",
+            scratchHtml: "",
+            pythonHtml: "",
+            explanation: `
+                <p style="margin-bottom:12px;">รวมคำสั่งและไวยากรณ์ Python ที่ใช้บ่อยไว้ในที่เดียว น้องๆ สามารถคัดลอกโค้ดตัวอย่างไปลองรันในสมุดเขียน (Editor) ทางขวาได้ทันที!</p>
+
+                <h4 style="color:var(--primary-orange); font-size:13px; font-family:var(--font-headers); margin:14px 0 6px;">1. การแสดงผลและรับข้อมูล (Input / Output)</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px;">
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>print(x)</code></td><td style="padding:6px 4px; color:var(--text-muted);">แสดงค่า x ออกทางหน้าจอ</td></tr>
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>input("ถาม: ")</code></td><td style="padding:6px 4px; color:var(--text-muted);">รับข้อความจากผู้ใช้ (ได้ค่าเป็น str เสมอ)</td></tr>
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>int(x)</code> / <code>float(x)</code></td><td style="padding:6px 4px; color:var(--text-muted);">แปลงข้อความเป็นจำนวนเต็ม / ทศนิยม</td></tr>
+                    <tr><td style="padding:6px 4px;"><code>str(x)</code></td><td style="padding:6px 4px; color:var(--text-muted);">แปลงค่าตัวเลขเป็นข้อความ</td></tr>
+                </table>
+
+                <h4 style="color:var(--primary-orange); font-size:13px; font-family:var(--font-headers); margin:14px 0 6px;">2. ตัวดำเนินการ (Operators)</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px;">
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>+ - * /</code></td><td style="padding:6px 4px; color:var(--text-muted);">บวก ลบ คูณ หาร</td></tr>
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>%</code> / <code>//</code> / <code>**</code></td><td style="padding:6px 4px; color:var(--text-muted);">หารเอาเศษ / หารปัดลง / ยกกำลัง</td></tr>
+                    <tr><td style="padding:6px 4px;"><code>== != &lt; &gt; &lt;= &gt;=</code></td><td style="padding:6px 4px; color:var(--text-muted);">เปรียบเทียบค่า (ได้ผลลัพธ์ True/False)</td></tr>
+                </table>
+
+                <h4 style="color:var(--primary-orange); font-size:13px; font-family:var(--font-headers); margin:14px 0 6px;">3. เงื่อนไขและการวนซ้ำ (Control Flow)</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px;">
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>if / elif / else</code></td><td style="padding:6px 4px; color:var(--text-muted);">ตรวจสอบเงื่อนไขเพื่อเลือกทำคำสั่ง</td></tr>
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>for i in range(n)</code></td><td style="padding:6px 4px; color:var(--text-muted);">วนซ้ำตามจำนวนรอบที่กำหนด</td></tr>
+                    <tr><td style="padding:6px 4px;"><code>while เงื่อนไข</code></td><td style="padding:6px 4px; color:var(--text-muted);">วนซ้ำไปเรื่อยๆ ตราบใดที่เงื่อนไขเป็นจริง</td></tr>
+                </table>
+
+                <h4 style="color:var(--primary-orange); font-size:13px; font-family:var(--font-headers); margin:14px 0 6px;">4. ลิสต์และฟังก์ชัน (Lists & Functions)</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>len(x)</code></td><td style="padding:6px 4px; color:var(--text-muted);">นับจำนวนสมาชิก/ความยาว</td></tr>
+                    <tr style="border-bottom:1px solid var(--border-color);"><td style="padding:6px 4px;"><code>list.append(x)</code></td><td style="padding:6px 4px; color:var(--text-muted);">เพิ่มสมาชิกเข้าไปในลิสต์</td></tr>
+                    <tr><td style="padding:6px 4px;"><code>def ชื่อฟังก์ชัน():</code></td><td style="padding:6px 4px; color:var(--text-muted);">สร้างฟังก์ชันเพื่อนำกลับมาใช้ซ้ำ</td></tr>
+                </table>
+            `,
+            challenges: [
+                "เลือกคำสั่งจากตารางด้านซ้าย นำไปลองพิมพ์และกด \"รันโค้ด Python\" เพื่อดูผลลัพธ์จริง",
+                "ลองผสมหลายคำสั่งเข้าด้วยกัน เช่น รับ input แล้วนำไปคำนวณและ print ผลลัพธ์"
+            ],
+            defaultCode: "# คลังรวมคำสั่ง Python — ลองแก้ไขและรันดูได้เลย!\nname = input(\"คุณชื่ออะไร: \")\nprint(\"สวัสดี\", name)\n\nfor i in range(1, 4):\n    print(\"รอบที่\", i)\n",
+            snippets: [
+                { label: "print", code: "print(\"Hello\")\n" },
+                { label: "input", code: "x = input(\"กรอกค่า: \")\n" },
+                { label: "for loop", code: "for i in range(5):\n    print(i)\n" },
+                { label: "if/else", code: "if x > 10:\n    print(\"มาก\")\nelse:\n    print(\"น้อย\")\n" }
+            ],
+            verify: (code, userInput = null) => {
+                return runPythonInterpreter(code, userInput);
+            }
+        },
         "proj": {
             isProjects: true,
             badge: "คลังโปรเจกต์ตัวอย่าง",
@@ -1811,6 +1864,9 @@ document.addEventListener('DOMContentLoaded', () => {
         "if", "else", "elif", "for", "while", "def", "return", "import", "from", "as", "pass",
         "break", "continue", "in", "is", "and", "or", "not", "True", "False", "None", "try", "except"
     ]);
+
+    let activeSyntaxMarkers = [];
+    let activeSyntaxLineClasses = [];
 
     function runRealtimeSyntaxChecker(cm) {
         // Clear previous markers & line classes

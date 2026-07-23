@@ -139,7 +139,7 @@
             if (typeof window.checkAndAwardBadges   === 'function') window.checkAndAwardBadges();
             if (typeof window.renderMyRubricProfile === 'function') window.renderMyRubricProfile();
             if (typeof window.renderBadgeGrid       === 'function') window.renderBadgeGrid();
-            if (typeof loadLeaderboard              === 'function') loadLeaderboard();
+            if (typeof window.loadLeaderboard        === 'function') window.loadLeaderboard();
         }, 400);
     }
 
@@ -186,7 +186,7 @@
         window.firebaseDB.ref(`students/${currentClassCode}/${currentStudentKey}`).set(data)
             .then(() => {
                 console.log(`✅ Synced → students/${currentClassCode}/${currentStudentKey}`);
-                if (typeof loadLeaderboard === 'function') setTimeout(loadLeaderboard, 300);
+                if (typeof window.loadLeaderboard === 'function') setTimeout(window.loadLeaderboard, 300);
             })
             .catch(err => console.error('❌ Sync failed:', err));
     };

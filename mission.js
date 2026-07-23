@@ -1739,6 +1739,11 @@ document.addEventListener('DOMContentLoaded', () => {
         logToConsole(`🟢 [ธงเขียว]: สั่งรันชุดบล็อกสคริปต์คำใบ้จำลองในด่านที่ ${currentMissionId}`, "system");
         
         const m = missions[currentMissionId];
+        // Re-run setup() after cleanup so target/extra sprites are re-shown and
+        // repositioned before the script runs (cleanupSimulation hides them).
+        if (m && m.setup) {
+            m.setup();
+        }
         if (m && m.start) {
             m.start();
         }
