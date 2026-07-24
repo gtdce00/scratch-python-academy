@@ -2300,11 +2300,11 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* 9. Realistic Scratch Blocks Visuals */
+/* 9. Realistic Scratch 3.0 Blocks Visuals */
 .scratch-block-visual {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12.5px;
-    font-weight: bold;
+    font-weight: 600;
     color: white;
     padding: 8px 14px;
     border-radius: 4px;
@@ -2312,102 +2312,75 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
     gap: 6px;
     position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.15);
     margin-bottom: 2px;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.25);
+    text-shadow: none;
+    letter-spacing: 0.1px;
     user-select: none;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    /* Flat Scratch look: subtle darker bottom edge instead of a heavy drop shadow */
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.18);
     min-height: 36px;
 }
 
-/* Event Hat block (Curved top, flat bottom with tab) */
-.scratch-block-visual.hat {
-    border-radius: 24px 24px 4px 4px;
-    padding-top: 14px;
-    margin-top: 8px;
-}
-.scratch-block-visual.hat::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 15px;
-    width: 14px;
-    height: 4px;
-    background-color: inherit;
-    border-radius: 0 0 4px 4px;
-    border-left: 1.5px solid rgba(0,0,0,0.2);
-    border-right: 1.5px solid rgba(0,0,0,0.2);
-    border-bottom: 1.5px solid rgba(0,0,0,0.2);
-    z-index: 5;
-}
-
-/* Stack block (notch on top, tab on bottom) */
-.scratch-block-visual.stack {
-    border-radius: 4px;
-}
-.scratch-block-visual.stack::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 15px;
-    width: 14px;
-    height: 4px;
-    background-color: var(--scratch-container-bg, #0c111d); /* Match the container background dynamically */
-    border-radius: 0 0 4px 4px;
-    border-left: 1.5px solid rgba(0,0,0,0.2);
-    border-right: 1.5px solid rgba(0,0,0,0.2);
-    border-bottom: 1.5px solid rgba(0,0,0,0.2);
-    z-index: 1;
-}
+/* Scratch puzzle connector: trapezoidal nub (bottom) + matching notch (top) */
+.scratch-block-visual.hat::after,
 .scratch-block-visual.stack::after {
     content: '';
     position: absolute;
     bottom: -4px;
-    left: 15px;
-    width: 14px;
+    left: 13px;
+    width: 20px;
     height: 4px;
     background-color: inherit;
-    border-radius: 0 0 4px 4px;
-    border-left: 1.5px solid rgba(0,0,0,0.2);
-    border-right: 1.5px solid rgba(0,0,0,0.2);
-    border-bottom: 1.5px solid rgba(0,0,0,0.2);
+    clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
     z-index: 5;
 }
-
-/* End block (notch on top, flat bottom) */
-.scratch-block-visual.cap {
-    border-radius: 4px 4px 10px 10px;
-}
-.scratch-block-visual.cap::before {
+.scratch-block-visual.stack::before,
+.scratch-block-visual.cap::before,
+.scratch-c-bottom::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 15px;
-    width: 14px;
+    left: 13px;
+    width: 20px;
     height: 4px;
-    background-color: var(--scratch-container-bg, #0c111d);
-    border-radius: 0 0 4px 4px;
-    border-left: 1.5px solid rgba(0,0,0,0.2);
-    border-right: 1.5px solid rgba(0,0,0,0.2);
-    border-bottom: 1.5px solid rgba(0,0,0,0.2);
-    z-index: 1;
+    background-color: var(--scratch-container-bg, #0c111d); /* Match the container background dynamically */
+    clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
+    z-index: 2;
 }
 
-/* Category Colors */
-.scratch-events { background-color: #FFD01A !important; color: #1e293b !important; }
-.scratch-events::after { background-color: #FFD01A !important; }
-.scratch-motion { background-color: #4D97FF !important; color: white !important; }
-.scratch-motion::after { background-color: #4D97FF !important; }
+/* Event Hat block (domed top) */
+.scratch-block-visual.hat {
+    border-radius: 18px 18px 4px 4px;
+    padding-top: 14px;
+    margin-top: 8px;
+}
+
+/* Stack block (notch on top, nub on bottom) */
+.scratch-block-visual.stack {
+    border-radius: 4px;
+}
+
+/* End / Cap block (notch on top, rounded flat bottom) */
+.scratch-block-visual.cap {
+    border-radius: 4px 4px 12px 12px;
+}
+
+/* Category Colors — official Scratch 3.0 palette */
+.scratch-events { background-color: #FFBF00 !important; color: #4a3600 !important; }
+.scratch-events::after { background-color: #FFBF00 !important; }
+.scratch-motion { background-color: #4C97FF !important; color: white !important; }
+.scratch-motion::after { background-color: #4C97FF !important; }
 .scratch-control { background-color: #FFAB19 !important; color: white !important; }
 .scratch-control::after { background-color: #FFAB19 !important; }
 .scratch-looks { background-color: #9966FF !important; color: white !important; }
 .scratch-looks::after { background-color: #9966FF !important; }
-.scratch-sound { background-color: #FF66B2 !important; color: white !important; }
-.scratch-sound::after { background-color: #FF66B2 !important; }
-.scratch-sensing { background-color: #4CBFE6 !important; color: white !important; }
-.scratch-sensing::after { background-color: #4CBFE6 !important; }
-.scratch-operators { background-color: #40BF50 !important; color: white !important; }
-.scratch-operators::after { background-color: #40BF50 !important; }
+.scratch-sound { background-color: #CF63CF !important; color: white !important; }
+.scratch-sound::after { background-color: #CF63CF !important; }
+.scratch-sensing { background-color: #5CB1D6 !important; color: white !important; }
+.scratch-sensing::after { background-color: #5CB1D6 !important; }
+.scratch-operators { background-color: #59C059 !important; color: white !important; }
+.scratch-operators::after { background-color: #59C059 !important; }
 .scratch-variables { background-color: #FF8C1A !important; color: white !important; }
 .scratch-variables::after { background-color: #FF8C1A !important; }
 
@@ -2436,36 +2409,24 @@ h1, h2, h3, h4, h5, h6 {
 .scratch-c-bottom {
     border-radius: 0 0 4px 4px;
     margin-top: 0;
+    min-height: 16px;
 }
-.scratch-c-bottom::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 15px;
-    width: 14px;
-    height: 4px;
-    background-color: var(--scratch-container-bg, #0c111d);
-    border-radius: 0 0 4px 4px;
-    border-left: 1.5px solid rgba(0,0,0,0.2);
-    border-right: 1.5px solid rgba(0,0,0,0.2);
-    border-bottom: 1.5px solid rgba(0,0,0,0.2);
-    z-index: 1;
-}
+/* (top notch handled by the shared .scratch-c-bottom::before rule above) */
 
-/* Inputs styling */
+/* Inputs styling — white rounded number/text field (Scratch reporter input) */
 .scratch-input-pill {
     background-color: white;
-    color: black;
+    color: #575e75;
     border-radius: 40px;
-    padding: 1px 8px;
+    padding: 2px 9px;
     font-size: 11px;
     font-weight: bold;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0,0,0,0.15);
     display: inline-block;
     min-width: 26px;
     text-align: center;
     text-shadow: none;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: none;
 }
 
 /* Container Background overrides for matching notches */
@@ -2482,28 +2443,35 @@ h1, h2, h3, h4, h5, h6 {
     --scratch-container-bg: #1b2430;
 }
 .scratch-input-dropdown {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.2);
     color: white;
-    border-radius: 4px;
-    padding: 1px 6px;
+    border-radius: 12px;
+    padding: 2px 8px;
     font-size: 11px;
-    border: 1px solid rgba(0,0,0,0.15);
+    font-weight: bold;
+    border: none;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     text-shadow: none;
 }
 .scratch-input-dropdown::after {
     content: '▾';
-    font-size: 10px;
+    font-size: 9px;
+    opacity: 0.9;
 }
+/* Boolean input — real hexagon (Scratch condition slot) */
 .scratch-input-hexagon {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.2);
     color: white;
-    border-radius: 4px;
-    padding: 2px 8px;
     font-size: 11px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+    padding: 3px 14px !important;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    text-shadow: none;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%);
 }
 
 /* Drag and Drop classes for Scratch Assembler */

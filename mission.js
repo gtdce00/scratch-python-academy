@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
                 { type: 'stack', category: 'motion', text: 'เดินหน้า <span class="scratch-input-pill">10</span> ก้าว' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">แตะ ขวดนม ?</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#5CB1D6; padding:1px 6px;">แตะ ขวดนม ?</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'เปลี่ยนขนาดทีละ <span class="scratch-input-pill">80</span>' },
                 { type: 'stack', category: 'sound', text: 'เล่นเสียง <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">Meow</span> จนจบ' },
                 { type: 'c-end', category: 'control' },
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { type: 'stack', category: 'variables', text: 'ตั้งค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">คะแนน</span> เป็น <span class="scratch-input-pill">5</span>' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
                 { type: 'stack', category: 'motion', text: 'เปลี่ยน y ทีละ <span class="scratch-input-pill">-6</span>' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">แตะ แมวส้ม ?</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#5CB1D6; padding:1px 6px;">แตะ แมวส้ม ?</span> แล้ว' },
                 { type: 'stack', category: 'variables', text: 'เปลี่ยนค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">คะแนน</span> ทีละ <span class="scratch-input-pill">-1</span>' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">โอ๊ย!</span> เป็นเวลา <span class="scratch-input-pill">0.5</span> วินาที' },
                 { type: 'c-end', category: 'control' },
@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">ปุ่ม สเปซบาร์ ถูกกด ?</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#5CB1D6; padding:1px 6px;">ปุ่ม สเปซบาร์ ถูกกด ?</span> แล้ว' },
                 { type: 'stack', category: 'motion', text: 'เดินหน้า <span class="scratch-input-pill">18</span> ก้าว' },
                 { type: 'c-start', category: 'control', text: 'มิฉะนั้น' },
                 { type: 'stack', category: 'motion', text: 'เดินหน้า <span class="scratch-input-pill">6</span> ก้าว' },
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'stack', category: 'sensing', text: 'ถาม <span class="scratch-input-pill" style="color:black; background:white; font-size:11px; padding:1px 6px;">5 + 7 ได้เท่าไหร่?</span> และรอ' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = 12</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = 12</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">ผ่านเข้ารอบสำเร็จ! 🎉</span> เป็นเวลา <span class="scratch-input-pill">2</span> วินาที' },
                 { type: 'c-start', category: 'control', text: 'มิฉะนั้น' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">คำตอบยังไม่ถูก ลองใหม่นะ</span> เป็นเวลา <span class="scratch-input-pill">2</span> วินาที' },
@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
-                { type: 'stack', category: 'looks', text: 'ตั้งค่าขนาดเป็น <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">(200) - (ระยะห่างไปยัง ตัวชี้เมาส์)</span> %' },
+                { type: 'stack', category: 'looks', text: 'ตั้งค่าขนาดเป็น <span class="scratch-input-hexagon" style="background:#5CB1D6; padding:1px 6px;">(200) - (ระยะห่างไปยัง ตัวชี้เมาส์)</span> %' },
                 { type: 'c-end', category: 'control' }
             ],
             steps: [
@@ -891,7 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'stack', category: 'sensing', text: 'ถาม <span class="scratch-input-pill" style="color:black; background:white; font-size:11px; padding:1px 6px;">6 x 8 ได้เท่าไหร่?</span> และรอ' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = 48</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = 48</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">ยินดีด้วยเก่งมากๆ!</span>' },
                 { type: 'c-end', category: 'control' }
             ],
@@ -942,8 +942,8 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
-                { type: 'stack', category: 'variables', text: 'ตั้งค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">ระยะห่าง</span> เป็น <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">ระยะห่างไปยัง ตัวชี้เมาส์</span>' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;">ระยะห่าง < 20</span> แล้ว' },
+                { type: 'stack', category: 'variables', text: 'ตั้งค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">ระยะห่าง</span> เป็น <span class="scratch-input-hexagon" style="background:#5CB1D6; padding:1px 6px;">ระยะห่างไปยัง ตัวชี้เมาส์</span>' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;">ระยะห่าง < 20</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'แสดงตัวละครกุญแจ' },
                 { type: 'c-end', category: 'control' },
                 { type: 'c-end', category: 'control' }
@@ -1001,7 +1001,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
-                { type: 'stack', category: 'sound', text: 'ตั้งค่าเอฟเฟกต์ <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">เสียงสูงต่ำ</span> เป็น <span class="scratch-input-hexagon" style="background:#4D97FF; padding:1px 6px;">ตำแหน่ง x</span>' },
+                { type: 'stack', category: 'sound', text: 'ตั้งค่าเอฟเฟกต์ <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">เสียงสูงต่ำ</span> เป็น <span class="scratch-input-hexagon" style="background:#4C97FF; padding:1px 6px;">ตำแหน่ง x</span>' },
                 { type: 'c-end', category: 'control' }
             ],
             steps: [
@@ -1061,7 +1061,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'stack', category: 'sensing', text: 'ถาม <span class="scratch-input-pill" style="color:black; background:white; font-size:11px; padding:1px 6px;">15 mod 4 ได้เท่าไหร่?</span> และรอ' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = 3</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = 3</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">คำตอบเจ๋งมาก! เหลือเศษ 3</span>' },
                 { type: 'c-end', category: 'control' }
             ],
@@ -1213,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'stack', category: 'sensing', text: 'ถาม <span class="scratch-input-pill" style="color:black; background:white; font-size:11px; padding:1px 6px;">10 > 5 และ 3 < 8 ใช่หรือไม่? (yes/no)</span> และรอ' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = yes</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;"><span style="background:rgba(255,255,255,0.2); border-radius:40px; padding:1px 4px;">คำตอบ</span> = yes</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">สมการจริง เชื่อมด้วย และ เป็นจริง!</span>' },
                 { type: 'c-end', category: 'control' }
             ],
@@ -1263,7 +1263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
                 { type: 'c-start', category: 'control', text: 'วนซ้ำตลอดไป' },
                 { type: 'stack', category: 'motion', text: 'ไปที่ <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">ตัวชี้เมาส์</span>' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#4CBFE6; padding:1px 6px;">แตะ หนูจอมซน ?</span> แล้ว' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#5CB1D6; padding:1px 6px;">แตะ หนูจอมซน ?</span> แล้ว' },
                 { type: 'stack', category: 'variables', text: 'เปลี่ยนค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">คะแนน</span> ทีละ <span class="scratch-input-pill">1</span>' },
                 { type: 'stack', category: 'motion', text: 'ไปที่ตำแหน่งสุ่มของหนู' },
                 { type: 'c-end', category: 'control' },
@@ -1380,8 +1380,8 @@ document.addEventListener('DOMContentLoaded', () => {
             objective: "จำลองปุ่มตรรกะสุ่มจับฉลาก โดยคลิกธงเขียวเพื่อสุ่มตัวแปร 'เลขนำโชค' ระหว่าง 10 ถึง 99 หากค่าที่ออกมามีค่ายินยอมสูงกว่า 50 (เลขสุ่ม > 50) จะประกาศผ่านภารกิจ!",
             hints: [
                 { type: 'hat', category: 'events', text: 'เมื่อคลิก 🟢' },
-                { type: 'stack', category: 'variables', text: 'ตั้งค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">เลขนำโชค</span> เป็น <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;">เลือกสุ่มจาก 10 ถึง 99</span>' },
-                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#40BF50; padding:1px 6px;">เลขนำโชค > 50</span> แล้ว' },
+                { type: 'stack', category: 'variables', text: 'ตั้งค่า <span class="scratch-input-dropdown" style="background:rgba(255,255,255,0.2); color:white; border-radius:4px; padding:1px 4px;">เลขนำโชค</span> เป็น <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;">เลือกสุ่มจาก 10 ถึง 99</span>' },
+                { type: 'c-start', category: 'control', text: 'ถ้า <span class="scratch-input-hexagon" style="background:#59C059; padding:1px 6px;">เลขนำโชค > 50</span> แล้ว' },
                 { type: 'stack', category: 'looks', text: 'พูด <span class="scratch-input-pill">โชคดีสุดๆ! ผ่านด่านแล้ว</span>' },
                 { type: 'c-end', category: 'control' }
             ],
