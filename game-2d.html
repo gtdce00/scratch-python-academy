@@ -303,6 +303,7 @@
                 <option value="2">Level 2: Turn Around</option>
                 <option value="3">Level 3: The Maze</option>
             </select>
+            <span id="game2d-progress-label" style="color:#94a3b8; font-size:13px; font-weight:700;">ผ่านแล้ว 0/3 ด่าน</span>
             <a href="index.html" class="btn-nav"><i class="fa-solid fa-house"></i> กลับหน้าหลัก</a>
         </div>
     </header>
@@ -366,7 +367,15 @@
         </div>
     </div>
 
+    <!-- Classroom sync -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="db-config.js?v=20260724_GAMESYNC"></script>
+    <script src="class-config.js?v=20260724_GAMESYNC"></script>
+    <script src="db-sync.js?v=20260724_GAMESYNC"></script>
+    <script src="badges.js?v=20260724_GAMESYNC"></script>
+
     <!-- Game Engine Scripts -->
-    <script src="game-2d.js"></script>
+    <script src="game-2d.js?v=20260724_GAMESYNC"></script>
 </body>
 </html>

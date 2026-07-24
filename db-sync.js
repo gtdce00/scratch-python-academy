@@ -102,6 +102,9 @@
         localStorage.removeItem('scratch_pre_test_score');
         localStorage.removeItem('scratch_post_test_score');
         localStorage.removeItem('scratch_badges');
+        localStorage.removeItem('python-rpg-save');
+        localStorage.removeItem('game2d_completed_levels');
+        localStorage.removeItem('game2d_best_stars');
         ['sequencing','loops','coordinates','events','conditions','operators','variables','functions'].forEach(k => {
             localStorage.removeItem('rubric_quiz_completed_' + k);
             localStorage.removeItem('rubric_debug_level_' + k);
@@ -126,6 +129,9 @@
         if (d.preScore  !== null && d.preScore  !== undefined) localStorage.setItem('scratch_pre_test_score',  String(d.preScore));
         if (d.postScore !== null && d.postScore !== undefined) localStorage.setItem('scratch_post_test_score', String(d.postScore));
         if (d.badges)    localStorage.setItem('scratch_badges', JSON.stringify(d.badges));
+        if (d.rpgSave)   localStorage.setItem('python-rpg-save', JSON.stringify(d.rpgSave));
+        if (d.game2dCompleted) localStorage.setItem('game2d_completed_levels', JSON.stringify(d.game2dCompleted));
+        if (d.game2dBestStars) localStorage.setItem('game2d_best_stars', JSON.stringify(d.game2dBestStars));
         if (d.rubricDebugLevels) {
             Object.keys(d.rubricDebugLevels).forEach(k => {
                 const lvl = parseInt(d.rubricDebugLevels[k] || 0, 10);
@@ -140,6 +146,7 @@
             if (typeof window.renderMyRubricProfile === 'function') window.renderMyRubricProfile();
             if (typeof window.renderBadgeGrid       === 'function') window.renderBadgeGrid();
             if (typeof window.loadLeaderboard        === 'function') window.loadLeaderboard();
+            if (typeof window.refreshLearningProgress === 'function') window.refreshLearningProgress();
         }, 400);
     }
 
@@ -161,8 +168,13 @@
         const missions  = JSON.parse(localStorage.getItem('scratch_completed_missions') || '{}');
         const lessons   = JSON.parse(localStorage.getItem('python_completed_lessons')   || '{}');
         const badges    = JSON.parse(localStorage.getItem('scratch_badges')             || '{}');
+        const rpgSave   = JSON.parse(localStorage.getItem('python-rpg-save')            || 'null');
+        const game2dCompleted = JSON.parse(localStorage.getItem('game2d_completed_levels') || '{}');
+        const game2dBestStars = JSON.parse(localStorage.getItem('game2d_best_stars') || '{}');
         const missionsCount = Object.values(missions).filter(Boolean).length;
         const lessonsCount  = Object.values(lessons).filter(Boolean).length;
+        const rpgClearedCount = Array.isArray(rpgSave && rpgSave.clearedLevels) ? rpgSave.clearedLevels.length : 0;
+        const game2dCount = Object.values(game2dCompleted).filter(Boolean).length;
         const rubricQuizPassed = {};
         const rubricDebugLevels = {};
         ['sequencing','loops','coordinates','events','conditions','operators','variables','functions'].forEach(k => {
@@ -176,8 +188,11 @@
             preScore:  preScore  !== null ? parseInt(preScore)  : null,
             postScore: postScore !== null ? parseInt(postScore) : null,
             missionsCount, lessonsCount,
+            rpgClearedCount, game2dCount,
             completedMissions: missions,
             completedLessons:  lessons,
+            rpgSave: rpgSave || null,
+            game2dCompleted, game2dBestStars,
             rubrics: calculateRubricScores(missions, lessons),
             rubricDebugLevels,
             rubricQuizPassed, badges,

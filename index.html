@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=8">
     <style>
         /* Top Navigation Bar Layout Overrides to bypass browser caching */
         .app-container {
@@ -53,7 +53,7 @@
             flex-shrink: 0 !important;
         }
         .brand-text h2 {
-            font-size: 18px !important;
+            font-size: 15px !important;
         }
         .brand-text span {
             font-size: 12px !important;
@@ -127,25 +127,24 @@
                     </svg>
                 </div>
                 <div class="brand-text">
-                    <h2>Scratch</h2>
+                    <h2>Scratch &amp; Python</h2>
                     <span>Academy</span>
                 </div>
             </div>
             
             <nav class="sidebar-menu">
-                <!-- หน้าแรก -->
                 <a href="#home" class="menu-item active" data-tab="home">
                     <i class="fa-solid fa-house"></i> หน้าแรก
                 </a>
 
-                <!-- Dropdown: แนะนำการใช้งาน -->
+                <!-- 1. เริ่มต้น Scratch -->
                 <div class="nav-dropdown">
                     <button class="nav-dropdown-btn">
-                        <i class="fa-solid fa-cat"></i> แนะนำการใช้งาน <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                        <i class="fa-solid fa-cat"></i> 1. เริ่มต้น Scratch <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
                     </button>
                     <div class="nav-dropdown-content">
                         <a href="#about" class="menu-item" data-tab="about">
-                            <i class="fa-solid fa-circle-info"></i> โปรแกรม Scratch คืออะไร?
+                            <i class="fa-solid fa-circle-info"></i> Scratch คืออะไร?
                         </a>
                         <a href="#install" class="menu-item" data-tab="install">
                             <i class="fa-solid fa-download"></i> การติดตั้งโปรแกรม
@@ -153,56 +152,67 @@
                         <a href="#interface" class="menu-item" data-tab="interface">
                             <i class="fa-solid fa-desktop"></i> ส่วนประกอบโปรแกรม
                         </a>
-                    </div>
-                </div>
-
-                <!-- Dropdown: บทเรียน Scratch -->
-                <div class="nav-dropdown">
-                    <button class="nav-dropdown-btn">
-                        <i class="fa-solid fa-puzzle-piece"></i> บทเรียน Scratch <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
-                    </button>
-                    <div class="nav-dropdown-content">
                         <a href="#flowchart" class="menu-item" data-tab="flowchart">
-                            <i class="fa-solid fa-diagram-project"></i> เรื่องผังงาน (Flowchart)
+                            <i class="fa-solid fa-diagram-project"></i> ผังงาน (Flowchart)
                         </a>
                         <a href="#variables" class="menu-item" data-tab="variables">
-                            <i class="fa-solid fa-box-archive"></i> ตัวแปร & ตัวดำเนินการ
+                            <i class="fa-solid fa-box-archive"></i> ตัวแปร &amp; ตัวดำเนินการ
                         </a>
                         <a href="#activities" class="menu-item" data-tab="activities">
-                            <i class="fa-solid fa-gamepad"></i> กิจกรรมฝึกเขียนโค้ด
-                        </a>
-                        <a href="motion.html" class="menu-item">
-                            <i class="fa-solid fa-arrows-up-down-left-right"></i> คลังบล็อกคำสั่ง Scratch
-                        </a>
-                        <a href="mission.html" class="menu-item">
-                            <i class="fa-solid fa-trophy"></i> เกมผ่านด่าน 20 ด่าน (Lab)
+                            <i class="fa-solid fa-play"></i> กิจกรรมฝึกเขียนโค้ด
                         </a>
                     </div>
                 </div>
 
-                <!-- Dropdown: บทเรียน Python -->
+                <!-- 2. ฝึกปฏิบัติ -->
                 <div class="nav-dropdown">
                     <button class="nav-dropdown-btn">
-                        <i class="fa-brands fa-python"></i> บทเรียน Python <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                        <i class="fa-solid fa-flask"></i> 2. ฝึกปฏิบัติ <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                    </button>
+                    <div class="nav-dropdown-content">
+                        <a href="motion.html" class="menu-item">
+                            <i class="fa-solid fa-puzzle-piece"></i> คลังบล็อกคำสั่ง
+                        </a>
+                        <a href="mission.html" class="menu-item">
+                            <i class="fa-solid fa-trophy"></i> ห้องปฏิบัติการ 20 ด่าน
+                        </a>
+                        <a href="game-2d.html" class="menu-item">
+                            <i class="fa-solid fa-gamepad"></i> เกม Code Rover
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. Python -->
+                <div class="nav-dropdown">
+                    <button class="nav-dropdown-btn">
+                        <i class="fa-brands fa-python"></i> 3. Python <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
                     </button>
                     <div class="nav-dropdown-content">
                         <a href="python-learn.html" class="menu-item">
-                            <i class="fa-brands fa-python"></i> เรียนรู้ Python เบื้องต้น
+                            <i class="fa-brands fa-python"></i> เรียนรู้ Python 20 บท
+                        </a>
+                        <a href="python-rpg.html" class="menu-item">
+                            <i class="fa-solid fa-map"></i> Python RPG
                         </a>
                     </div>
                 </div>
 
-                <!-- Dropdown: ประเมินผลรูบริก & สอบ -->
+                <!-- 4. วัดผล -->
                 <div class="nav-dropdown">
                     <button class="nav-dropdown-btn">
-                        <i class="fa-solid fa-square-poll-vertical"></i> การวัดผลสัมฤทธิ์ <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
+                        <i class="fa-solid fa-square-poll-vertical"></i> 4. วัดผล <i class="fa-solid fa-chevron-down" style="font-size: 10px; margin-left: 4px;"></i>
                     </button>
                     <div class="nav-dropdown-content">
                         <a href="#quiz" class="menu-item" data-tab="quiz">
-                            <i class="fa-solid fa-award"></i> แบบทดสอบ Pre/Post test
+                            <i class="fa-solid fa-award"></i> Pre/Post test &amp; รูบริก
                         </a>
                     </div>
                 </div>
+
+                <!-- โหมดครู (แสดงเมื่อล็อกอินด้วย TEACHER / DEMO) -->
+                <a href="#teacher" class="menu-item" data-tab="teacher" id="nav-teacher-item" style="display:none;">
+                    <i class="fa-solid fa-chalkboard-user"></i> โหมดครู
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -259,7 +269,8 @@
                         color:white; border-radius:10px; padding:10px 14px; font-size:13px; outline:none; font-family:var(--font-body); text-transform:uppercase;"
                         autocomplete="off" maxlength="10">
                     <div style="font-size:10px; color:rgba(255,255,255,0.25); margin-top:6px; line-height:1.5;">
-                        รหัสห้อง: P101-P603 (ประถม), M101-M303 (มัธยม)
+                        รหัสห้อง: P101-P603 (ประถม), M101-M303 (มัธยม)<br>
+                        ครูผู้สอนใช้รหัส <strong style="color:rgba(251,146,60,0.85);">TEACHER</strong> หรือ <strong style="color:rgba(251,146,60,0.85);">DEMO</strong>
                     </div>
                 </div>
 
@@ -281,7 +292,7 @@
             <!-- Header Status Bar -->
             <header class="content-header" style="flex-wrap: wrap; gap: 12px; align-items: center;">
                 <div class="header-title">
-                    <h1 id="page-title">ยินดีต้อนรับสู่ Scratch Academy</h1>
+                    <h1 id="page-title">Scratch &amp; Python Academy</h1>
                 </div>
                 <div class="header-student-profile" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; flex-wrap: wrap;">
                     <i class="fa-solid fa-user-graduate" style="color: var(--primary-orange); font-size: 13px;"></i>
@@ -296,7 +307,7 @@
                     <input type="hidden" id="header-student-name">
                 </div>
                 <div class="header-progress">
-                    <span class="progress-text">ระดับการเรียนรู้: <strong id="progress-percent">0%</strong></span>
+                    <span class="progress-text">ความคืบหน้ารวม: <strong id="progress-percent">0%</strong></span>
                     <div class="progress-bar-container">
                         <div class="progress-bar" id="learning-progress"></div>
                     </div>
@@ -308,99 +319,109 @@
                 
                 <!-- 1. Home Screen -->
                 <section id="home-tab" class="tab-panel active">
-                    <div class="hero-section">
-                        <div class="hero-content">
-                            <span class="hero-badge">หลักสูตรอบรมการเขียนโปรแกรมคอมพิวเตอร์เพื่อการศึกษา</span>
-                            <h1>การเขียนโปรแกรมคอมพิวเตอร์เบื้องต้น<br><span class="highlight-text">ด้วยโปรแกรม Scratch</span></h1>
-                            <p>ยินดีต้อนรับเด็กๆ และผู้ที่สนใจทุกคน! เว็บไซต์นี้จะพาเด็กๆ ไปทำความรู้จักกับพื้นฐานของการคิดอย่างเป็นระบบ การวางแผนงานด้วยผังงาน (Flowchart) และการเริ่มต้นสั่งการคอมพิวเตอร์ด้วยการต่อบล็อกคำสั่ง Scratch ซึ่งเป็นรากฐานที่สำคัญที่สุดก่อนจะก้าวเข้าสู่โลกของนักเขียนโปรแกรมตัวจริง!</p>
-                            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                                <button class="btn btn-primary btn-large btn-start-learning">
-                                    <i class="fa-solid fa-play"></i> เริ่มการเรียนที่แสนสนุกกันเถอะ!
+                    <div class="home-hero">
+                        <div class="home-hero-visual" aria-hidden="true">
+                            <div class="home-hero-glow home-hero-glow-a"></div>
+                            <div class="home-hero-glow home-hero-glow-b"></div>
+                            <div class="home-hero-stage">
+                                <div class="home-hero-block home-hero-block-hat">เมื่อคลิกธงเขียว</div>
+                                <div class="home-hero-block home-hero-block-motion">เดินหน้า 10 ก้าว</div>
+                                <div class="home-hero-block home-hero-block-looks">พูด Hello!</div>
+                                <div class="home-hero-cat">🐱</div>
+                            </div>
+                        </div>
+                        <div class="home-hero-copy">
+                            <p class="home-hero-brand">Scratch &amp; Python Academy</p>
+                            <h1 class="home-hero-title">จากบล็อก Scratch<br>สู่โค้ด Python</h1>
+                            <p class="home-hero-lead">เส้นทางเดียว เรียน–ฝึก–วัดผล สำหรับห้องเรียนวิทยาการคำนวณ</p>
+                            <div class="home-hero-cta">
+                                <button type="button" class="btn btn-primary btn-large btn-start-learning">
+                                    <i class="fa-solid fa-play"></i> เริ่มเรียน Scratch
                                 </button>
-                                <a href="motion.html" class="btn btn-orange btn-large" style="text-decoration: none;">
-                                    <i class="fa-solid fa-arrows-up-down-left-right"></i> คลังบล็อกคำสั่ง
-                                </a>
-                                <a href="mission.html" class="btn btn-purple btn-large" style="text-decoration: none; background-color: var(--scratch-purple); border-color: var(--scratch-purple); color: white;">
-                                    <i class="fa-solid fa-trophy"></i> เกมผ่านด่าน 20 ด่าน
-                                </a>
-                                <a href="python-learn.html" class="btn btn-large" style="text-decoration: none; background-color: #306998; border-color: #306998; color: white;">
-                                    <i class="fa-brands fa-python"></i> เริ่มต้นเขียน Python <i class="fa-solid fa-arrow-right"></i>
-                                </a>
-                                <a href="game-2d.html" class="btn btn-large" style="text-decoration: none; background-color: #10b981; border-color: #059669; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
-                                    <i class="fa-solid fa-gamepad"></i> โซนเกม 2 มิติ (ใหม่!)
+                                <a href="mission.html" class="btn btn-large home-hero-cta-secondary">
+                                    <i class="fa-solid fa-flask"></i> เข้าห้องปฏิบัติการ
                                 </a>
                             </div>
                         </div>
-                        <div class="hero-image">
-                            <!-- Animated SVG Boy Coding with Scratch Blocks -->
-                            <svg viewBox="0 0 400 400" width="100%" height="100%">
-                                <defs>
-                                    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#4D97FF" />
-                                        <stop offset="100%" stop-color="#005DFF" />
-                                    </linearGradient>
-                                    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#FFAB19" />
-                                        <stop offset="100%" stop-color="#FF8C00" />
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="200" cy="200" r="180" fill="url(#blueGrad)" opacity="0.1" />
-                                <!-- Laptop screen representation -->
-                                <rect x="80" y="100" width="240" height="160" rx="10" fill="#1e293b" stroke="#4D97FF" stroke-width="4" />
-                                <rect x="95" y="115" width="210" height="130" rx="4" fill="#334155" />
-                                <!-- Laptop base -->
-                                <path d="M50 260 L350 260 L370 280 L30 280 Z" fill="#64748b" />
-                                <rect x="170" y="260" width="60" height="8" fill="#475569" />
-                                <!-- Code Block representing Scratch Orange -->
-                                <g transform="translate(110, 130) scale(0.8)">
-                                    <rect width="120" height="30" rx="8" fill="url(#orangeGrad)" />
-                                    <text x="10" y="20" fill="white" font-family="Kanit" font-size="12" font-weight="bold">when green flag clicked</text>
-                                </g>
-                                <g transform="translate(130, 160) scale(0.8)">
-                                    <rect width="100" height="30" rx="8" fill="#4D97FF" />
-                                    <text x="10" y="20" fill="white" font-family="Kanit" font-size="12">move 10 steps</text>
-                                </g>
-                                <g transform="translate(130, 190) scale(0.8)">
-                                    <rect width="100" height="30" rx="8" fill="#9966FF" />
-                                    <text x="10" y="20" fill="white" font-family="Kanit" font-size="12">say Hello!</text>
-                                </g>
-                                <!-- Mascot Scratch Cat Silhouette -->
-                                <g transform="translate(230, 150) scale(0.6)">
-                                    <circle cx="80" cy="80" r="40" fill="#FFAB19" />
-                                    <!-- Ears -->
-                                    <polygon points="50,50 40,20 70,45" fill="#FFAB19" />
-                                    <polygon points="110,50 120,20 90,45" fill="#FFAB19" />
-                                    <!-- Eyes -->
-                                    <circle cx="65" cy="75" r="10" fill="white" />
-                                    <circle cx="65" cy="75" r="4" fill="black" />
-                                    <circle cx="95" cy="75" r="10" fill="white" />
-                                    <circle cx="95" cy="75" r="4" fill="black" />
-                                    <!-- Snout -->
-                                    <polygon points="80,82 76,86 84,86" fill="#F87171" />
-                                    <!-- Smile -->
-                                    <path d="M72 90 Q80 100 88 90" fill="none" stroke="black" stroke-width="2" />
-                                </g>
-                            </svg>
-                        </div>
                     </div>
 
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon orange-bg"><i class="fa-solid fa-puzzle-piece"></i></div>
-                            <h3>เรียนรู้ด้วยบล็อกคำสั่ง</h3>
-                            <p>เข้าใจง่าย ไม่จำเป็นต้องพิมพ์คำสั่งยาวๆ ช่วยให้มองเห็นภาพการทำงานของคำสั่งได้ชัดเจนและไม่พิมพ์ผิดไวยากรณ์</p>
+                    <section class="today-panel" aria-labelledby="today-panel-title">
+                        <div class="today-mission-card">
+                            <p class="today-kicker"><i class="fa-solid fa-bullseye"></i> ภารกิจวันนี้</p>
+                            <h2 id="today-panel-title" class="today-mission-title">กำลังโหลด...</h2>
+                            <p class="today-mission-desc" id="today-mission-desc">ระบบกำลังดูความคืบหน้าของคุณ</p>
+                            <a href="#about" class="btn btn-primary" id="today-mission-cta">
+                                <i class="fa-solid fa-play"></i> เริ่มเลย
+                            </a>
                         </div>
-                        <div class="feature-card">
-                            <div class="feature-icon blue-bg"><i class="fa-solid fa-diagram-project"></i></div>
-                            <h3>ออกแบบขั้นตอนผ่านผังงาน</h3>
-                            <p>ฝึกฝนการเขียนลำดับขั้นตอนความคิดผ่านผังงาน (Flowchart) ด้วยสัญลักษณ์ที่เป็นสากล ก่อนเริ่มต้นโค้ดจริง</p>
+                        <div class="my-progress-card">
+                            <div class="my-progress-head">
+                                <h2>ความคืบหน้าของฉัน</h2>
+                                <strong id="my-progress-overall">0%</strong>
+                            </div>
+                            <ul class="my-progress-meters" id="my-progress-meters">
+                                <li>
+                                    <div class="meter-label"><span>Scratch Lab</span><span id="meter-missions-val">0/20</span></div>
+                                    <div class="meter-track"><div class="meter-fill meter-scratch" id="meter-missions" style="width:0%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="meter-label"><span>Python</span><span id="meter-lessons-val">0/20</span></div>
+                                    <div class="meter-track"><div class="meter-fill meter-python" id="meter-lessons" style="width:0%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="meter-label"><span>Code Rover</span><span id="meter-rover-val">0/3</span></div>
+                                    <div class="meter-track"><div class="meter-fill meter-rover" id="meter-rover" style="width:0%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="meter-label"><span>Python RPG</span><span id="meter-rpg-val">0/12</span></div>
+                                    <div class="meter-track"><div class="meter-fill meter-rpg" id="meter-rpg" style="width:0%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="meter-label"><span>แบบทดสอบ</span><span id="meter-quiz-val">ยังไม่ทำ</span></div>
+                                    <div class="meter-track"><div class="meter-fill meter-quiz" id="meter-quiz" style="width:0%"></div></div>
+                                </li>
+                                <li>
+                                    <div class="meter-label"><span>Badges</span><span id="meter-badges-val">0/10</span></div>
+                                    <div class="meter-track"><div class="meter-fill meter-badges" id="meter-badges" style="width:0%"></div></div>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="feature-card">
-                            <div class="feature-icon purple-bg"><i class="fa-solid fa-code"></i></div>
-                            <h3>ตัวแปรและตัวดำเนินการ</h3>
-                            <p>ทำความเข้าใจเรื่อง 'กล่องวิเศษ' (ตัวแปร) ที่ใช้จองพื้นที่ในสมองคอมพิวเตอร์ และฝึกการคิดเลขด้วยตัวดำเนินการ</p>
-                        </div>
-                    </div>
+                    </section>
+
+                    <section class="learning-path" aria-labelledby="learning-path-title">
+                        <h2 id="learning-path-title">เส้นทางการเรียนรู้</h2>
+                        <p class="learning-path-lead">เลื่อนตามลำดับจากพื้นฐานสู่การวัดผลสัมฤทธิ์</p>
+                        <ol class="learning-path-steps">
+                            <li>
+                                <a href="#about" class="learning-path-link" data-tab="about">
+                                    <span class="learning-path-num">1</span>
+                                    <span class="learning-path-label">เริ่มต้น Scratch</span>
+                                    <span class="learning-path-desc">รู้จักโปรแกรม ผังงาน และพื้นฐานบล็อก</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="mission.html" class="learning-path-link">
+                                    <span class="learning-path-num">2</span>
+                                    <span class="learning-path-label">ฝึกปฏิบัติ</span>
+                                    <span class="learning-path-desc">คลังบล็อก · 20 ด่าน · Code Rover</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="python-learn.html" class="learning-path-link">
+                                    <span class="learning-path-num">3</span>
+                                    <span class="learning-path-label">ก้าวสู่ Python</span>
+                                    <span class="learning-path-desc">20 บทเรียน และเกม RPG</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#quiz" class="learning-path-link" data-tab="quiz">
+                                    <span class="learning-path-num">4</span>
+                                    <span class="learning-path-label">วัดผล</span>
+                                    <span class="learning-path-desc">Pre/Post test · รูบริก · เกียรติบัตร</span>
+                                </a>
+                            </li>
+                        </ol>
+                    </section>
                 </section>
 
                 <!-- 2. What is Scratch Tab -->
@@ -1236,6 +1257,62 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Teacher Dashboard -->
+                <section id="teacher-tab" class="tab-panel">
+                    <div class="teacher-dash">
+                        <div class="teacher-dash-header">
+                            <div>
+                                <h2>Teacher Dashboard</h2>
+                                <p>ดูสถานะห้องเรียนแบบเรียลไทม์ — ใครทำอะไรแล้ว / ใครติดอยู่</p>
+                            </div>
+                            <div class="teacher-dash-controls">
+                                <label for="teacher-class-select">เลือกห้อง</label>
+                                <select id="teacher-class-select"></select>
+                                <button type="button" class="btn btn-green" id="btn-teacher-export" style="background-color:#34d399;color:#061f14;">
+                                    <i class="fa-solid fa-file-csv"></i> ส่งออก CSV
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="teacher-stat-grid" id="teacher-stat-grid">
+                            <div class="teacher-stat"><span class="teacher-stat-label">นักเรียนในห้อง</span><strong id="td-stat-total">0</strong></div>
+                            <div class="teacher-stat"><span class="teacher-stat-label">ทำ Pre-test แล้ว</span><strong id="td-stat-pre">0</strong></div>
+                            <div class="teacher-stat"><span class="teacher-stat-label">ทำ Post-test แล้ว</span><strong id="td-stat-post">0</strong></div>
+                            <div class="teacher-stat"><span class="teacher-stat-label">เฉลี่ย Lab (ด่าน)</span><strong id="td-stat-missions">0</strong></div>
+                            <div class="teacher-stat"><span class="teacher-stat-label">เฉลี่ย Python (บท)</span><strong id="td-stat-lessons">0</strong></div>
+                        </div>
+
+                        <div class="teacher-filters" id="teacher-filters">
+                            <button type="button" class="teacher-filter active" data-filter="all">ทั้งหมด</button>
+                            <button type="button" class="teacher-filter" data-filter="no-pre">ยังไม่ทำ Pre</button>
+                            <button type="button" class="teacher-filter" data-filter="low-lab">Lab &lt; 5 ด่าน</button>
+                            <button type="button" class="teacher-filter" data-filter="no-post">ยังไม่ทำ Post</button>
+                            <button type="button" class="teacher-filter" data-filter="inactive">ยังไม่เริ่ม</button>
+                        </div>
+
+                        <div class="teacher-table-wrap">
+                            <table class="teacher-table">
+                                <thead>
+                                    <tr>
+                                        <th>ชื่อ</th>
+                                        <th>สถานะ</th>
+                                        <th>Pre</th>
+                                        <th>Post</th>
+                                        <th>Lab</th>
+                                        <th>Python</th>
+                                        <th>Rover</th>
+                                        <th>RPG</th>
+                                        <th>อัปเดตล่าสุด</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teacher-table-body">
+                                    <tr><td colspan="9" class="teacher-empty">เลือกรหัสห้องด้านบนเพื่อโหลดข้อมูล</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
                 
 
             </div>
@@ -1285,10 +1362,10 @@
     <!-- Firebase SDK Compatibility Libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="db-config.js?v=20260722_3TASKS_PROG"></script>
-    <script src="class-config.js?v=20260722_3TASKS_PROG"></script>
-    <script src="db-sync.js?v=20260722_3TASKS_PROG"></script>
-    <script src="badges.js?v=20260722_3TASKS_PROG"></script>
-    <script src="app.js?v=20260722_3TASKS_PROG"></script>
+    <script src="db-config.js?v=20260724_GAMESYNC"></script>
+    <script src="class-config.js?v=20260724_GAMESYNC"></script>
+    <script src="db-sync.js?v=20260724_GAMESYNC"></script>
+    <script src="badges.js?v=20260724_GAMESYNC"></script>
+    <script src="app.js?v=20260724_GAMESYNC"></script>
 </body>
 </html>

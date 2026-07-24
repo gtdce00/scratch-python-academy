@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeEl.textContent  = label || classCode;
             badgeEl.style.display = 'inline-block';
         }
+        if (typeof window.updateTeacherNavVisibility === 'function') {
+            window.updateTeacherNavVisibility();
+        }
     }
 
     // Pre-fill saved data on modal open
@@ -70,10 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateHeaderDisplay(fn, ln, code);
         if (loginModal) { loginModal.style.display = 'none'; }
-        // Trigger badge check
+        // Trigger badge check + teacher nav
         setTimeout(() => {
             if (typeof window.checkAndAwardBadges === 'function') window.checkAndAwardBadges();
             if (typeof window.renderBadgeGrid     === 'function') window.renderBadgeGrid();
+            if (typeof window.refreshLearningProgress === 'function') window.refreshLearningProgress();
+            if (typeof window.updateTeacherNavVisibility === 'function') window.updateTeacherNavVisibility();
+            // Auto-open teacher dashboard when logging in as teacher
+            const up = (code || '').toUpperCase();
+            if (up === 'TEACHER' || up === 'DEMO') {
+                const teacherMenu = document.querySelector('[data-tab="teacher"]');
+                if (teacherMenu) teacherMenu.click();
+            }
         }, 800);
     }
 
@@ -127,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressPercent = document.getElementById('progress-percent');
     
     const pageTitles = {
-        home: "ยินดีต้อนรับสู่ Scratch Academy",
+        home: "Scratch & Python Academy",
         about: "ทำความรู้จัก: โปรแกรม Scratch คืออะไร?",
         install: "คู่มือ: การติดตั้งโปรแกรมคอมพิวเตอร์",
         variables: "พื้นฐาน: ตัวแปรและตัวดำเนินการ",
@@ -138,16 +149,246 @@ document.addEventListener('DOMContentLoaded', () => {
         teacher: "คุณครู: แผงประเมินผลและติดตามผลงานนักเรียน"
     };
 
-    // Tracks which tabs the user has visited to calculate learning progress
+    // Tracks which tabs the user has visited (kept for soft engagement, not overall %)
     const visitedTabs = new Set(['home']);
 
-    function updateProgress() {
-        const keys = Object.keys(pageTitles).filter(k => k !== 'teacher');
-        const visited = Array.from(visitedTabs).filter(k => k !== 'teacher');
-        const percent = Math.round((visited.length / keys.length) * 100);
-        learningProgress.style.width = `${percent}%`;
-        progressPercent.textContent = `${percent}%`;
+    function countTruthy(obj) {
+        return Object.values(obj || {}).filter(Boolean).length;
     }
+
+    function countPythonLessons(lessons) {
+        return Object.keys(lessons || {}).filter(id =>
+            id !== 'ref' && id !== 'proj' && id !== 'syllabus' && lessons[id]
+        ).length;
+    }
+
+    function getNextIncompleteMission(missions) {
+        for (let i = 1; i <= 20; i++) {
+            if (!missions[String(i)]) return i;
+        }
+        return null;
+    }
+
+    function getNextIncompleteLesson(lessons) {
+        for (let i = 1; i <= 20; i++) {
+            if (!lessons[String(i)]) return i;
+        }
+        return null;
+    }
+
+    /** Snapshot of real learning progress across the platform */
+    window.getLearningSnapshot = function() {
+        const missions = JSON.parse(localStorage.getItem('scratch_completed_missions') || '{}');
+        const lessons = JSON.parse(localStorage.getItem('python_completed_lessons') || '{}');
+        const badges = JSON.parse(localStorage.getItem('scratch_badges') || '{}');
+        const game2d = JSON.parse(localStorage.getItem('game2d_completed_levels') || '{}');
+        const rpgSave = JSON.parse(localStorage.getItem('python-rpg-save') || 'null');
+        const preRaw = localStorage.getItem('scratch_pre_test_score');
+        const postRaw = localStorage.getItem('scratch_post_test_score');
+        const missionsDone = countTruthy(missions);
+        const lessonsDone = countPythonLessons(lessons);
+        const roverDone = countTruthy(game2d);
+        const rpgDone = Array.isArray(rpgSave && rpgSave.clearedLevels) ? rpgSave.clearedLevels.length : 0;
+        const badgesDone = Object.keys(badges).filter(k => badges[k]).length;
+        const preDone = preRaw !== null && preRaw !== '';
+        const postDone = postRaw !== null && postRaw !== '';
+        const preScore = preDone ? parseInt(preRaw, 10) : null;
+        const postScore = postDone ? parseInt(postRaw, 10) : null;
+
+        // Weighted overall (100): Lab 28 + Python 22 + Rover 8 + RPG 10 + Pre 8 + Post 12 + Badges 12
+        const overall = Math.round(
+            (missionsDone / 20) * 28 +
+            (lessonsDone / 20) * 22 +
+            (roverDone / 3) * 8 +
+            (Math.min(rpgDone, 12) / 12) * 10 +
+            (preDone ? 8 : 0) +
+            (postDone ? 12 : 0) +
+            (badgesDone / 10) * 12
+        );
+
+        let next = null;
+        const nextMission = getNextIncompleteMission(missions);
+        const nextLesson = getNextIncompleteLesson(lessons);
+
+        if (!preDone) {
+            next = {
+                title: 'ทำแบบทดสอบก่อนเรียน (Pre-test)',
+                desc: 'วัดพื้นฐานก่อนเริ่มเส้นทางเรียน เพื่อดูพัฒนาการหลังจบคอร์ส',
+                href: '#quiz',
+                tab: 'quiz',
+                cta: 'เริ่ม Pre-test'
+            };
+        } else if (missionsDone === 0) {
+            next = {
+                title: 'รู้จัก Scratch และเริ่มต้นพื้นฐาน',
+                desc: 'อ่านบทนำสั้นๆ แล้วเข้าห้องปฏิบัติการด่านที่ 1',
+                href: '#about',
+                tab: 'about',
+                cta: 'เริ่มรู้จัก Scratch'
+            };
+        } else if (nextMission && missionsDone < 5) {
+            next = {
+                title: `ผ่านด่าน Scratch ที่ ${nextMission}`,
+                desc: `คุณผ่านไปแล้ว ${missionsDone}/20 ด่าน — ไปต่อที่ห้องปฏิบัติการ`,
+                href: `mission.html#mission${nextMission}`,
+                tab: null,
+                cta: `ไปด่านที่ ${nextMission}`
+            };
+        } else if (roverDone < 3 && missionsDone >= 3) {
+            next = {
+                title: 'ฝึกลำดับคำสั่งด้วย Code Rover',
+                desc: `ผ่านเกม 2 มิติแล้ว ${roverDone}/3 ด่าน — ฝึกวางแผนก่อนรัน`,
+                href: 'game-2d.html',
+                tab: null,
+                cta: 'เปิด Code Rover'
+            };
+        } else if (nextMission && missionsDone < 10) {
+            next = {
+                title: `ผ่านด่าน Scratch ที่ ${nextMission}`,
+                desc: `คุณผ่านไปแล้ว ${missionsDone}/20 ด่าน — ไปต่อที่ห้องปฏิบัติการ`,
+                href: `mission.html#mission${nextMission}`,
+                tab: null,
+                cta: `ไปด่านที่ ${nextMission}`
+            };
+        } else if (lessonsDone === 0) {
+            next = {
+                title: 'เริ่มบทเรียน Python บทที่ 1',
+                desc: 'ต่อยอดจากบล็อก Scratch สู่การพิมพ์โค้ดจริง',
+                href: 'python-learn.html',
+                tab: null,
+                cta: 'เปิดบทเรียน Python'
+            };
+        } else if (nextLesson && lessonsDone < 5) {
+            next = {
+                title: `เรียน Python บทที่ ${nextLesson}`,
+                desc: `จบไปแล้ว ${lessonsDone}/20 บท — ไปต่อบทถัดไป`,
+                href: `python-learn.html#lesson${nextLesson}`,
+                tab: null,
+                cta: `ไปบทที่ ${nextLesson}`
+            };
+        } else if (rpgDone < 3 && lessonsDone >= 3) {
+            next = {
+                title: 'ท้าทาย Python RPG',
+                desc: `เคลียร์ภารกิจในแผนที่แล้ว ${rpgDone}/12 — ฝึกโค้ดกับ NPC`,
+                href: 'python-rpg.html',
+                tab: null,
+                cta: 'เข้า Python RPG'
+            };
+        } else if (nextLesson && lessonsDone < 10) {
+            next = {
+                title: `เรียน Python บทที่ ${nextLesson}`,
+                desc: `จบไปแล้ว ${lessonsDone}/20 บท — ไปต่อบทถัดไป`,
+                href: `python-learn.html#lesson${nextLesson}`,
+                tab: null,
+                cta: `ไปบทที่ ${nextLesson}`
+            };
+        } else if (!postDone) {
+            next = {
+                title: 'ทำแบบทดสอบหลังเรียน (Post-test)',
+                desc: 'วัดผลสัมฤทธิ์หลังฝึกมาพอสมควร และปลดล็อกเกียรติบัตรเมื่อได้ ≥ 14',
+                href: '#quiz',
+                tab: 'quiz',
+                cta: 'เริ่ม Post-test'
+            };
+        } else if (nextMission) {
+            next = {
+                title: `เคลียร์ Scratch ด่านที่ ${nextMission}`,
+                desc: `เหลืออีก ${20 - missionsDone} ด่านถึง Scratch Hero`,
+                href: `mission.html#mission${nextMission}`,
+                tab: null,
+                cta: `ไปด่านที่ ${nextMission}`
+            };
+        } else if (nextLesson) {
+            next = {
+                title: `เคลียร์ Python บทที่ ${nextLesson}`,
+                desc: `เหลืออีก ${20 - lessonsDone} บทถึงจบคอร์ส Python`,
+                href: `python-learn.html#lesson${nextLesson}`,
+                tab: null,
+                cta: `ไปบทที่ ${nextLesson}`
+            };
+        } else if (rpgDone < 12) {
+            next = {
+                title: 'สำรวจ Python RPG ให้ครบ',
+                desc: `เคลียร์ไปแล้ว ${rpgDone}/12 ภารกิจ — ไปคุยกับ NPC ที่เหลือ`,
+                href: 'python-rpg.html',
+                tab: null,
+                cta: 'เล่นต่อ RPG'
+            };
+        } else {
+            next = {
+                title: 'คุณเรียนครบเส้นทางหลักแล้ว!',
+                desc: 'ทบทวนรูบริกหรือสะสม Badge ให้ครบ Graduate',
+                href: '#quiz',
+                tab: 'quiz',
+                cta: 'ไปหน้าวัดผล'
+            };
+        }
+
+        return {
+            missionsDone, lessonsDone, badgesDone, roverDone, rpgDone,
+            preDone, postDone, preScore, postScore,
+            overall: Math.min(100, Math.max(0, overall)),
+            next
+        };
+    };
+
+    function updateProgress() {
+        const snap = window.getLearningSnapshot();
+        if (learningProgress) learningProgress.style.width = `${snap.overall}%`;
+        if (progressPercent) progressPercent.textContent = `${snap.overall}%`;
+        renderTodayPanel(snap);
+    }
+
+    function renderTodayPanel(snap) {
+        const titleEl = document.getElementById('today-panel-title');
+        const descEl = document.getElementById('today-mission-desc');
+        const ctaEl = document.getElementById('today-mission-cta');
+        const overallEl = document.getElementById('my-progress-overall');
+        if (!titleEl || !snap) return;
+
+        const n = snap.next;
+        titleEl.textContent = n.title;
+        if (descEl) descEl.textContent = n.desc;
+        if (ctaEl) {
+            ctaEl.innerHTML = `<i class="fa-solid fa-play"></i> ${n.cta}`;
+            ctaEl.href = n.href || '#';
+            ctaEl.onclick = (e) => {
+                if (n.tab) {
+                    e.preventDefault();
+                    const menu = document.querySelector(`.menu-item[data-tab="${n.tab}"]`);
+                    if (menu) menu.click();
+                }
+            };
+        }
+
+        if (overallEl) overallEl.textContent = `${snap.overall}%`;
+
+        const setMeter = (fillId, valId, pct, label) => {
+            const fill = document.getElementById(fillId);
+            const val = document.getElementById(valId);
+            if (fill) fill.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+            if (val) val.textContent = label;
+        };
+
+        setMeter('meter-missions', 'meter-missions-val', (snap.missionsDone / 20) * 100, `${snap.missionsDone}/20`);
+        setMeter('meter-lessons', 'meter-lessons-val', (snap.lessonsDone / 20) * 100, `${snap.lessonsDone}/20`);
+        setMeter('meter-rover', 'meter-rover-val', ((snap.roverDone || 0) / 3) * 100, `${snap.roverDone || 0}/3`);
+        setMeter('meter-rpg', 'meter-rpg-val', (Math.min(snap.rpgDone || 0, 12) / 12) * 100, `${snap.rpgDone || 0}/12`);
+
+        let quizPct = 0;
+        let quizLabel = 'ยังไม่ทำ';
+        if (snap.preDone && snap.postDone) {
+            quizPct = 100;
+            quizLabel = `Pre ${snap.preScore} · Post ${snap.postScore}`;
+        } else if (snap.preDone) {
+            quizPct = 50;
+            quizLabel = `Pre ${snap.preScore} · รอ Post`;
+        }
+        setMeter('meter-quiz', 'meter-quiz-val', quizPct, quizLabel);
+        setMeter('meter-badges', 'meter-badges-val', ((snap.badgesDone || 0) / 10) * 100, `${snap.badgesDone}/10`);
+    }
+
+    window.refreshLearningProgress = updateProgress;
 
     menuItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -178,6 +419,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.renderBadgeGrid();
                 }
             }
+            if (tabId === 'teacher') {
+                if (typeof window.loadTeacherDashboard === 'function') {
+                    window.loadTeacherDashboard();
+                }
+            }
             
             // Update page title
             pageTitle.textContent = pageTitles[tabId] || "Scratch Academy";
@@ -185,6 +431,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update progress
             visitedTabs.add(tabId);
             updateProgress();
+
+            // Special: refresh today panel when returning home
+            if (tabId === 'home') updateProgress();
             
             // Scroll content to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -192,10 +441,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle "Start Learning" button on home screen
-    document.querySelector('.btn-start-learning').addEventListener('click', () => {
-        const aboutMenu = document.querySelector('[data-tab="about"]');
-        if (aboutMenu) aboutMenu.click();
-    });
+    const btnStartLearning = document.querySelector('.btn-start-learning');
+    if (btnStartLearning) {
+        btnStartLearning.addEventListener('click', () => {
+            const aboutMenu = document.querySelector('[data-tab="about"]');
+            if (aboutMenu) aboutMenu.click();
+        });
+    }
 
     // Automatic Hash Navigation Handler (e.g. index.html#quiz, index.html#flowchart)
     function handleInitialHash() {
@@ -2452,14 +2704,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const rub = s.rubrics || {};
-                const rSeq = rub.sequencing || 1;
-                const rLoop = rub.loops || 1;
-                const rCoord = rub.coordinates || 1;
-                const rEvent = rub.events || 1;
-                const rCond = rub.conditions || 1;
-                const rOp = rub.operators || 1;
-                const rVar = rub.variables || 1;
-                const rFunc = rub.functions || 1;
+                const rSeq = rub.sequencing || 0;
+                const rLoop = rub.loops || 0;
+                const rCoord = rub.coordinates || 0;
+                const rEvent = rub.events || 0;
+                const rCond = rub.conditions || 0;
+                const rOp = rub.operators || 0;
+                const rVar = rub.variables || 0;
+                const rFunc = rub.functions || 0;
 
                 const totalRubric = rSeq + rLoop + rCoord + rEvent + rCond + rOp + rVar + rFunc;
                 const pctRubric = ((totalRubric / 24) * 100).toFixed(2);
@@ -2478,5 +2730,219 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.removeChild(link);
         });
     }
+
+    // ── Teacher Dashboard ────────────────────────────────────────────────────
+    let teacherListenerRef = null;
+    let teacherStudentsCache = [];
+    let teacherFilter = 'all';
+
+    function isTeacherMode() {
+        const code = (localStorage.getItem('scratch_class_code') || '').toUpperCase();
+        return code === 'TEACHER' || code === 'DEMO';
+    }
+
+    function updateTeacherNavVisibility() {
+        const nav = document.getElementById('nav-teacher-item');
+        if (!nav) return;
+        nav.style.display = isTeacherMode() ? 'flex' : 'none';
+    }
+
+    function populateTeacherClassSelect() {
+        const sel = document.getElementById('teacher-class-select');
+        if (!sel || typeof CLASS_CODES === 'undefined') return;
+        const saved = localStorage.getItem('teacher_watch_class') || 'M101';
+        sel.innerHTML = '';
+        Object.keys(CLASS_CODES).forEach(code => {
+            if (code === 'TEACHER' || code === 'DEMO') return;
+            const opt = document.createElement('option');
+            opt.value = code;
+            opt.textContent = `${code} — ${CLASS_CODES[code]}`;
+            if (code === saved) opt.selected = true;
+            sel.appendChild(opt);
+        });
+    }
+
+    function formatTeacherTime(iso) {
+        if (!iso) return '—';
+        try {
+            const d = new Date(iso);
+            if (isNaN(d.getTime())) return '—';
+            return d.toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+        } catch (_) {
+            return '—';
+        }
+    }
+
+    function studentStatusFlags(s) {
+        const missions = s.missionsCount || countTruthy(s.completedMissions);
+        const lessons = s.lessonsCount || countPythonLessons(s.completedLessons);
+        const hasPre = s.preScore !== null && s.preScore !== undefined;
+        const hasPost = s.postScore !== null && s.postScore !== undefined;
+        const flags = [];
+        if (!hasPre && missions === 0 && lessons === 0) flags.push({ t: 'ยังไม่เริ่ม', c: '#94a3b8' });
+        else if (!hasPre) flags.push({ t: 'รอ Pre-test', c: '#f87171' });
+        if (hasPre && missions < 5) flags.push({ t: 'Lab น้อย', c: '#fb923c' });
+        if (hasPre && missions >= 5 && !hasPost) flags.push({ t: 'รอ Post-test', c: '#c084fc' });
+        if (hasPost) flags.push({ t: 'ทำ Post แล้ว', c: '#34d399' });
+        if (missions >= 20) flags.push({ t: 'Lab ครบ', c: '#60a5fa' });
+        return flags.length ? flags : [{ t: 'กำลังเรียน', c: '#38bdf8' }];
+    }
+
+    function matchesTeacherFilter(s, filter) {
+        const missions = s.missionsCount || countTruthy(s.completedMissions);
+        const lessons = s.lessonsCount || countPythonLessons(s.completedLessons);
+        const hasPre = s.preScore !== null && s.preScore !== undefined;
+        const hasPost = s.postScore !== null && s.postScore !== undefined;
+        if (filter === 'all') return true;
+        if (filter === 'no-pre') return !hasPre;
+        if (filter === 'low-lab') return missions < 5;
+        if (filter === 'no-post') return !hasPost;
+        if (filter === 'inactive') return !hasPre && missions === 0 && lessons === 0;
+        return true;
+    }
+
+    function renderTeacherTable(students) {
+        const body = document.getElementById('teacher-table-body');
+        if (!body) return;
+        const filtered = students.filter(s => matchesTeacherFilter(s, teacherFilter));
+        if (filtered.length === 0) {
+            body.innerHTML = '<tr><td colspan="9" class="teacher-empty">ไม่พบนักเรียนตามตัวกรองนี้</td></tr>';
+            return;
+        }
+        body.innerHTML = '';
+        filtered.forEach(s => {
+            const missions = s.missionsCount != null ? s.missionsCount : countTruthy(s.completedMissions);
+            const lessons = s.lessonsCount != null ? s.lessonsCount : countPythonLessons(s.completedLessons);
+            const rover = s.game2dCount != null ? s.game2dCount : countTruthy(s.game2dCompleted);
+            const rpg = s.rpgClearedCount != null ? s.rpgClearedCount : (Array.isArray(s.rpgSave && s.rpgSave.clearedLevels) ? s.rpgSave.clearedLevels.length : 0);
+            const pre = (s.preScore !== null && s.preScore !== undefined) ? s.preScore : '—';
+            const post = (s.postScore !== null && s.postScore !== undefined) ? s.postScore : '—';
+            const flags = studentStatusFlags(s).map(f =>
+                `<span class="td-flag" style="color:${f.c};border-color:${f.c}55;">${f.t}</span>`
+            ).join(' ');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${s.name || 'ไม่ระบุชื่อ'}</strong></td>
+                <td class="td-flags">${flags}</td>
+                <td>${pre}</td>
+                <td>${post}</td>
+                <td>${missions}/20</td>
+                <td>${lessons}/20</td>
+                <td>${rover}/3</td>
+                <td>${rpg}/12</td>
+                <td>${formatTeacherTime(s.lastUpdated)}</td>
+            `;
+            body.appendChild(tr);
+        });
+    }
+
+    function updateTeacherStats(students) {
+        const total = students.length;
+        let preN = 0, postN = 0, mSum = 0, lSum = 0;
+        students.forEach(s => {
+            if (s.preScore !== null && s.preScore !== undefined) preN++;
+            if (s.postScore !== null && s.postScore !== undefined) postN++;
+            mSum += (s.missionsCount != null ? s.missionsCount : countTruthy(s.completedMissions));
+            lSum += (s.lessonsCount != null ? s.lessonsCount : countPythonLessons(s.completedLessons));
+        });
+        const el = (id, v) => { const n = document.getElementById(id); if (n) n.textContent = v; };
+        el('td-stat-total', total);
+        el('td-stat-pre', `${preN}/${total || 0}`);
+        el('td-stat-post', `${postN}/${total || 0}`);
+        el('td-stat-missions', total ? (mSum / total).toFixed(1) : '0');
+        el('td-stat-lessons', total ? (lSum / total).toFixed(1) : '0');
+    }
+
+    window.loadTeacherDashboard = function() {
+        if (!isTeacherMode()) {
+            updateTeacherNavVisibility();
+            return;
+        }
+        populateTeacherClassSelect();
+        const sel = document.getElementById('teacher-class-select');
+        const classCode = sel ? sel.value : (localStorage.getItem('teacher_watch_class') || 'M101');
+        localStorage.setItem('teacher_watch_class', classCode);
+
+        const body = document.getElementById('teacher-table-body');
+        if (!window.firebaseDB) {
+            if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อ Firebase...</td></tr>';
+            setTimeout(() => window.loadTeacherDashboard(), 1000);
+            return;
+        }
+
+        if (teacherListenerRef) {
+            try { teacherListenerRef.off(); } catch (_) {}
+            teacherListenerRef = null;
+        }
+
+        if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดห้อง ' + classCode + '...</td></tr>';
+
+        teacherListenerRef = window.firebaseDB.ref(`students/${classCode}`);
+        teacherListenerRef.on('value', (snapshot) => {
+            const raw = snapshot.val() || {};
+            const list = [];
+            Object.keys(raw).forEach(key => {
+                const entry = raw[key];
+                if (entry && typeof entry === 'object' && entry.name) list.push(entry);
+            });
+            list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th'));
+            teacherStudentsCache = list;
+            window.currentTeacherData = list;
+            updateTeacherStats(list);
+            renderTeacherTable(list);
+        }, (err) => {
+            console.error('Teacher dashboard error:', err);
+            if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty" style="color:#f87171;">โหลดข้อมูลไม่สำเร็จ</td></tr>';
+        });
+    };
+
+    const teacherClassSelect = document.getElementById('teacher-class-select');
+    if (teacherClassSelect) {
+        teacherClassSelect.addEventListener('change', () => {
+            localStorage.setItem('teacher_watch_class', teacherClassSelect.value);
+            window.loadTeacherDashboard();
+        });
+    }
+
+    document.querySelectorAll('.teacher-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.teacher-filter').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            teacherFilter = btn.getAttribute('data-filter') || 'all';
+            renderTeacherTable(teacherStudentsCache);
+        });
+    });
+
+    const btnTeacherExport = document.getElementById('btn-teacher-export');
+    if (btnTeacherExport) {
+        btnTeacherExport.addEventListener('click', () => {
+            const data = window.currentTeacherData || teacherStudentsCache;
+            if (!data.length) {
+                alert('ยังไม่มีข้อมูลในห้องนี้');
+                return;
+            }
+            const classCode = (document.getElementById('teacher-class-select') || {}).value || 'class';
+            let csv = '\uFEFFName,Pre,Post,Missions,Lessons,Rover,RPG,LastUpdated,Status\n';
+            data.forEach(s => {
+                const missions = s.missionsCount != null ? s.missionsCount : countTruthy(s.completedMissions);
+                const lessons = s.lessonsCount != null ? s.lessonsCount : countPythonLessons(s.completedLessons);
+                const rover = s.game2dCount != null ? s.game2dCount : countTruthy(s.game2dCompleted);
+                const rpg = s.rpgClearedCount != null ? s.rpgClearedCount : (Array.isArray(s.rpgSave && s.rpgSave.clearedLevels) ? s.rpgSave.clearedLevels.length : 0);
+                const status = studentStatusFlags(s).map(f => f.t).join(' | ');
+                const name = (s.name || '').replace(/,/g, ' ');
+                csv += `${name},${s.preScore ?? ''},${s.postScore ?? ''},${missions},${lessons},${rover},${rpg},${s.lastUpdated || ''},${status}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `teacher_${classCode}_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    }
+
+    updateTeacherNavVisibility();
+    window.updateTeacherNavVisibility = updateTeacherNavVisibility;
 
 });

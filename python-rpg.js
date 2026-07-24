@@ -272,9 +272,16 @@ function loadSaveData() {
     }
 }
 
-/** Save game state to LocalStorage */
+/** Save game state to LocalStorage (+ sync to classroom cloud when logged in) */
 function saveData() {
     localStorage.setItem("python-rpg-save", JSON.stringify(gameState));
+    if (typeof window.syncProgressToCloud === "function") {
+        clearTimeout(window.__rpgCloudSyncTimer);
+        window.__rpgCloudSyncTimer = setTimeout(() => {
+            window.syncProgressToCloud();
+            if (typeof window.checkAndAwardBadges === "function") window.checkAndAwardBadges();
+        }, 1000);
+    }
 }
 
 /** Reset all data */

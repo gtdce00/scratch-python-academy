@@ -64,10 +64,26 @@
             }
         },
         {
+            id: 'rover_pilot',
+            icon: '🚀',
+            name: 'Rover Pilot',
+            desc: 'ผ่านเกม Code Rover ครบทั้ง 3 ด่าน',
+            color: '#38bdf8',
+            check: (data) => Object.values(data.game2dCompleted || {}).filter(Boolean).length >= 3
+        },
+        {
+            id: 'rpg_explorer',
+            icon: '🗺️',
+            name: 'RPG Explorer',
+            desc: 'เคลียร์ภารกิจ Python RPG อย่างน้อย 3 ด่าน',
+            color: '#a78bfa',
+            check: (data) => (data.rpgClearedCount || 0) >= 3
+        },
+        {
             id: 'graduate',
             icon: '🎓',
             name: 'Graduate',
-            desc: 'ได้รับครบ 7 Badges ข้างต้น',
+            desc: 'ได้รับครบ 7 Badges หลัก (ไม่รวม Rover/RPG)',
             color: '#34d399',
             check: (data) => {
                 const earned = data.badges || {};
@@ -131,6 +147,9 @@
         const completedLessons  = JSON.parse(localStorage.getItem('python_completed_lessons')  || '{}');
         const preScore  = parseInt(localStorage.getItem('scratch_pre_test_score')  || '0');
         const postScore = parseInt(localStorage.getItem('scratch_post_test_score') || '0');
+        const game2dCompleted = JSON.parse(localStorage.getItem('game2d_completed_levels') || '{}');
+        const rpgSave = JSON.parse(localStorage.getItem('python-rpg-save') || 'null');
+        const rpgClearedCount = Array.isArray(rpgSave && rpgSave.clearedLevels) ? rpgSave.clearedLevels.length : 0;
 
         const rubricQuizPassed = {};
         ['sequencing','loops','coordinates','events','conditions','operators','variables','functions'].forEach(k => {
@@ -139,7 +158,10 @@
 
         const existingBadges = JSON.parse(localStorage.getItem('scratch_badges') || '{}');
 
-        const data = { completedMissions, completedLessons, preScore, postScore, rubricQuizPassed, badges: existingBadges };
+        const data = {
+            completedMissions, completedLessons, preScore, postScore, rubricQuizPassed,
+            badges: existingBadges, game2dCompleted, rpgClearedCount
+        };
 
         let newBadgeAwarded = false;
 

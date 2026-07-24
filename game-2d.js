@@ -17,6 +17,46 @@ document.addEventListener('DOMContentLoaded', () => {
     let robot = { x: 0, y: 0, dir: 0 }; // dir: 0=Up, 1=Right, 2=Down, 3=Left
     let goal = { x: 0, y: 0 };
     let walls = [];
+
+    const GAME2D_COMPLETED_KEY = 'game2d_completed_levels';
+    const GAME2D_STARS_KEY = 'game2d_best_stars';
+    const TOTAL_LEVELS = 3;
+
+    function loadGame2dProgress() {
+        try {
+            return {
+                completed: JSON.parse(localStorage.getItem(GAME2D_COMPLETED_KEY) || '{}'),
+                stars: JSON.parse(localStorage.getItem(GAME2D_STARS_KEY) || '{}')
+            };
+        } catch (_) {
+            return { completed: {}, stars: {} };
+        }
+    }
+
+    function markLevelComplete(levelId, starsEarned) {
+        const { completed, stars } = loadGame2dProgress();
+        const key = String(levelId);
+        completed[key] = true;
+        stars[key] = Math.max(parseInt(stars[key] || 0, 10), starsEarned);
+        localStorage.setItem(GAME2D_COMPLETED_KEY, JSON.stringify(completed));
+        localStorage.setItem(GAME2D_STARS_KEY, JSON.stringify(stars));
+        updateGame2dProgressUI();
+        if (typeof window.syncProgressToCloud === 'function') {
+            clearTimeout(window.__game2dSyncTimer);
+            window.__game2dSyncTimer = setTimeout(() => {
+                window.syncProgressToCloud();
+                if (typeof window.checkAndAwardBadges === 'function') window.checkAndAwardBadges();
+            }, 800);
+        }
+    }
+
+    function updateGame2dProgressUI() {
+        const el = document.getElementById('game2d-progress-label');
+        if (!el) return;
+        const { completed } = loadGame2dProgress();
+        const done = Object.values(completed).filter(Boolean).length;
+        el.textContent = `ผ่านแล้ว ${done}/${TOTAL_LEVELS} ด่าน`;
+    }
     
     // --- Levels ---
     const levels = {
@@ -289,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         starContainer.innerHTML = html;
+        markLevelComplete(currentLevel, stars);
         modal.style.display = 'flex';
     }
 
@@ -305,5 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Init
+    updateGame2dProgressUI();
     loadLevel(1);
 });
