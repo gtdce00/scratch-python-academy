@@ -1,4 +1,7 @@
-// db-config.js - ไฟล์กำหนดค่าระบบฐานข้อมูลห้องเรียน (Firebase Realtime Database)
-// ลิงก์เชื่อมโยงฐานข้อมูลที่คุณครูได้สร้างไว้สำเร็จ
-
-const FIREBASE_DB_URL = "https://my-scratch-academy-default-rtdb.asia-southeast1.firebasedatabase.app/";
+// db-config.js — ข้อมูลห้องเรียนเก็บบน GitHub ในไฟล์ data/db.json
+const GITHUB_STORE = {
+    owner: 'gtdce00',
+    repo: 'scratch-python-academy',
+    branch: 'main',
+    file: 'data/db.json'
+};

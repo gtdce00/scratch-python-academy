@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=9">
+    <link rel="stylesheet" href="style.css?v=10">
     <style>
         /* Top Navigation Bar Layout Overrides to bypass browser caching */
         .app-container {
@@ -1267,7 +1267,7 @@
                         <div class="teacher-dash-header">
                             <div>
                                 <h2>Teacher Dashboard</h2>
-                                <p>ดูสถานะห้องเรียนแบบเรียลไทม์ — ใครทำอะไรแล้ว / ใครติดอยู่</p>
+                                <p>ข้อมูลห้องเรียนอยู่ใน GitHub — ใครทำอะไรแล้ว / ใครติดอยู่</p>
                             </div>
                             <div class="teacher-dash-controls">
                                 <label for="teacher-class-select">เลือกห้อง</label>
@@ -1276,6 +1276,12 @@
                                     <i class="fa-solid fa-file-csv"></i> ส่งออก CSV
                                 </button>
                             </div>
+                        </div>
+
+                        <div class="github-sync-bar">
+                            <span id="github-sync-status">กำลังโหลดข้อมูลจาก GitHub...</span>
+                            <input id="github-token-input" type="password" autocomplete="off" placeholder="โทเคน GitHub (สิทธิ์ repo) — เก็บแค่ในเบราว์เซอร์นี้">
+                            <button type="button" class="btn" id="btn-github-token-save">เชื่อม GitHub</button>
                         </div>
 
                         <div class="teacher-stat-grid" id="teacher-stat-grid">
@@ -1362,13 +1368,10 @@
     </div>
 
     <script src="audio-synth.js"></script>
-    <!-- Firebase SDK Compatibility Libraries -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="db-config.js?v=20260922_CLOUD"></script>
+    <script src="db-config.js?v=20260922_GH"></script>
     <script src="class-config.js?v=20260922_CLOUD"></script>
-    <script src="db-sync.js?v=20260922_CLOUD"></script>
-    <script src="badges.js?v=20260922_CLOUD"></script>
-    <script src="app.js?v=20260922_CLOUD"></script>
+    <script src="db-sync.js?v=20260922_GH"></script>
+    <script src="badges.js?v=20260922_GH"></script>
+    <script src="app.js?v=20260922_GH"></script>
 </body>
 </html>

@@ -3042,6 +3042,29 @@ h1, h2, h3, h4, h5, h6 {
 .teacher-dash-header p { margin: 0; color: var(--text-muted); font-size: 13px; }
 .teacher-dash-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
 .teacher-dash-controls label { font-size: 12px; color: var(--text-muted); }
+.github-sync-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: -6px 0 18px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(15, 23, 42, 0.45);
+}
+.github-sync-bar span { font-size: 12px; color: var(--text-muted); flex: 1; min-width: 200px; }
+.github-sync-bar input {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    min-width: 240px;
+    flex: 1;
+    outline: none;
+}
 .teacher-dash-controls select {
     background: rgba(0,0,0,0.35);
     border: 1px solid var(--border-color);

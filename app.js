@@ -2164,8 +2164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!leaderboardBody) return;
         
         if (!window.firebaseDB) {
-            leaderboardBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อกับระบบคลาวด์จัดอันดับ...</td></tr>';
-            // Retry in 1 second if firebase is loading
+            leaderboardBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อข้อมูลบน GitHub...</td></tr>';
             setTimeout(loadLeaderboard, 1000);
             return;
         }
@@ -2177,7 +2176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const firebasePath = classCode ? `students/${classCode}` : 'students';
 
-        leaderboardBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังดาวน์โหลดคะแนนห้องเรียนจากฐานข้อมูล...</td></tr>';
+        leaderboardBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังดาวน์โหลดคะแนนห้องเรียนจาก GitHub...</td></tr>';
 
         if (window._leaderboardRef) {
             try { window._leaderboardRef.off(); } catch (_) {}
@@ -2315,11 +2314,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 leaderboardBody.appendChild(row);
             });
         }, (err) => {
-            console.error("Firebase read failed:", err);
-            const denied = err && (err.code === 'PERMISSION_DENIED' || String(err.message || '').toLowerCase().includes('permission'));
-            const msg = denied
-                ? 'Firebase ปฏิเสธการอ่านข้อมูลห้องเรียน (permission denied) — เปิดกฎ Read ของ Realtime Database ที่ path students'
-                : 'ไม่สามารถดึงข้อมูลได้ (การเชื่อมต่อคลาวด์ขัดข้อง)';
+            console.error("GitHub read failed:", err);
+            const msg = 'ไม่สามารถดึงข้อมูลจาก GitHub ได้';
             leaderboardBody.innerHTML = `<tr><td colspan="15" style="text-align: center; color: #f87171; padding: 16px;"><i class="fa-solid fa-triangle-exclamation"></i> ${msg}</td></tr>`;
         });
     }
@@ -2889,7 +2885,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const body = document.getElementById('teacher-table-body');
         if (!window.firebaseDB) {
-            if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อ Firebase...</td></tr>';
+            if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อ GitHub...</td></tr>';
             setTimeout(() => window.loadTeacherDashboard(), 1000);
             return;
         }
@@ -2916,10 +2912,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTeacherTable(list);
         }, (err) => {
             console.error('Teacher dashboard error:', err);
-            const denied = err && (err.code === 'PERMISSION_DENIED' || String(err.message || '').toLowerCase().includes('permission'));
-            const msg = denied
-                ? 'Firebase ปฏิเสธการอ่าน (permission denied) — เปิดกฎ Read ที่ Realtime Database → students'
-                : 'โหลดข้อมูลห้องไม่สำเร็จ';
+            const msg = 'โหลดข้อมูลห้องจาก GitHub ไม่สำเร็จ';
             if (body) body.innerHTML = `<tr><td colspan="9" class="teacher-empty" style="color:#f87171;">${msg}</td></tr>`;
         });
     };

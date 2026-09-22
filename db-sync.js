@@ -1,9 +1,10 @@
-// db-sync.js — Scratch Academy Firebase Sync Engine v4
+// db-sync.js — Scratch Academy GitHub data store
 // =====================================================
-// AUTH DESIGN:
+// data/db.json ใน repo:
 //   accounts/{username}  → { displayName, passwordHash, classCode, studentKey }
 //   students/{classCode}/{studentKey} → progress data
-//   Password hashed with SHA-256 + salt via Web Crypto API
+// อ่านได้จาก GitHub Pages โดยไม่ต้องใช้โทเคน
+// เขียนกลับเข้า repo ได้เมื่อเบราว์เซอร์มีโทเคนใน localStorage (ไม่ถูกใส่ในไฟล์นี้)
 
 (function() {
 
@@ -59,21 +60,310 @@
     let currentStudentKey = localStorage.getItem('scratch_student_key') || null;
     let currentUsername   = localStorage.getItem('scratch_username')    || null;
 
-    // ── Firebase init ────────────────────────────────────────────────────────
-    const dbUrl = typeof FIREBASE_DB_URL !== 'undefined'
-        ? FIREBASE_DB_URL
-        : 'https://my-scratch-academy-default-rtdb.asia-southeast1.firebasedatabase.app/';
+    // ── GitHub JSON store (same call shape the rest of the app already uses) ─
+    const TOKEN_KEY = 'github_data_token';
+    const DIRTY_KEY = 'github_dirty_ops';
+    const listeners = [];
+    let memory = { accounts: {}, students: {} };
+    let committing = false;
+    let commitTimer = null;
 
-    function initFirebase() {
-        try {
-            if (typeof firebase !== 'undefined') {
-                if (!firebase.apps.length) firebase.initializeApp({ databaseURL: dbUrl });
-                window.firebaseDB = firebase.database();
-                console.log('✅ Firebase connected:', dbUrl);
-            }
-        } catch(e) { console.error('❌ Firebase init error:', e); }
+    function storeCfg() {
+        const c = (typeof GITHUB_STORE !== 'undefined') ? GITHUB_STORE : {};
+        return {
+            owner: c.owner || 'gtdce00',
+            repo: c.repo || 'scratch-python-academy',
+            branch: c.branch || 'main',
+            file: c.file || 'data/db.json'
+        };
     }
-    initFirebase();
+
+    function dataToken() {
+        return (localStorage.getItem(TOKEN_KEY) || '').trim();
+    }
+
+    function emptyDb() {
+        return { accounts: {}, students: {} };
+    }
+
+    function normalizeDb(raw) {
+        const d = (raw && typeof raw === 'object') ? raw : {};
+        if (!d.accounts || typeof d.accounts !== 'object' || Array.isArray(d.accounts)) d.accounts = {};
+        if (!d.students || typeof d.students !== 'object' || Array.isArray(d.students)) d.students = {};
+        return d;
+    }
+
+    function cloneVal(v) {
+        if (v === null || v === undefined) return null;
+        return JSON.parse(JSON.stringify(v));
+    }
+
+    function readPath(root, path) {
+        const parts = String(path || '').split('/').filter(Boolean);
+        let cur = root;
+        for (let i = 0; i < parts.length; i++) {
+            if (!cur || typeof cur !== 'object' || !Object.prototype.hasOwnProperty.call(cur, parts[i])) return null;
+            cur = cur[parts[i]];
+        }
+        return cur === undefined ? null : cur;
+    }
+
+    function writePath(root, path, value) {
+        const parts = String(path || '').split('/').filter(Boolean);
+        if (!parts.length) return;
+        let cur = root;
+        for (let i = 0; i < parts.length - 1; i++) {
+            if (!cur[parts[i]] || typeof cur[parts[i]] !== 'object') cur[parts[i]] = {};
+            cur = cur[parts[i]];
+        }
+        cur[parts[parts.length - 1]] = value;
+    }
+
+    function loadDirty() {
+        try {
+            const parsed = JSON.parse(localStorage.getItem(DIRTY_KEY) || '{}');
+            return (parsed && typeof parsed === 'object') ? parsed : {};
+        } catch (_) {
+            return {};
+        }
+    }
+
+    function saveDirty(map) {
+        localStorage.setItem(DIRTY_KEY, JSON.stringify(map || {}));
+    }
+
+    function applyDirty(root) {
+        const dirty = loadDirty();
+        Object.keys(dirty).forEach(path => writePath(root, path, dirty[path]));
+        return root;
+    }
+
+    function makeSnap(value) {
+        const v = (value === undefined) ? null : value;
+        return {
+            exists() { return v !== null && v !== undefined; },
+            val() { return cloneVal(v); }
+        };
+    }
+
+    function pathAffects(listenPath, changedPath) {
+        if (listenPath === changedPath) return true;
+        if (changedPath.startsWith(listenPath + '/')) return true;
+        if (listenPath.startsWith(changedPath + '/')) return true;
+        return false;
+    }
+
+    function notifyPath(changedPath) {
+        listeners.forEach(item => {
+            if (!pathAffects(item.path, changedPath)) return;
+            try { item.cb(makeSnap(readPath(memory, item.path))); }
+            catch (e) { console.error(e); }
+        });
+    }
+
+    function notifyAll() {
+        listeners.forEach(item => {
+            try { item.cb(makeSnap(readPath(memory, item.path))); }
+            catch (e) { console.error(e); }
+        });
+    }
+
+    function setSyncStatus(text) {
+        const el = document.getElementById('github-sync-status');
+        if (el) el.textContent = text;
+    }
+
+    function utf8ToB64(str) {
+        const bytes = new TextEncoder().encode(str);
+        let bin = '';
+        const size = 0x2000;
+        for (let i = 0; i < bytes.length; i += size) {
+            bin += String.fromCharCode.apply(null, bytes.subarray(i, i + size));
+        }
+        return btoa(bin);
+    }
+
+    function b64ToUtf8(b64) {
+        const bin = atob(String(b64 || '').replace(/\n/g, ''));
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        return new TextDecoder().decode(bytes);
+    }
+
+    function apiHeaders() {
+        const headers = {
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+        };
+        const t = dataToken();
+        if (t) headers.Authorization = 'Bearer ' + t;
+        return headers;
+    }
+
+    async function fetchPublishedDb() {
+        const cfg = storeCfg();
+        const res = await fetch(cfg.file + '?t=' + Date.now(), { cache: 'no-store' });
+        if (res.status === 404) return emptyDb();
+        if (!res.ok) throw new Error('read ' + res.status);
+        return normalizeDb(await res.json());
+    }
+
+    async function apiGetFile() {
+        const cfg = storeCfg();
+        const url = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.file + '?ref=' + encodeURIComponent(cfg.branch);
+        const res = await fetch(url, { headers: apiHeaders(), cache: 'no-store' });
+        if (res.status === 404) return { sha: null, json: emptyDb() };
+        if (!res.ok) {
+            const err = new Error('github get ' + res.status);
+            err.status = res.status;
+            throw err;
+        }
+        const body = await res.json();
+        let json = emptyDb();
+        try { json = normalizeDb(JSON.parse(b64ToUtf8(body.content))); }
+        catch (_) { json = emptyDb(); }
+        return { sha: body.sha || null, json: json };
+    }
+
+    async function apiPutFile(json, sha) {
+        const cfg = storeCfg();
+        const url = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.file;
+        return fetch(url, {
+            method: 'PUT',
+            headers: apiHeaders(),
+            body: JSON.stringify({
+                message: 'อัปเดตข้อมูลห้องเรียน',
+                content: utf8ToB64(JSON.stringify(json, null, 2)),
+                sha: sha || undefined,
+                branch: cfg.branch
+            })
+        });
+    }
+
+    async function flushCommit() {
+        if (!dataToken()) {
+            setSyncStatus('บันทึกในเบราว์เซอร์แล้ว — ใส่โทเคนในแดชบอร์ดครูเพื่อส่งขึ้น GitHub');
+            return;
+        }
+        if (!Object.keys(loadDirty()).length) {
+            setSyncStatus('ข้อมูลบน GitHub เป็นปัจจุบันแล้ว');
+            return;
+        }
+        if (committing) {
+            clearTimeout(commitTimer);
+            commitTimer = setTimeout(flushCommit, 800);
+            return;
+        }
+        committing = true;
+        setSyncStatus('กำลังบันทึกขึ้น GitHub...');
+        try {
+            for (let attempt = 0; attempt < 4; attempt++) {
+                const remote = await apiGetFile();
+                const next = normalizeDb(JSON.parse(JSON.stringify(remote.json)));
+                applyDirty(next);
+                if (JSON.stringify(next) === JSON.stringify(remote.json)) {
+                    memory = next;
+                    saveDirty({});
+                    setSyncStatus('บันทึกลง GitHub แล้ว');
+                    notifyAll();
+                    return;
+                }
+                const res = await apiPutFile(next, remote.sha);
+                if (res.ok) {
+                    memory = next;
+                    saveDirty({});
+                    setSyncStatus('บันทึกลง GitHub แล้ว');
+                    notifyAll();
+                    return;
+                }
+                if (res.status === 409) continue;
+                if (res.status === 401 || res.status === 403) {
+                    setSyncStatus('โทเคน GitHub ใช้ไม่ได้ หรือไม่มีสิทธิ์เขียน repo');
+                    showToast('โทเคน GitHub ใช้ไม่ได้ หรือไม่มีสิทธิ์เขียน', '#f87171', 5000);
+                    return;
+                }
+                console.error('GitHub save failed', res.status);
+                setSyncStatus('บันทึกขึ้น GitHub ไม่สำเร็จ');
+                showToast('บันทึกขึ้น GitHub ไม่สำเร็จ', '#f87171');
+                return;
+            }
+            setSyncStatus('มีคนบันทึกพร้อมกัน — ลองใหม่');
+        } catch (e) {
+            console.error(e);
+            setSyncStatus('เชื่อม GitHub ไม่สำเร็จ');
+        } finally {
+            committing = false;
+        }
+    }
+
+    function scheduleCommit() {
+        clearTimeout(commitTimer);
+        commitTimer = setTimeout(flushCommit, 1200);
+    }
+
+    async function refreshFromPages() {
+        if (committing) return;
+        try {
+            const remote = await fetchPublishedDb();
+            applyDirty(remote);
+            if (JSON.stringify(remote) === JSON.stringify(memory)) return;
+            memory = remote;
+            notifyAll();
+        } catch (e) {
+            console.warn('GitHub read:', e);
+        }
+    }
+
+    const readyPromise = (async function () {
+        try {
+            memory = await fetchPublishedDb();
+        } catch (e) {
+            console.warn(e);
+            memory = emptyDb();
+        }
+        applyDirty(memory);
+    })();
+
+    readyPromise.then(() => {
+        setInterval(() => { refreshFromPages(); }, 15000);
+    });
+
+    function githubRef(path) {
+        const subs = [];
+        return {
+            once() {
+                return readyPromise.then(() => makeSnap(readPath(memory, path)));
+            },
+            set(value) {
+                return readyPromise.then(() => {
+                    writePath(memory, path, value);
+                    const dirty = loadDirty();
+                    dirty[path] = value;
+                    saveDirty(dirty);
+                    notifyPath(path);
+                    scheduleCommit();
+                });
+            },
+            on(event, cb, errCb) {
+                const item = { path: path, cb: cb, err: errCb };
+                listeners.push(item);
+                subs.push(item);
+                readyPromise.then(() => {
+                    try { cb(makeSnap(readPath(memory, path))); }
+                    catch (e) { if (errCb) errCb(e); }
+                }).catch(e => { if (errCb) errCb(e); });
+            },
+            off() {
+                subs.splice(0).forEach(item => {
+                    const i = listeners.indexOf(item);
+                    if (i >= 0) listeners.splice(i, 1);
+                });
+            }
+        };
+    }
+
+    window.firebaseDB = { ref: githubRef };
+    window.flushGithubData = flushCommit;
 
     // ── Authentic Performance-Based Rubric Score Calculator ─────────────────
     function calculateRubricScores(missions, lessons) {
@@ -139,7 +429,7 @@
                 localStorage.setItem('rubric_quiz_completed_' + k, lvl >= 3 ? 'true' : 'false');
             });
         }
-        showToast('✅ โหลดข้อมูลการเรียนของคุณจากคลาวด์เรียบร้อยแล้ว', '#34d399');
+        showToast('✅ โหลดข้อมูลการเรียนของคุณจาก GitHub เรียบร้อยแล้ว', '#34d399');
         _refreshScoreUI();
         setTimeout(() => {
             if (typeof window.checkAndAwardBadges   === 'function') window.checkAndAwardBadges();
@@ -360,7 +650,34 @@
 
     // ── DOM Bindings ─────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', () => {
-        if (!window.firebaseDB && typeof firebase !== 'undefined') initFirebase();
+        const tokenInput = document.getElementById('github-token-input');
+        const tokenBtn = document.getElementById('btn-github-token-save');
+        if (tokenInput && dataToken()) tokenInput.placeholder = 'บันทึกโทเคนไว้แล้ว — วางใหม่เพื่อเปลี่ยน';
+        if (tokenBtn && tokenInput) {
+            tokenBtn.addEventListener('click', async () => {
+                const v = tokenInput.value.trim();
+                tokenInput.value = '';
+                if (!v) {
+                    localStorage.removeItem(TOKEN_KEY);
+                    tokenInput.placeholder = 'โทเคน GitHub (สิทธิ์ repo) — เก็บแค่ในเบราว์เซอร์นี้';
+                    setSyncStatus('เอาโทเคนออกแล้ว — จะไม่อัปข้อมูลขึ้น GitHub');
+                    return;
+                }
+                localStorage.setItem(TOKEN_KEY, v);
+                tokenInput.placeholder = 'บันทึกโทเคนไว้แล้ว — วางใหม่เพื่อเปลี่ยน';
+                setSyncStatus('กำลังตรวจโทเคน...');
+                try {
+                    await apiGetFile();
+                    setSyncStatus('เชื่อม GitHub แล้ว');
+                    flushCommit();
+                } catch (e) {
+                    console.error(e);
+                    setSyncStatus('โทเคน GitHub ใช้ไม่ได้ หรือไม่มีสิทธิ์อ่าน repo');
+                    showToast('โทเคน GitHub ใช้ไม่ได้', '#f87171', 5000);
+                }
+            });
+        }
+        if (!dataToken()) setSyncStatus('อ่านจาก GitHub ได้ — ใส่โทเคนในแถบนี้เพื่อบันทึกคะแนนขึ้น repo');
 
         // Restore header display if already logged in
         const savedName = localStorage.getItem('scratch_student_name') || '';
