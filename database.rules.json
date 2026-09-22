@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "students": {
+      ".read": true,
+      "$classCode": {
+        ".read": true,
+        "$studentKey": {
+          ".write": true
+        }
+      }
+    },
+    "accounts": {
+      "$username": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}

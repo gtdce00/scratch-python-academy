@@ -20,6 +20,8 @@ const CLASS_CODES = {
     'DEMO':    '🖥️ สาธิต',
 };
 
+window.CLASS_CODES = CLASS_CODES;
+
 // ตรวจสอบว่ารหัสถูกต้องหรือไม่
 function isValidClassCode(code) {
     return Object.prototype.hasOwnProperty.call(CLASS_CODES, code.toUpperCase().trim());

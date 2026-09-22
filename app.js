@@ -2164,20 +2164,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!leaderboardBody) return;
         
         if (!window.firebaseDB) {
-            leaderboardBody.innerHTML = '<tr><td colspan="13" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อกับระบบคลาวด์จัดอันดับ...</td></tr>';
+            leaderboardBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อกับระบบคลาวด์จัดอันดับ...</td></tr>';
             // Retry in 1 second if firebase is loading
             setTimeout(loadLeaderboard, 1000);
             return;
         }
         
         // Use class-specific path if logged in
-        const classCode = localStorage.getItem('scratch_class_code');
+        let classCode = (localStorage.getItem('scratch_class_code') || '').toUpperCase();
+        if (classCode === 'TEACHER' || classCode === 'DEMO') {
+            classCode = (localStorage.getItem('teacher_watch_class') || 'M101').toUpperCase();
+        }
         const firebasePath = classCode ? `students/${classCode}` : 'students';
 
-        leaderboardBody.innerHTML = '<tr><td colspan="13" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังดาวน์โหลดคะแนนห้องเรียนจากฐานข้อมูล...</td></tr>';
-        
-        // Setup Realtime value listener on class-specific path
-        window.firebaseDB.ref(firebasePath).on('value', (snapshot) => {
+        leaderboardBody.innerHTML = '<tr><td colspan="15" style="text-align: center; color: var(--text-muted); padding: 16px;"><i class="fa-solid fa-spinner fa-spin"></i> กำลังดาวน์โหลดคะแนนห้องเรียนจากฐานข้อมูล...</td></tr>';
+
+        if (window._leaderboardRef) {
+            try { window._leaderboardRef.off(); } catch (_) {}
+        }
+        window._leaderboardRef = window.firebaseDB.ref(firebasePath);
+        window._leaderboardRef.on('value', (snapshot) => {
             const rawData = snapshot.val() || {};
             const studentsList = [];
             
@@ -2310,7 +2316,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }, (err) => {
             console.error("Firebase read failed:", err);
-            leaderboardBody.innerHTML = '<tr><td colspan="13" style="text-align: center; color: #f87171; padding: 16px;"><i class="fa-solid fa-triangle-exclamation"></i> ไม่สามารถดึงข้อมูลได้ (การดึงข้อมูลจากระบบคลาวด์ขัดข้อง)</td></tr>';
+            const denied = err && (err.code === 'PERMISSION_DENIED' || String(err.message || '').toLowerCase().includes('permission'));
+            const msg = denied
+                ? 'Firebase ปฏิเสธการอ่านข้อมูลห้องเรียน (permission denied) — เปิดกฎ Read ของ Realtime Database ที่ path students'
+                : 'ไม่สามารถดึงข้อมูลได้ (การเชื่อมต่อคลาวด์ขัดข้อง)';
+            leaderboardBody.innerHTML = `<tr><td colspan="15" style="text-align: center; color: #f87171; padding: 16px;"><i class="fa-solid fa-triangle-exclamation"></i> ${msg}</td></tr>`;
         });
     }
     // Expose so db-sync.js can refresh the leaderboard after cloud sync/restore
@@ -2741,25 +2751,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return code === 'TEACHER' || code === 'DEMO';
     }
 
+    function classCatalog() {
+        if (typeof CLASS_CODES !== 'undefined') return CLASS_CODES;
+        if (window.CLASS_CODES) return window.CLASS_CODES;
+        return { M101: 'ม.1/1', P101: 'ป.1/1' };
+    }
+
+    function watchedClassCode() {
+        const own = (localStorage.getItem('scratch_class_code') || '').toUpperCase();
+        const saved = (localStorage.getItem('teacher_watch_class') || '').toUpperCase();
+        const catalog = classCatalog();
+        if (saved && catalog[saved]) return saved;
+        if (own && own !== 'TEACHER' && own !== 'DEMO' && catalog[own]) return own;
+        return 'M101';
+    }
+
     function updateTeacherNavVisibility() {
         const nav = document.getElementById('nav-teacher-item');
-        if (!nav) return;
-        nav.style.display = isTeacherMode() ? 'flex' : 'none';
+        if (nav) nav.classList.add('teacher-visible');
     }
 
     function populateTeacherClassSelect() {
         const sel = document.getElementById('teacher-class-select');
-        if (!sel || typeof CLASS_CODES === 'undefined') return;
-        const saved = localStorage.getItem('teacher_watch_class') || 'M101';
+        if (!sel) return;
+        const catalog = classCatalog();
+        const saved = watchedClassCode();
         sel.innerHTML = '';
-        Object.keys(CLASS_CODES).forEach(code => {
+        Object.keys(catalog).forEach(code => {
             if (code === 'TEACHER' || code === 'DEMO') return;
             const opt = document.createElement('option');
             opt.value = code;
-            opt.textContent = `${code} — ${CLASS_CODES[code]}`;
+            opt.textContent = `${code} — ${catalog[code]}`;
             if (code === saved) opt.selected = true;
             sel.appendChild(opt);
         });
+        if (!sel.value && sel.options.length) sel.selectedIndex = 0;
     }
 
     function formatTeacherTime(iso) {
@@ -2854,13 +2880,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.loadTeacherDashboard = function() {
-        if (!isTeacherMode()) {
-            updateTeacherNavVisibility();
-            return;
-        }
+        updateTeacherNavVisibility();
         populateTeacherClassSelect();
         const sel = document.getElementById('teacher-class-select');
-        const classCode = sel ? sel.value : (localStorage.getItem('teacher_watch_class') || 'M101');
+        const classCode = (sel && sel.value) ? sel.value : watchedClassCode();
+        if (sel && classCode) sel.value = classCode;
         localStorage.setItem('teacher_watch_class', classCode);
 
         const body = document.getElementById('teacher-table-body');
@@ -2892,7 +2916,11 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTeacherTable(list);
         }, (err) => {
             console.error('Teacher dashboard error:', err);
-            if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty" style="color:#f87171;">โหลดข้อมูลไม่สำเร็จ</td></tr>';
+            const denied = err && (err.code === 'PERMISSION_DENIED' || String(err.message || '').toLowerCase().includes('permission'));
+            const msg = denied
+                ? 'Firebase ปฏิเสธการอ่าน (permission denied) — เปิดกฎ Read ที่ Realtime Database → students'
+                : 'โหลดข้อมูลห้องไม่สำเร็จ';
+            if (body) body.innerHTML = `<tr><td colspan="9" class="teacher-empty" style="color:#f87171;">${msg}</td></tr>`;
         });
     };
 

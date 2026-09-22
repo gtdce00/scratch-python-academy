@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=8">
+    <link rel="stylesheet" href="style.css?v=9">
     <style>
         /* Top Navigation Bar Layout Overrides to bypass browser caching */
         .app-container {
@@ -78,6 +78,9 @@
             white-space: nowrap !important;
             font-size: 13px !important;
             flex-shrink: 0 !important;
+        }
+        #nav-teacher-item.teacher-visible {
+            display: flex !important;
         }
         .sidebar-footer {
             display: none !important;
@@ -210,7 +213,7 @@
                 </div>
 
                 <!-- โหมดครู (แสดงเมื่อล็อกอินด้วย TEACHER / DEMO) -->
-                <a href="#teacher" class="menu-item" data-tab="teacher" id="nav-teacher-item" style="display:none;">
+                <a href="#teacher" class="menu-item" data-tab="teacher" id="nav-teacher-item">
                     <i class="fa-solid fa-chalkboard-user"></i> โหมดครู
                 </a>
             </nav>
@@ -1362,10 +1365,10 @@
     <!-- Firebase SDK Compatibility Libraries -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="db-config.js?v=20260724_GAMESYNC"></script>
-    <script src="class-config.js?v=20260724_GAMESYNC"></script>
-    <script src="db-sync.js?v=20260724_GAMESYNC"></script>
-    <script src="badges.js?v=20260724_GAMESYNC"></script>
-    <script src="app.js?v=20260724_GAMESYNC"></script>
+    <script src="db-config.js?v=20260922_CLOUD"></script>
+    <script src="class-config.js?v=20260922_CLOUD"></script>
+    <script src="db-sync.js?v=20260922_CLOUD"></script>
+    <script src="badges.js?v=20260922_CLOUD"></script>
+    <script src="app.js?v=20260922_CLOUD"></script>
 </body>
 </html>
