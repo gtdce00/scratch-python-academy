@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=10">
+    <link rel="stylesheet" href="style.css?v=11">
     <style>
         /* Top Navigation Bar Layout Overrides to bypass browser caching */
         .app-container {
@@ -1267,7 +1267,7 @@
                         <div class="teacher-dash-header">
                             <div>
                                 <h2>Teacher Dashboard</h2>
-                                <p>ข้อมูลห้องเรียนอยู่ใน GitHub — ใครทำอะไรแล้ว / ใครติดอยู่</p>
+                                <p>จัดการรายชื่อและดูความคืบหน้าของห้องเรียน</p>
                             </div>
                             <div class="teacher-dash-controls">
                                 <label for="teacher-class-select">เลือกห้อง</label>
@@ -1300,6 +1300,13 @@
                             <button type="button" class="teacher-filter" data-filter="inactive">ยังไม่เริ่ม</button>
                         </div>
 
+                        <div class="teacher-roster-bar">
+                            <input id="teacher-search" type="search" placeholder="ค้นหาชื่อในห้องนี้" autocomplete="off">
+                            <input id="teacher-add-first" type="text" placeholder="ชื่อ" autocomplete="off">
+                            <input id="teacher-add-last" type="text" placeholder="นามสกุล" autocomplete="off">
+                            <button type="button" class="td-add" id="btn-teacher-add">เพิ่มชื่อ</button>
+                        </div>
+
                         <div class="teacher-table-wrap">
                             <table class="teacher-table">
                                 <thead>
@@ -1313,10 +1320,11 @@
                                         <th>Rover</th>
                                         <th>RPG</th>
                                         <th>อัปเดตล่าสุด</th>
+                                        <th>จัดการ</th>
                                     </tr>
                                 </thead>
                                 <tbody id="teacher-table-body">
-                                    <tr><td colspan="9" class="teacher-empty">เลือกรหัสห้องด้านบนเพื่อโหลดข้อมูล</td></tr>
+                                    <tr><td colspan="10" class="teacher-empty">เลือกรหัสห้องด้านบนเพื่อโหลดข้อมูล</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1370,8 +1378,8 @@
     <script src="audio-synth.js"></script>
     <script src="db-config.js?v=20260922_GH"></script>
     <script src="class-config.js?v=20260922_CLOUD"></script>
-    <script src="db-sync.js?v=20260922_GH"></script>
+    <script src="db-sync.js?v=20260922_ROSTER"></script>
     <script src="badges.js?v=20260922_GH"></script>
-    <script src="app.js?v=20260922_GH"></script>
+    <script src="app.js?v=20260922_ROSTER"></script>
 </body>
 </html>

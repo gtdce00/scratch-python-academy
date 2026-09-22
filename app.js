@@ -2741,6 +2741,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let teacherListenerRef = null;
     let teacherStudentsCache = [];
     let teacherFilter = 'all';
+    let teacherSearch = '';
 
     function isTeacherMode() {
         const code = (localStorage.getItem('scratch_class_code') || '').toUpperCase();
@@ -2826,9 +2827,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTeacherTable(students) {
         const body = document.getElementById('teacher-table-body');
         if (!body) return;
-        const filtered = students.filter(s => matchesTeacherFilter(s, teacherFilter));
+        const filtered = students.filter(s => matchesTeacherFilter(s, teacherFilter) && matchesTeacherSearch(s));
         if (filtered.length === 0) {
-            body.innerHTML = '<tr><td colspan="9" class="teacher-empty">ไม่พบนักเรียนตามตัวกรองนี้</td></tr>';
+            const msg = students.length === 0 ? 'ยังไม่มีนักเรียนในห้องนี้' : 'ไม่พบชื่อตามตัวกรองหรือคำค้น';
+            body.innerHTML = `<tr><td colspan="10" class="teacher-empty">${msg}</td></tr>`;
             return;
         }
         body.innerHTML = '';
@@ -2840,11 +2842,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const pre = (s.preScore !== null && s.preScore !== undefined) ? s.preScore : '—';
             const post = (s.postScore !== null && s.postScore !== undefined) ? s.postScore : '—';
             const flags = studentStatusFlags(s).map(f =>
-                `<span class="td-flag" style="color:${f.c};border-color:${f.c}55;">${f.t}</span>`
+                `<span class="td-flag" style="color:${f.c};border-color:${f.c}55;">${escHtml(f.t)}</span>`
             ).join(' ');
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><strong>${s.name || 'ไม่ระบุชื่อ'}</strong></td>
+                <td><strong>${escHtml(s.name || 'ไม่ระบุชื่อ')}</strong></td>
                 <td class="td-flags">${flags}</td>
                 <td>${pre}</td>
                 <td>${post}</td>
@@ -2853,9 +2855,89 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${rover}/3</td>
                 <td>${rpg}/12</td>
                 <td>${formatTeacherTime(s.lastUpdated)}</td>
+                <td><button type="button" class="td-delete" data-key="${escHtml(s.key || '')}">ลบ</button></td>
             `;
             body.appendChild(tr);
         });
+    }
+
+    function escHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, ch => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[ch]));
+    }
+
+    function matchesTeacherSearch(s) {
+        if (!teacherSearch) return true;
+        return (s.name || '').toLowerCase().includes(teacherSearch);
+    }
+
+    function rosterKey(firstname, lastname) {
+        return `${firstname}_${lastname}`.trim().toLowerCase()
+            .replace(/\s+/g, '_')
+            .replace(/[.#$[\]/]/g, '-')
+            .substring(0, 64) || 'unnamed';
+    }
+
+    function currentTeacherClass() {
+        const sel = document.getElementById('teacher-class-select');
+        return (sel && sel.value) ? sel.value : watchedClassCode();
+    }
+
+    function deleteTeacherStudent(student) {
+        if (!student || !student.key || !window.firebaseDB) return;
+        const classCode = currentTeacherClass();
+        const ok = window.confirm(`ลบ "${student.name || 'นักเรียน'}" ออกจากห้อง ${classCode} ?`);
+        if (!ok) return;
+        const ref = window.firebaseDB.ref(`students/${classCode}/${student.key}`);
+        if (typeof ref.remove !== 'function') return;
+        ref.remove();
+    }
+
+    function addTeacherStudent() {
+        const firstEl = document.getElementById('teacher-add-first');
+        const lastEl = document.getElementById('teacher-add-last');
+        const fn = (firstEl && firstEl.value || '').trim();
+        const ln = (lastEl && lastEl.value || '').trim();
+        if (!fn || !ln) {
+            window.alert('กรอกชื่อและนามสกุล');
+            return;
+        }
+        if (!window.firebaseDB) return;
+        const classCode = currentTeacherClass();
+        const name = `${fn} ${ln}`;
+        if (teacherStudentsCache.some(s => (s.name || '').trim() === name)) {
+            window.alert('มีชื่อนี้อยู่แล้วในห้องนี้');
+            return;
+        }
+        let key = rosterKey(fn, ln);
+        const used = new Set(teacherStudentsCache.map(s => s.key));
+        const base = key;
+        let n = 2;
+        while (used.has(key)) key = `${base}_${n++}`;
+        const record = {
+            key, name, classCode,
+            username: '',
+            preScore: null,
+            postScore: null,
+            missionsCount: 0,
+            lessonsCount: 0,
+            rpgClearedCount: 0,
+            game2dCount: 0,
+            completedMissions: {},
+            completedLessons: {},
+            rpgSave: null,
+            game2dCompleted: {},
+            game2dBestStars: {},
+            rubrics: {},
+            rubricDebugLevels: {},
+            rubricQuizPassed: {},
+            badges: {},
+            lastUpdated: new Date().toISOString()
+        };
+        window.firebaseDB.ref(`students/${classCode}/${key}`).set(record);
+        if (firstEl) firstEl.value = '';
+        if (lastEl) lastEl.value = '';
     }
 
     function updateTeacherStats(students) {
@@ -2885,7 +2967,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const body = document.getElementById('teacher-table-body');
         if (!window.firebaseDB) {
-            if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อ GitHub...</td></tr>';
+            if (body) body.innerHTML = '<tr><td colspan="10" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังเชื่อมต่อ GitHub...</td></tr>';
             setTimeout(() => window.loadTeacherDashboard(), 1000);
             return;
         }
@@ -2895,7 +2977,7 @@ document.addEventListener('DOMContentLoaded', () => {
             teacherListenerRef = null;
         }
 
-        if (body) body.innerHTML = '<tr><td colspan="9" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดห้อง ' + classCode + '...</td></tr>';
+        if (body) body.innerHTML = '<tr><td colspan="10" class="teacher-empty"><i class="fa-solid fa-spinner fa-spin"></i> กำลังโหลดห้อง ' + classCode + '...</td></tr>';
 
         teacherListenerRef = window.firebaseDB.ref(`students/${classCode}`);
         teacherListenerRef.on('value', (snapshot) => {
@@ -2913,9 +2995,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }, (err) => {
             console.error('Teacher dashboard error:', err);
             const msg = 'โหลดข้อมูลห้องจาก GitHub ไม่สำเร็จ';
-            if (body) body.innerHTML = `<tr><td colspan="9" class="teacher-empty" style="color:#f87171;">${msg}</td></tr>`;
+            if (body) body.innerHTML = `<tr><td colspan="10" class="teacher-empty" style="color:#f87171;">${msg}</td></tr>`;
         });
     };
+
+    const teacherTableBody = document.getElementById('teacher-table-body');
+    if (teacherTableBody) {
+        teacherTableBody.addEventListener('click', (e) => {
+            const btn = e.target.closest('.td-delete');
+            if (!btn) return;
+            const key = btn.getAttribute('data-key');
+            const student = teacherStudentsCache.find(s => s.key === key);
+            if (student) deleteTeacherStudent(student);
+        });
+    }
+
+    const teacherSearchInput = document.getElementById('teacher-search');
+    if (teacherSearchInput) {
+        teacherSearchInput.addEventListener('input', () => {
+            teacherSearch = teacherSearchInput.value.trim().toLowerCase();
+            renderTeacherTable(teacherStudentsCache);
+        });
+    }
+
+    const btnTeacherAdd = document.getElementById('btn-teacher-add');
+    if (btnTeacherAdd) btnTeacherAdd.addEventListener('click', addTeacherStudent);
 
     const teacherClassSelect = document.getElementById('teacher-class-select');
     if (teacherClassSelect) {

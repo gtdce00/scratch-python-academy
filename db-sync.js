@@ -119,6 +119,21 @@
         cur[parts[parts.length - 1]] = value;
     }
 
+    function deletePath(root, path) {
+        const parts = String(path || '').split('/').filter(Boolean);
+        if (!parts.length || !root) return;
+        let cur = root;
+        for (let i = 0; i < parts.length - 1; i++) {
+            if (!cur || typeof cur !== 'object') return;
+            cur = cur[parts[i]];
+        }
+        if (cur && typeof cur === 'object') delete cur[parts[parts.length - 1]];
+    }
+
+    function isDeletedMark(value) {
+        return !!(value && typeof value === 'object' && value.__deleted === true);
+    }
+
     function loadDirty() {
         try {
             const parsed = JSON.parse(localStorage.getItem(DIRTY_KEY) || '{}');
@@ -134,7 +149,10 @@
 
     function applyDirty(root) {
         const dirty = loadDirty();
-        Object.keys(dirty).forEach(path => writePath(root, path, dirty[path]));
+        Object.keys(dirty).forEach(path => {
+            if (isDeletedMark(dirty[path])) deletePath(root, path);
+            else writePath(root, path, dirty[path]);
+        });
         return root;
     }
 
@@ -339,6 +357,16 @@
                     writePath(memory, path, value);
                     const dirty = loadDirty();
                     dirty[path] = value;
+                    saveDirty(dirty);
+                    notifyPath(path);
+                    scheduleCommit();
+                });
+            },
+            remove() {
+                return readyPromise.then(() => {
+                    deletePath(memory, path);
+                    const dirty = loadDirty();
+                    dirty[path] = { __deleted: true };
                     saveDirty(dirty);
                     notifyPath(path);
                     scheduleCommit();

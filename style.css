@@ -3106,6 +3106,42 @@ h1, h2, h3, h4, h5, h6 {
     color: #FFBF00;
     background: rgba(255, 171, 25, 0.08);
 }
+.teacher-roster-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.teacher-roster-bar input {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid var(--border-color);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    min-width: 120px;
+}
+#teacher-search { flex: 1; min-width: 180px; }
+.td-add, .td-delete {
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.td-add {
+    background: #34d399;
+    color: #061f14;
+    border: none;
+    padding: 8px 14px;
+}
+.td-delete {
+    background: transparent;
+    color: #f87171;
+    border: 1px solid rgba(248, 113, 113, 0.45);
+    padding: 4px 10px;
+}
+.td-delete:hover { background: rgba(248, 113, 113, 0.12); }
 .teacher-table-wrap {
     overflow-x: auto;
     border: 1px solid rgba(255,255,255,0.08);
